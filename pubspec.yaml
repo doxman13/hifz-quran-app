@@ -1,0 +1,75 @@
+name: hifz_quran_app
+description: "Standalone Hifz (Memorization) App for Quran."
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.12.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  cupertino_icons: ^1.0.8
+  provider: ^6.1.5+1
+  shared_preferences: ^2.5.5
+  path_provider: ^2.1.3
+  scrollable_positioned_list: ^0.3.8
+  google_fonts: ^8.1.0
+  flutter_blue_plus: ^1.31.18
+  collection: ^1.18.0
+  http: ^1.6.0
+  supabase_flutter: ^2.8.0
+  flutter_svg: ^2.0.10
+  share_plus: ^13.2.0
+  just_audio: ^0.10.5
+  just_audio_background: ^0.0.1-beta.15
+  audio_service: ^0.18.19
+  flutter_background_service: ^5.1.0
+  flutter_local_notifications: ^17.2.1
+  qcf_quran: ^0.0.5
+  url_launcher: ^6.3.0
+  timeago: ^3.7.1
+  wakelock_plus: ^1.6.1
+  sqflite: ^2.4.3
+  path: ^1.9.1
+  volume_key_board: ^0.0.2
+  uuid: ^4.6.0
+  firebase_core: ^4.12.1
+  firebase_analytics: ^12.4.5
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/quran_tajweed.json
+    - assets/thai_v3.json
+    - assets/merged_quran.json
+    - assets/tafsir_thai_mokhtasar.json
+    - assets/icons/playstore-icon.png
+    - assets/icons/mipmap-xxxhdpi/
+    - assets/quran_arabic.json
+    - assets/Bismillah_Calligraphy6.svg
+    - assets/logo.svg
+    - assets/reconciled_thai_quran_themes.json
+    - assets/surah_summary_th_exact.json
+    - assets/surah_summary_en_exact.json
+    - assets/tafsir_eng_mokhtasar.json
+    - assets/images/
+    - assets/qcf_v1_pages/
+    - assets/qcf_v1_fonts/
+    - assets/Tajweed/
+
+  fonts:
+    - family: UthmanicHafs
+      fonts:
+        - asset: assets/fonts/UthmanicHafs.ttf
+    - family: Tajweed
+      fonts:
+        - asset: assets/Tajweed/DigitalKhattQuranicV1.otf

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "913097538260",
+    "project_id": "iqra-quran-project",
+    "storage_bucket": "iqra-quran-project.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:913097538260:android:4a97f7445c47085b455941",
+        "android_client_info": {
+          "package_name": "com.abuzayd.iqra"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSxOSlkB9rxVRNWUHj5JjPtHPnLIwfeog"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
