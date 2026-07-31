@@ -208,7 +208,7 @@ class ThaiQuranApp extends StatelessWidget {
     return Consumer<SettingsProvider>(
       builder: (context, settings, child) {
         return MaterialApp(
-          title: 'Thai Quran',
+          title: 'HifzSpace',
           debugShowCheckedModeBanner: false,
 
           // Connects your live app settings state directly into the theme engine
