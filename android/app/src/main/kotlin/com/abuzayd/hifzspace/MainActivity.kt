@@ -1,4 +1,4 @@
-package com.abuzayd.iqra
+package com.abuzayd.hifzspace
 
 import android.view.KeyEvent
 import com.ryanheise.audioservice.AudioServiceFragmentActivity
