@@ -7,11 +7,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qcf_quran/qcf_quran.dart' as qcf;
+import 'package:shared_preferences/shared_preferences.dart';
 
+import '../data/quran_foundation_repository.dart';
 import '../data/quran_repository.dart';
 import '../providers/settings_provider.dart';
 import '../database/hifz_repository.dart';
 import '../models/hifz_session_config.dart';
+import 'hifz_memorize_screen.dart';
 
 /// Return type from the setup screen.
 class NewVersesSetupResult {
@@ -36,6 +39,7 @@ class NewVersesSetupResult {
 
 class HifzNewVersesSetupScreen extends StatefulWidget {
   final QuranRepository quranRepository;
+  final QuranFoundationRepository? foundationRepository;
   final int initialSurah;
   final int initialStartVerse;
   final int initialEndVerse;
@@ -46,6 +50,7 @@ class HifzNewVersesSetupScreen extends StatefulWidget {
   const HifzNewVersesSetupScreen({
     super.key,
     required this.quranRepository,
+    this.foundationRepository,
     this.initialSurah = 1,
     this.initialStartVerse = 1,
     this.initialEndVerse = 3,
@@ -197,6 +202,19 @@ class _HifzNewVersesSetupScreenState extends State<HifzNewVersesSetupScreen>
 
     if (!mounted) return;
     if (resume == true) {
+      if (widget.foundationRepository != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => HifzMemorizeScreen(
+              quranRepository: widget.quranRepository,
+              foundationRepository: widget.foundationRepository!,
+              resumeSessionSnapshot: snap,
+            ),
+          ),
+        );
+        return;
+      }
       Navigator.pop(
         context,
         NewVersesSetupResult(
@@ -209,6 +227,8 @@ class _HifzNewVersesSetupScreenState extends State<HifzNewVersesSetupScreen>
           resumeSnapshot: snap,
         ),
       );
+    } else if (resume == false) {
+      await repo.clearActiveSession(sessionId: snap.sessionId);
     }
   }
 
@@ -218,7 +238,6 @@ class _HifzNewVersesSetupScreenState extends State<HifzNewVersesSetupScreen>
       _pageSurah = pageItems.first['surah'];
       _pageStart = pageItems.first['start'];
       _pageEnd = pageItems.last['end'];
-      if (_pageEnd - _pageStart + 1 > 30) _pageEnd = _pageStart + 29;
       _pageRepeatStart = _pageStart;
     }
   }
@@ -229,22 +248,57 @@ class _HifzNewVersesSetupScreenState extends State<HifzNewVersesSetupScreen>
     super.dispose();
   }
 
-  void _confirmAndReturn() {
+  Future<void> _confirmAndReturn() async {
     final isSurah = _tabController.index == 0;
-    Navigator.pop(
-      context,
-      NewVersesSetupResult(
-        surah: isSurah ? _surah : _pageSurah,
-        repeatStart: isSurah ? _repeatStart : _pageRepeatStart,
-        startVerse: isSurah ? _startVerse : _pageStart,
-        endVerse: isSurah ? _endVerse : _pageEnd,
-        page: isSurah
-            ? qcf.getPageNumber(isSurah ? _surah : _pageSurah,
-                isSurah ? _startVerse : _pageStart)
-            : _page,
-        isSurahMode: isSurah,
-      ),
-    );
+    final selectedSurah = isSurah ? _surah : _pageSurah;
+    final selectedRepeatStart = isSurah ? _repeatStart : _pageRepeatStart;
+    final selectedStartVerse = isSurah ? _startVerse : _pageStart;
+    final selectedEndVerse = isSurah ? _endVerse : _pageEnd;
+    final selectedPage = isSurah
+        ? qcf.getPageNumber(selectedSurah, selectedStartVerse)
+        : _page;
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt('hifz_nv_surah', selectedSurah);
+    await prefs.setInt('hifz_nv_start_verse', selectedStartVerse);
+    await prefs.setInt('hifz_nv_end_verse', selectedEndVerse);
+    await prefs.setInt('hifz_nv_repeat_start', selectedRepeatStart);
+    await prefs.setInt('hifz_nv_page', selectedPage);
+    await prefs.setBool('hifz_nv_is_surah_mode', isSurah);
+
+    if (widget.foundationRepository != null && mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => HifzMemorizeScreen(
+            quranRepository: widget.quranRepository,
+            foundationRepository: widget.foundationRepository!,
+            surahNumber: selectedSurah,
+            startVerse: selectedStartVerse,
+            endVerse: selectedEndVerse,
+            initialSessionType: HifzSessionType.newVerses,
+            repeatStart: selectedRepeatStart,
+            initialPage: selectedPage,
+            isSurahMode: isSurah,
+          ),
+        ),
+      );
+      return;
+    }
+
+    if (mounted) {
+      Navigator.pop(
+        context,
+        NewVersesSetupResult(
+          surah: selectedSurah,
+          repeatStart: selectedRepeatStart,
+          startVerse: selectedStartVerse,
+          endVerse: selectedEndVerse,
+          page: selectedPage,
+          isSurahMode: isSurah,
+        ),
+      );
+    }
   }
 
   @override
@@ -254,7 +308,6 @@ class _HifzNewVersesSetupScreenState extends State<HifzNewVersesSetupScreen>
     final isThai = context.watch<SettingsProvider>().languageCode == 'th';
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         centerTitle: true,
         title: Text(
@@ -420,7 +473,6 @@ class _BySurahTabState extends State<_BySurahTab> {
                     _start = v;
                     if (_repeat > _start) _repeat = _start;
                     if (_end < _start) _end = _start;
-                    if (_end - _start + 1 > 30) _end = _start + 29;
                     if (_end > _totalVerses) _end = _totalVerses;
                   });
                   _notify();
@@ -432,9 +484,7 @@ class _BySurahTabState extends State<_BySurahTab> {
               child: _LabeledDropdown<int>(
                 label: isThai ? 'อายะห์สิ้นสุด' : 'End Verse',
                 value: _end,
-                items: List.generate(_totalVerses - _start + 1, (i) => _start + i)
-                    .where((v) => v - _start + 1 <= 30)
-                    .toList(),
+                items: List.generate(_totalVerses - _start + 1, (i) => _start + i),
                 itemLabel: (v) => isThai ? 'อายะห์ $v' : 'Verse $v',
                 onChanged: (v) {
                   setState(() => _end = v);
@@ -521,10 +571,11 @@ class _ByPageTabState extends State<_ByPageTab> {
       _pageSurah = items.first['surah'];
       _start = items.first['start'];
       _end = items.last['end'];
-      if (_end - _start + 1 > 30) _end = _start + 29;
       _repeat = _start;
     }
   }
+
+  int get _totalVerses => qcf.getVerseCount(_pageSurah);
 
   @override
   Widget build(BuildContext context) {
@@ -560,16 +611,14 @@ class _ByPageTabState extends State<_ByPageTab> {
               child: _LabeledDropdown<int>(
                 label: isThai ? 'อายะห์เริ่ม' : 'Start Verse',
                 value: _start,
-                items: List.generate(_end - _start + 10, (i) => _start + i - 5)
-                    .where((v) => v >= 1)
-                    .toList(),
+                items: List.generate(_totalVerses, (i) => i + 1),
                 itemLabel: (v) => isThai ? 'อายะห์ $v' : 'Verse $v',
                 onChanged: (v) {
                   setState(() {
                     _start = v;
                     if (_repeat > _start) _repeat = _start;
                     if (_end < _start) _end = _start;
-                    if (_end - _start + 1 > 30) _end = _start + 29;
+                    if (_end > _totalVerses) _end = _totalVerses;
                   });
                   _notify();
                 },
@@ -580,7 +629,7 @@ class _ByPageTabState extends State<_ByPageTab> {
               child: _LabeledDropdown<int>(
                 label: isThai ? 'อายะห์สิ้นสุด' : 'End Verse',
                 value: _end,
-                items: List.generate(30, (i) => _start + i),
+                items: List.generate(_totalVerses - _start + 1, (i) => _start + i),
                 itemLabel: (v) => isThai ? 'อายะห์ $v' : 'Verse $v',
                 onChanged: (v) {
                   setState(() => _end = v);

@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../data/translation_database.dart';
 import '../data/quran_repository.dart';
+import '../models/recitation_event.dart';
 import '../theme/app_theme.dart';
 
 enum HifzInputMode {
@@ -34,9 +35,22 @@ class SettingsProvider extends ChangeNotifier {
   DateTime _settingsUpdatedAt = DateTime.fromMillisecondsSinceEpoch(0);
   String _languageCode = 'th'; // Default to Thai
 
-  // New setting for Hifz input mode
+  // Setting for Hifz input mode (default: inAppTally)
   static const String _hifzInputModeKey = 'hifz_input_mode';
-  HifzInputMode _hifzInputMode = HifzInputMode.bluetoothShutter;
+  HifzInputMode _hifzInputMode = HifzInputMode.inAppTally;
+
+  // Setting for on-device voice recitation tracking
+  static const String _voiceRecitationEnabledKey = 'voice_recitation_enabled';
+  bool _voiceRecitationEnabled = true;
+  bool get voiceRecitationEnabled => _voiceRecitationEnabled;
+
+  static const String _voiceRecitationSensitivityKey = 'voice_recitation_sensitivity';
+  RecitationSensitivity _voiceRecitationSensitivity = RecitationSensitivity.balanced;
+  RecitationSensitivity get voiceRecitationSensitivity => _voiceRecitationSensitivity;
+
+  static const String _voiceRecitationAdaptiveNoiseKey = 'voice_recitation_adaptive_noise';
+  bool _voiceRecitationAdaptiveNoise = true;
+  bool get voiceRecitationAdaptiveNoise => _voiceRecitationAdaptiveNoise;
 
   // Dual-slot translation model
   // Built-in ID: 'thai_v3'. Other active IDs should come from downloaded API translations.
@@ -63,6 +77,15 @@ class SettingsProvider extends ChangeNotifier {
   String get themeColor => _themeColor;
   String get webHostUrl => _webHostUrl;
   HifzInputMode get hifzInputMode => _hifzInputMode;
+  // Word by word display setting
+  bool _showWordByWord = false;
+  bool get showWordByWord => _showWordByWord;
+  String _wordByWordLanguage = 'th'; // 'th', 'en', 'ms'
+  String get wordByWordLanguage => _wordByWordLanguage;
+
+  // Footnotes display setting (default: true)
+  bool _showFootnotes = true;
+  bool get showFootnotes => _showFootnotes;
 
   // New dual-slot getters
   String get primaryTranslationId => _primaryTranslationId;
@@ -79,20 +102,39 @@ class SettingsProvider extends ChangeNotifier {
       _primaryTranslationId == 'english' ||
       _secondaryTranslationId == 'english';
 
+  /// Effective UI and theme language code ('th' or 'en') derived from the active primary translation.
+  String get effectiveLanguageCode {
+    final primary = _primaryTranslationId.trim().toLowerCase();
+    if (primary == 'english' || primary.startsWith('en')) {
+      return 'en';
+    }
+    if (primary == 'ms_basmeih' || primary == 'malay' || primary.startsWith('ms')) {
+      return 'en';
+    }
+    if (primary == 'thai_v3' || primary == 'thai_v2' || primary.startsWith('th') || primary.startsWith('thai')) {
+      return 'th';
+    }
+    return _languageCode;
+  }
+
   SettingsProvider() {
     _loadSettings();
     _listenToAuthChanges();
   }
 
   void _listenToAuthChanges() {
-    _authSubscription = Supabase.instance.client.auth.onAuthStateChange.listen((
-      data,
-    ) async {
-      final user = data.session?.user;
-      if (user != null) {
-        await loadAndApplySyncedSettings(user.id);
-      }
-    });
+    try {
+      _authSubscription = Supabase.instance.client.auth.onAuthStateChange.listen((
+        data,
+      ) async {
+        final user = data.session?.user;
+        if (user != null) {
+          await loadAndApplySyncedSettings(user.id);
+        }
+      });
+    } catch (e) {
+      debugPrint('Supabase auth listener not initialized: $e');
+    }
   }
 
   @override
@@ -188,16 +230,7 @@ class SettingsProvider extends ChangeNotifier {
               showArabic: response['always_show_arabic'] == true,
               showTranslation: _readingDisplayMode != quranOnlyMode,
             );
-      _arabicFontSize =
-          double.tryParse(response['arabic_font_size']?.toString() ?? '') ??
-          _arabicFontSize;
-      _translationFontSize =
-          double.tryParse(
-            (response['translation_font_size'] ?? response['thai_font_size'])
-                    ?.toString() ??
-                '',
-          ) ??
-          _translationFontSize;
+      // Note: Mobile font sizes are kept Device-Local in SharedPreferences to prevent conflict with desktop screen sizes.
       _languageCode = response['language_code']?.toString() == 'en'
           ? 'en'
           : 'th';
@@ -253,14 +286,23 @@ class SettingsProvider extends ChangeNotifier {
         await prefs.remove('secondaryTranslationId');
       }
 
-      // Load Hifz input mode
+      // Load Hifz input mode and voice recitation setting
+      _voiceRecitationEnabled = prefs.getBool(_voiceRecitationEnabledKey) ?? true;
+      _voiceRecitationAdaptiveNoise = prefs.getBool(_voiceRecitationAdaptiveNoiseKey) ?? true;
+      final remoteSensitivity = prefs.getString(_voiceRecitationSensitivityKey);
+      if (remoteSensitivity != null) {
+        _voiceRecitationSensitivity = RecitationSensitivity.values.firstWhere(
+          (e) => e.name == remoteSensitivity,
+          orElse: () => RecitationSensitivity.balanced,
+        );
+      }
       final savedHifzMode = prefs.getString(_hifzInputModeKey);
       if (savedHifzMode == HifzInputMode.bleSmartRing.toString()) {
         _hifzInputMode = HifzInputMode.bleSmartRing;
-      } else if (savedHifzMode == HifzInputMode.inAppTally.toString()) {
-        _hifzInputMode = HifzInputMode.inAppTally;
-      } else {
+      } else if (savedHifzMode == HifzInputMode.bluetoothShutter.toString()) {
         _hifzInputMode = HifzInputMode.bluetoothShutter;
+      } else {
+        _hifzInputMode = HifzInputMode.inAppTally;
       }
     } catch (e) {
       debugPrint('Error loading/applying user settings: $e');
@@ -272,6 +314,27 @@ class SettingsProvider extends ChangeNotifier {
     _languageCode = prefs.getString('languageCode') ?? 'th';
     _isDarkMode = prefs.getBool('isDarkMode') ?? false;
     _keepAwake = prefs.getBool('keepAwake') ?? true;
+    _showWordByWord = prefs.getBool('showWordByWord') ?? false;
+    _wordByWordLanguage = prefs.getString('wordByWordLanguage') ?? 'th';
+    _showFootnotes = prefs.getBool('showFootnotes') ?? true;
+    _voiceRecitationEnabled = prefs.getBool(_voiceRecitationEnabledKey) ?? true;
+    _voiceRecitationAdaptiveNoise = prefs.getBool(_voiceRecitationAdaptiveNoiseKey) ?? true;
+    final savedSensitivity = prefs.getString(_voiceRecitationSensitivityKey);
+    if (savedSensitivity != null) {
+      _voiceRecitationSensitivity = RecitationSensitivity.values.firstWhere(
+        (e) => e.name == savedSensitivity,
+        orElse: () => RecitationSensitivity.balanced,
+      );
+    }
+
+    final savedHifzMode = prefs.getString(_hifzInputModeKey);
+    if (savedHifzMode == HifzInputMode.bleSmartRing.toString()) {
+      _hifzInputMode = HifzInputMode.bleSmartRing;
+    } else if (savedHifzMode == HifzInputMode.bluetoothShutter.toString()) {
+      _hifzInputMode = HifzInputMode.bluetoothShutter;
+    } else {
+      _hifzInputMode = HifzInputMode.inAppTally;
+    }
     final storedDisplayMode = prefs.getString('readingDisplayMode');
     if (storedDisplayMode != null && storedDisplayMode.isNotEmpty) {
       _readingDisplayMode = _normalizeReadingDisplayMode(storedDisplayMode);
@@ -361,7 +424,11 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   bool _isBundledTranslationId(String id) {
-    return id == 'thai_v3' || id == 'thai_v2' || id == 'english';
+    return id == 'thai_v3' ||
+        id == 'thai_v2' ||
+        id == 'english' ||
+        id == 'en_usmani' ||
+        id == 'ms_basmeih';
   }
 
   Future<bool> _isTranslationAvailableOnDevice(String? id) async {
@@ -406,7 +473,7 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   void _syncGlobalState() {
-    QuranRepository.globalIsThaiName = _languageCode == 'th' || _primaryTranslationId.startsWith('thai');
+    QuranRepository.globalIsThaiName = effectiveLanguageCode == 'th';
   }
 
   Future<void> _markSettingsChanged(SharedPreferences prefs) async {
@@ -433,6 +500,23 @@ class SettingsProvider extends ChangeNotifier {
     await prefs.setBool('keepAwake', value);
     await _markSettingsChanged(prefs);
     await _syncToSupabase();
+  }
+
+  void toggleShowWordByWord(bool value) async {
+    _showWordByWord = value;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('showWordByWord', value);
+    await _markSettingsChanged(prefs);
+  }
+
+  void setWordByWordLanguage(String lang) async {
+    if (_wordByWordLanguage == lang) return;
+    _wordByWordLanguage = lang;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('wordByWordLanguage', lang);
+    await _markSettingsChanged(prefs);
   }
 
   void toggleAlwaysShowArabic(bool value) async {
@@ -478,8 +562,7 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('arabicFontSize', value);
-    await _markSettingsChanged(prefs);
-    await _syncToSupabase();
+    // Device-local setting: keep in SharedPreferences, do not override desktop web font size
   }
 
   void setTranslationFontSize(double value) async {
@@ -487,8 +570,7 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setDouble('translationFontSize', value);
-    await _markSettingsChanged(prefs);
-    await _syncToSupabase();
+    // Device-local setting: keep in SharedPreferences, do not override desktop web font size
   }
 
   void setThemeColor(String value) async {
@@ -520,6 +602,15 @@ class SettingsProvider extends ChangeNotifier {
     await _syncToSupabase();
   }
 
+  void setShowFootnotes(bool value) async {
+    if (_showFootnotes == value) return;
+    _showFootnotes = value;
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('showFootnotes', value);
+    await _markSettingsChanged(prefs);
+  }
+
   /// Core dual-slot mutation with Auto-Eviction collision logic.
   ///
   /// [slot] must be `'primary'` or `'secondary'`.
@@ -538,6 +629,14 @@ class SettingsProvider extends ChangeNotifier {
           : _secondaryTranslationId;
       _primaryTranslationId = id;
       _secondaryTranslationId = newSecondary;
+
+      final lowerId = id.trim().toLowerCase();
+      if (lowerId.startsWith('thai') || lowerId.startsWith('th')) {
+        _languageCode = 'th';
+      } else if (lowerId == 'english' || lowerId.startsWith('en') || lowerId == 'malay' || lowerId.startsWith('ms')) {
+        _languageCode = 'en';
+      }
+      await prefs.setString('languageCode', _languageCode);
     } else {
       if (id == _primaryTranslationId) return; // collision — reject
       _secondaryTranslationId = id;
@@ -562,6 +661,36 @@ class SettingsProvider extends ChangeNotifier {
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_hifzInputModeKey, mode.toString());
+  }
+
+  Future<void> setVoiceRecitationEnabled(bool value) async {
+    if (_voiceRecitationEnabled == value) return;
+
+    _voiceRecitationEnabled = value;
+    notifyListeners();
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_voiceRecitationEnabledKey, value);
+  }
+
+  Future<void> setVoiceRecitationSensitivity(RecitationSensitivity sensitivity) async {
+    if (_voiceRecitationSensitivity == sensitivity) return;
+
+    _voiceRecitationSensitivity = sensitivity;
+    notifyListeners();
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_voiceRecitationSensitivityKey, sensitivity.name);
+  }
+
+  Future<void> setVoiceRecitationAdaptiveNoise(bool value) async {
+    if (_voiceRecitationAdaptiveNoise == value) return;
+
+    _voiceRecitationAdaptiveNoise = value;
+    notifyListeners();
+
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_voiceRecitationAdaptiveNoiseKey, value);
   }
 
   // Legacy adaptor setters — delegate to updateTranslationSlot for backwards compat

@@ -2184,11 +2184,14 @@ class MushafLayoutProfile {
 class QcfSurahHeader extends StatelessWidget {
   final int surahNumber;
   final AppThemeColors colors;
+  final bool showSurahFrame;
   final bool showBismillahText;
 
   const QcfSurahHeader({
+    super.key,
     required this.surahNumber,
     required this.colors,
+    this.showSurahFrame = true,
     this.showBismillahText = true,
   });
 
@@ -2203,11 +2206,17 @@ class QcfSurahHeader extends StatelessWidget {
     final showBismillah =
         showBismillahText && surahNumber != 1 && surahNumber != 9;
 
+    if (!showSurahFrame && !showBismillah) return const SizedBox.shrink();
+
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: EdgeInsets.symmetric(
+        vertical: showSurahFrame && showBismillah ? 8 : (showSurahFrame ? 4 : 2),
+      ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          ColorFiltered(
+          if (showSurahFrame)
+            ColorFiltered(
             colorFilter: isDark
                 ? const ColorFilter.matrix([
                     -0.2126,
@@ -2303,10 +2312,13 @@ class MushafLine extends StatelessWidget {
   final Map<int, List<String>> surahStartsByLine;
   final String? highlightedVerseKey;
   final Set<String>? highlightedVerseKeys;
+  final Set<String>? weakVerseKeys;
+  final Set<String>? hintedVerseKeys;
   final ValueChanged<String> onVerseTap;
   final ValueChanged<String> onVerseLongPressStart;
   final ValueChanged<String> onVerseLongPress;
   final bool Function(String)? isVerseHidden;
+  final bool Function(String verseKey, int wordPosition)? isWordHidden;
   final bool isPeekActive;
 
   const MushafLine({
@@ -2322,10 +2334,13 @@ class MushafLine extends StatelessWidget {
     required this.surahStartsByLine,
     required this.highlightedVerseKey,
     this.highlightedVerseKeys,
+    this.weakVerseKeys,
+    this.hintedVerseKeys,
     required this.onVerseTap,
     required this.onVerseLongPressStart,
     required this.onVerseLongPress,
     this.isVerseHidden,
+    this.isWordHidden,
     this.isPeekActive = false,
   });
 
@@ -2382,14 +2397,24 @@ class MushafLine extends StatelessWidget {
     for (int i = 0; i < line.length; i++) {
       final word = line[i];
       final isEndWord = verseEndWords.contains(word);
-      final isWordHidden = (isVerseHidden?.call(word.verseKey) ?? false) && !isPeekActive && !isEndWord;
-      final isHighlighted = (highlightedVerseKeys?.contains(word.verseKey) ?? false) || highlightedVerseKey == word.verseKey;
+      final isWordHiddenBool = ((isWordHidden != null)
+              ? isWordHidden!(word.verseKey, word.position)
+              : (isVerseHidden?.call(word.verseKey) ?? false)) &&
+          !isPeekActive &&
+          !isEndWord;
+      final isWeak = (weakVerseKeys?.contains(word.verseKey) ?? false) && !isWordHiddenBool;
+      final isHinted = (hintedVerseKeys?.contains(word.verseKey) ?? false) && !isWordHiddenBool && word.position == 1;
+      final isHighlighted = ((highlightedVerseKeys?.contains(word.verseKey) ?? false) || highlightedVerseKey == word.verseKey) && !isWordHiddenBool;
       final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-      final highlightColor = isHighlighted
-          ? Theme.of(context).colorScheme.primary.withValues(alpha: isDarkMode ? 0.20 : 0.10)
-          : null;
+      final highlightColor = isWeak
+          ? Theme.of(context).colorScheme.error.withValues(alpha: isDarkMode ? 0.32 : 0.18)
+          : (isHinted
+              ? Theme.of(context).colorScheme.primaryContainer.withValues(alpha: isDarkMode ? 0.45 : 0.35)
+              : (isHighlighted
+                  ? Theme.of(context).colorScheme.primary.withValues(alpha: isDarkMode ? 0.20 : 0.10)
+                  : null));
 
-      final wordColor = isWordHidden
+      final wordColor = isWordHiddenBool
           ? Colors.transparent
           : null;
 
@@ -2444,7 +2469,7 @@ class MushafLine extends StatelessWidget {
               fontFamily: 'UthmanicHafs',
               fontSize: 13,
               height: 1,
-              color: isWordHidden
+              color: isWordHiddenBool
                   ? Colors.transparent
                   : Theme.of(
                       context,

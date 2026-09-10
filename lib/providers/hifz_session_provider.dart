@@ -12,6 +12,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:qcf_quran/qcf_quran.dart' as qcf;
 
 import '../models/hifz_task.dart';
 import '../models/hifz_session_config.dart';
@@ -56,24 +57,25 @@ class HifzSessionProvider extends ChangeNotifier {
   // ---------------------------------------------------------------------------
   // Shared
   // ---------------------------------------------------------------------------
-  final String _sessionId;
+  String _sessionId;
+  String get sessionId => _sessionId;
 
   // ---------------------------------------------------------------------------
   // Constructor: New Verses mode (backward-compatible default)
   // ---------------------------------------------------------------------------
   HifzSessionProvider({
     HifzRepository? repository,
-    int surahNumber = 1,
+    this._surahNumber = 1,
     int repeatStart = 1,
     int startVerse = 1,
     int endVerse = 3,
+    String? sessionId,
   })  : _repo = repository ?? HifzRepository(),
         _sessionType = HifzSessionType.newVerses,
-        _surahNumber = surahNumber,
         _repeatStart = repeatStart,
         _startVerse = startVerse,
         _endVerse = endVerse,
-        _sessionId = DateTime.now().millisecondsSinceEpoch.toString() {
+        _sessionId = sessionId ?? DateTime.now().millisecondsSinceEpoch.toString() {
     initRoutine(repeatStart, startVerse, endVerse);
   }
 
@@ -84,13 +86,14 @@ class HifzSessionProvider extends ChangeNotifier {
     HifzRepository? repository,
     required ReviewGranularity granularity,
     required ReviewTargetParams targetParams,
+    String? sessionId,
   })  : _repo = repository ?? HifzRepository(),
         _sessionType = HifzSessionType.review,
         _surahNumber = 1,
         _repeatStart = 1,
         _startVerse = 1,
         _endVerse = 1,
-        _sessionId = DateTime.now().millisecondsSinceEpoch.toString() {
+        _sessionId = sessionId ?? DateTime.now().millisecondsSinceEpoch.toString() {
     _reviewGranularity = granularity;
     _reviewTargetParams = targetParams;
     _initReviewRoutine(granularity, targetParams);
@@ -100,6 +103,18 @@ class HifzSessionProvider extends ChangeNotifier {
   // New Verses getters (preserved exactly)
   // ---------------------------------------------------------------------------
   int get surahNumber => _surahNumber;
+
+  /// Returns the effective surah number for both Review and New Verses modes.
+  int get currentSurahNumber {
+    if (_sessionType == HifzSessionType.review) {
+      final step = currentReviewStep;
+      if (step != null) {
+        return step.surahNumber ?? (_reviewGranularity == ReviewGranularity.bySurah ? step.primaryIndex : _surahNumber);
+      }
+    }
+    return _surahNumber;
+  }
+
   int get repeatStart => _repeatStart;
   int get startVerse => _startVerse;
   int get endVerse => _endVerse;
@@ -257,11 +272,64 @@ class HifzSessionProvider extends ChangeNotifier {
   }
 
   // ---------------------------------------------------------------------------
-  // Peek (hold-to-reveal)
+  // Visibility & Peek State (Dynamic Hide/Show Anytime)
   // ---------------------------------------------------------------------------
+  bool? _manualHiddenOverride;
+
+  bool get defaultTaskHidden =>
+      currentTask?.mode == TextVisibilityMode.hidden;
+
+  bool get defaultReviewHidden =>
+      _reviewPhase == ReviewPhase.hidden;
+
+  bool get isCurrentStepDefaultHidden =>
+      _sessionType == HifzSessionType.newVerses
+          ? defaultTaskHidden
+          : defaultReviewHidden;
+
+  /// Returns whether the target verse(s) are currently rendered hidden.
+  bool get isTargetHidden {
+    if (isSessionCompleted) return false;
+    return _manualHiddenOverride ?? isCurrentStepDefaultHidden;
+  }
+
+  /// Whether voice recitation tracking is eligible for the current session state.
+  /// Only available for:
+  /// 1. Review mode in hidden stage.
+  /// 2. New verses mode during cumulative repeat range in hidden stage.
+  bool get isVoiceTrackingEligible {
+    if (isSessionCompleted) return false;
+    if (_sessionType == HifzSessionType.review) {
+      return _reviewPhase == ReviewPhase.hidden;
+    } else if (_sessionType == HifzSessionType.newVerses) {
+      final task = currentTask;
+      if (task == null) return false;
+      return task.type == TaskType.cumulativeLink &&
+          task.mode == TextVisibilityMode.hidden;
+    }
+    return false;
+  }
+
+  /// True if the user has manually toggled the visibility away from default for this step.
+  bool get isVisibilityOverridden => _manualHiddenOverride != null;
+
+  /// Toggles visibility anytime. Inverts current hidden state.
+  void toggleVisibilityOverride() {
+    _manualHiddenOverride = !isTargetHidden;
+    _isPeekActive = !isTargetHidden && isCurrentStepDefaultHidden;
+    notifyListeners();
+  }
+
+  /// Backward-compatible peek setter.
   void setPeekActive(bool active) {
-    if (_isPeekActive != active) {
-      _isPeekActive = active;
+    toggleVisibilityOverride();
+  }
+
+  /// Resets manual visibility override back to the current step's default mode.
+  void resetVisibilityOverride() {
+    if (_manualHiddenOverride != null) {
+      _manualHiddenOverride = null;
+      _isPeekActive = false;
       notifyListeners();
     }
   }
@@ -270,6 +338,9 @@ class HifzSessionProvider extends ChangeNotifier {
   // incrementProgress — the single entry point for all tally actions
   // ---------------------------------------------------------------------------
   void incrementProgress() {
+    // Automatically revert visibility override back to default upon clicking count
+    _manualHiddenOverride = null;
+    _isPeekActive = false;
     if (_sessionType == HifzSessionType.newVerses) {
       _incrementNewVerses();
     } else {
@@ -280,12 +351,24 @@ class HifzSessionProvider extends ChangeNotifier {
   }
 
   void advanceStepOrPhase() {
+    _manualHiddenOverride = null;
+    _isPeekActive = false;
     if (_sessionType == HifzSessionType.newVerses) {
       if (currentTask == null || isNewVersesSessionCompleted) return;
       _currentTaskIndex++;
       if (isNewVersesSessionCompleted) {
-        unawaited(_repo.markNewVersesCompleted(_surahNumber));
-        unawaited(_repo.recordHistory(HifzSessionType.newVerses, 'Surah $_surahNumber (New Verses)', surahNumber: _surahNumber));
+        final totalVersesInSurah = qcf.getVerseCount(_surahNumber);
+        final isFullSurahCompleted =
+            _startVerse == 1 && _endVerse >= totalVersesInSurah;
+        if (isFullSurahCompleted) {
+          unawaited(_repo.markNewVersesCompleted(_surahNumber));
+        }
+        final rangeLabel = isFullSurahCompleted
+            ? 'Surah $_surahNumber'
+            : 'Surah $_surahNumber:$_startVerse-$_endVerse';
+        unawaited(_repo.recordHistory(
+            HifzSessionType.newVerses, '$rangeLabel (New Verses)',
+            surahNumber: _surahNumber));
         unawaited(_repo.clearActiveSession(sessionId: _sessionId));
       }
     } else {
@@ -349,24 +432,70 @@ class HifzSessionProvider extends ChangeNotifier {
   }
 
   void _undoNewVerses() {
-    if (currentTask == null || isNewVersesSessionCompleted) return;
+    _manualHiddenOverride = null;
+    _isPeekActive = false;
+
+    if (isNewVersesSessionCompleted) {
+      if (_tasks.isNotEmpty) {
+        _currentTaskIndex = _tasks.length - 1;
+        final task = _tasks[_currentTaskIndex];
+        if (task.currentProgress > 0) {
+          task.currentProgress--;
+          for (int v in task.verseNumbers) {
+            _verseTallyMap[v] = (_verseTallyMap[v] ?? 0) - 1;
+          }
+        }
+      }
+      return;
+    }
+
+    if (currentTask == null) return;
     final task = currentTask!;
     if (task.currentProgress > 0) {
       task.currentProgress--;
       for (int v in task.verseNumbers) {
         _verseTallyMap[v] = (_verseTallyMap[v] ?? 0) - 1;
       }
+    } else if (_currentTaskIndex > 0) {
+      _currentTaskIndex--;
+      final prevTask = _tasks[_currentTaskIndex];
+      if (prevTask.currentProgress > 0) {
+        prevTask.currentProgress--;
+        for (int v in prevTask.verseNumbers) {
+          _verseTallyMap[v] = (_verseTallyMap[v] ?? 0) - 1;
+        }
+      }
     }
   }
 
   void _undoReview() {
-    if (isReviewSessionCompleted) return;
+    _manualHiddenOverride = null;
+    _isPeekActive = false;
+
+    if (isReviewSessionCompleted) {
+      if (_reviewSteps.isNotEmpty) {
+        _reviewStepIndex = _reviewSteps.length - 1;
+        _reviewPhase = ReviewPhase.hidden;
+        _reviewTally = (_reviewTargetTally - 1).clamp(0, _reviewTargetTally);
+      }
+      return;
+    }
+
     if (_reviewTally > 0) {
       _reviewTally--;
+    } else if (_reviewPhase == ReviewPhase.hidden) {
+      _reviewPhase = ReviewPhase.visible;
+      _reviewTally = (_reviewTargetTally - 1).clamp(0, _reviewTargetTally);
+    } else if (_reviewStepIndex > 0) {
+      _reviewStepIndex--;
+      _reviewPhase = ReviewPhase.hidden;
+      _reviewTally = (_reviewTargetTally - 1).clamp(0, _reviewTargetTally);
     }
   }
 
   void resetCurrentTask() {
+    _manualHiddenOverride = null;
+    _isPeekActive = false;
     if (_sessionType == HifzSessionType.newVerses) {
       if (currentTask == null || isNewVersesSessionCompleted) return;
       currentTask!.currentProgress = 0;
@@ -381,6 +510,8 @@ class HifzSessionProvider extends ChangeNotifier {
   }
 
   void resetSession() {
+    _manualHiddenOverride = null;
+    _isPeekActive = false;
     if (_sessionType == HifzSessionType.newVerses) {
       initRoutine(_repeatStart, _startVerse, _endVerse);
     } else if (_reviewTargetParams != null) {
@@ -393,6 +524,8 @@ class HifzSessionProvider extends ChangeNotifier {
   // Restore from snapshot (called by resume dialog)
   // ---------------------------------------------------------------------------
   void restoreFromSnapshot(ActiveSessionSnapshot snap) {
+    _sessionId = snap.sessionId;
+    _manualHiddenOverride = null;
     _sessionType = snap.sessionType;
     _startTime = DateTime.fromMillisecondsSinceEpoch(snap.lastUpdatedTimestamp);
 

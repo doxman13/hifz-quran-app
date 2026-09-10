@@ -244,7 +244,6 @@ class _HifzHistoryScreenState extends State<HifzHistoryScreen> {
     final isThai = settings.languageCode == 'th';
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         centerTitle: true,
         title: Text(
@@ -254,7 +253,6 @@ class _HifzHistoryScreenState extends State<HifzHistoryScreen> {
             color: colorScheme.onSurface,
           ),
         ),
-        backgroundColor: colorScheme.surface,
         elevation: 0,
         leading: IconButton(
           icon: Icon(Icons.arrow_back_ios_new_rounded,

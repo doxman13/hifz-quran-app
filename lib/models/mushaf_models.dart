@@ -3,6 +3,38 @@ const mushafStoreKey = 'thai_quran_mushaf_store_v1';
 const mushafFreeReadSlug = 'mushaf_free_read';
 const qcfPackageMushafId = 20;
 
+/// Surahs where the Surah Header Frame belongs at the bottom of the previous page
+/// to maintain a strict 15-line Mushaf layout.
+const Set<String> surahsWithFrameOnPreviousPage = {
+  '4', '10', '22', '23', '24', '26', '27', '32', '33', '37',
+  '38', '45', '47', '53', '60', '64', '65', '80', '82', '86', '91',
+};
+
+/// Mapping of page numbers to the Surah ID whose header frame belongs at the bottom of that page.
+const Map<int, String> surahFrameOnPageBottom = {
+  76: '4',
+  207: '10',
+  331: '22',
+  341: '23',
+  349: '24',
+  366: '26',
+  376: '27',
+  414: '32',
+  417: '33',
+  445: '37',
+  452: '38',
+  498: '45',
+  506: '47',
+  525: '53',
+  548: '60',
+  555: '64',
+  557: '65',
+  584: '80',
+  586: '82',
+  590: '86',
+  594: '91',
+};
+
 class MushafType {
   final int id;
   final String name;

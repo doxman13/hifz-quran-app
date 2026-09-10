@@ -14,7 +14,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   provider: ^6.1.5+1
   shared_preferences: ^2.5.5
-  path_provider: ^2.1.3
+  path_provider: ^2.1.6
   scrollable_positioned_list: ^0.3.8
   google_fonts: ^8.1.0
   flutter_blue_plus: ^1.31.18
@@ -38,11 +38,17 @@ dependencies:
   uuid: ^4.6.0
   firebase_core: ^4.12.1
   firebase_analytics: ^12.4.5
+  intl: any
+  onnxruntime_v2: ^1.23.2+2
+  record: ^5.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^6.0.0
+
+dependency_overrides:
+  record_linux: ^1.3.1
 
 flutter:
   uses-material-design: true
@@ -65,6 +71,9 @@ flutter:
     - assets/qcf_v1_pages/
     - assets/qcf_v1_fonts/
     - assets/Tajweed/
+    - assets/quran_offline.db
+    - assets/footnotes/
+    - assets/models/
 
   fonts:
     - family: UthmanicHafs

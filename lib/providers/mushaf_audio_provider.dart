@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:just_audio_background/just_audio_background.dart';
 import 'package:audio_service/audio_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/quran_foundation_repository.dart';
 import '../models/mushaf_models.dart';
@@ -28,17 +29,50 @@ class MushafAudioProvider extends ChangeNotifier {
 
   MushafAudioProvider() {
     _initPlayerStateListener();
+    _loadSavedVolume();
   }
+
+  double _volume = 1.0;
 
   // Getters
   bool get isPlaying => _isPlaying;
   bool get isLoading => _isLoading;
+  double get volume => _volume;
   String? get currentVerseKey => _currentVerseKey;
   int? get currentPageNumber => _currentPageNumber;
   int? get mushafId => _mushafId;
   bool get isContinuous => _isContinuous;
   List<MushafVerse> get playlist => _playlist;
   int get playlistIndex => _playlistIndex;
+
+  Future<void> _loadSavedVolume() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final savedVol = prefs.getDouble('mushaf_audio_volume');
+      if (savedVol != null) {
+        _volume = savedVol.clamp(0.0, 1.0);
+      }
+      await _audioPlayer.setVolume(_volume);
+      notifyListeners();
+    } catch (e) {
+      debugPrint('Failed to load saved audio volume: $e');
+    }
+  }
+
+  Future<void> setVolume(double value) async {
+    final clamped = value.clamp(0.0, 1.0);
+    _volume = clamped;
+    notifyListeners();
+    try {
+      await _audioPlayer.setVolume(_volume);
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setDouble('mushaf_audio_volume', _volume);
+    } catch (e) {
+      debugPrint('Error setting audio player volume: $e');
+    }
+  }
+
+  bool _isTransitioningPage = false;
 
   void _initPlayerStateListener() {
     _playerStateSubscription = _audioPlayer.playerStateStream.listen((state) {
@@ -55,9 +89,12 @@ class MushafAudioProvider extends ChangeNotifier {
   }
 
   void _handlePlaybackCompleted() {
-    if (_isContinuous) {
-      _loadAndPlayNextPage();
-    } else {
+    if (_isContinuous && !_isTransitioningPage) {
+      _isTransitioningPage = true;
+      _loadAndPlayNextPage().whenComplete(() {
+        _isTransitioningPage = false;
+      });
+    } else if (!_isContinuous) {
       stop();
     }
   }
@@ -89,37 +126,23 @@ class MushafAudioProvider extends ChangeNotifier {
     required int pageNumber,
     required String verseKey,
     required List<MushafVerse> pageVerses,
+    bool continuous = true,
   }) async {
     await stop();
 
     _mushafId = mushafId;
     _currentPageNumber = pageNumber;
     _playlist = List.from(pageVerses);
-    _isContinuous = false;
+    _isContinuous = continuous;
 
     final index = _playlist.indexWhere((v) => v.verseKey == verseKey);
-    if (index != -1) {
-      _playlistIndex = index;
-    } else {
-      final parts = verseKey.split(':');
-      final verse = MushafVerse(
-        verseKey: verseKey,
-        surahId: parts[0],
-        verseId: parts.length > 1 ? parts[1] : '1',
-        words: [],
-      );
-      _playlist = [verse];
-      _playlistIndex = 0;
-    }
-
-    final targetVerse = _playlist[_playlistIndex];
-    _playlist = [targetVerse];
-    _playlistIndex = 0;
-    _currentVerseKey = targetVerse.verseKey;
+    final startIndex = index != -1 ? index : 0;
+    _playlistIndex = startIndex;
+    _currentVerseKey = _playlist[_playlistIndex].verseKey;
     _isLoading = true;
     notifyListeners();
 
-    await _loadAndPlayPlaylist(_playlistIndex);
+    await _loadAndPlayPlaylist(startIndex);
   }
 
   Future<void> playSingleIndependentVerse(String verseKey) async {
@@ -148,14 +171,19 @@ class MushafAudioProvider extends ChangeNotifier {
     await _loadAndPlayPlaylist(_playlistIndex);
   }
 
-  Future<void> playRange(String surahId, List<int> verseIds) async {
+  Future<void> playRange(
+    String surahId,
+    List<int> verseIds, {
+    int verseRepeat = 1,
+    int rangeRepeat = 1,
+  }) async {
     await stop();
 
     _isContinuous = false;
     _currentPageNumber = null;
     _mushafId = null;
 
-    _playlist = verseIds.map((vId) {
+    final baseVerses = verseIds.map((vId) {
       return MushafVerse(
         verseKey: '$surahId:$vId',
         surahId: surahId,
@@ -164,8 +192,21 @@ class MushafAudioProvider extends ChangeNotifier {
       );
     }).toList();
 
-    if (_playlist.isEmpty) return;
+    if (baseVerses.isEmpty) return;
 
+    final vRep = verseRepeat.clamp(1, 20);
+    final rRep = rangeRepeat.clamp(1, 20);
+
+    final List<MushafVerse> expanded = [];
+    for (int r = 0; r < rRep; r++) {
+      for (final v in baseVerses) {
+        for (int vr = 0; vr < vRep; vr++) {
+          expanded.add(v);
+        }
+      }
+    }
+
+    _playlist = expanded;
     _playlistIndex = 0;
     _currentVerseKey = _playlist[0].verseKey;
     _isLoading = true;
@@ -226,11 +267,13 @@ class MushafAudioProvider extends ChangeNotifier {
 
       _currentIndexSubscription?.cancel();
 
-      final playlistSource = ConcatenatingAudioSource(children: sources);
-      await _audioPlayer.setAudioSource(
-        playlistSource,
+      await _audioPlayer.setAudioSources(
+        sources,
         initialIndex: startVerseIndex.clamp(0, sources.length - 1),
       );
+
+      // Enforce current volume on the newly set audio sources
+      await _audioPlayer.setVolume(_volume);
 
       _currentIndexSubscription = _audioPlayer.currentIndexStream.listen((index) {
         if (index != null && index >= 0 && index < _playlist.length) {
@@ -252,9 +295,10 @@ class MushafAudioProvider extends ChangeNotifier {
   }
 
   Future<void> _loadAndPlayNextPage() async {
-    if (_mushafId == null || _currentPageNumber == null) return;
+    final mushafId = _mushafId ?? 2;
+    if (_currentPageNumber == null) return;
 
-    final type = mushafTypeById(_mushafId!);
+    final type = mushafTypeById(mushafId);
     if (_currentPageNumber! >= type.pageCount) {
       await stop();
       return;
@@ -266,7 +310,7 @@ class MushafAudioProvider extends ChangeNotifier {
 
     try {
       final nextPageData = await _audioRepository.fetchPage(
-        mushafId: _mushafId!,
+        mushafId: mushafId,
         pageNumber: _currentPageNumber!,
       );
 
@@ -275,6 +319,9 @@ class MushafAudioProvider extends ChangeNotifier {
         return;
       }
 
+      await _audioPlayer.stop();
+
+      _mushafId = mushafId;
       _playlist = List.from(nextPageData.verses);
       _playlistIndex = 0;
       _currentVerseKey = _playlist[0].verseKey;
@@ -286,7 +333,8 @@ class MushafAudioProvider extends ChangeNotifier {
   }
 
   Future<void> _loadAndPlayPreviousPage() async {
-    if (_mushafId == null || _currentPageNumber == null || _currentPageNumber! <= 1) return;
+    final mushafId = _mushafId ?? 2;
+    if (_currentPageNumber == null || _currentPageNumber! <= 1) return;
 
     _isLoading = true;
     _currentPageNumber = _currentPageNumber! - 1;
@@ -294,7 +342,7 @@ class MushafAudioProvider extends ChangeNotifier {
 
     try {
       final prevPageData = await _audioRepository.fetchPage(
-        mushafId: _mushafId!,
+        mushafId: mushafId,
         pageNumber: _currentPageNumber!,
       );
 
@@ -303,6 +351,9 @@ class MushafAudioProvider extends ChangeNotifier {
         return;
       }
 
+      await _audioPlayer.stop();
+
+      _mushafId = mushafId;
       _playlist = List.from(prevPageData.verses);
       _playlistIndex = _playlist.length - 1;
       _currentVerseKey = _playlist[_playlistIndex].verseKey;

@@ -40,6 +40,7 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
   int _masteredCount = 0;
   int _inProgressCount = 0;
   bool _hasActiveSession = false;
+  ActiveSessionSnapshot? _activeSessionSnapshot;
   bool _loading = true;
   late AnimationController _animController;
   late Animation<double> _fadeAnim;
@@ -70,6 +71,7 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
       _masteredCount = records.where((r) => r.newVersesCompleted && r.reviewCount >= 3).length;
       _inProgressCount =
           records.where((r) => r.newVersesCompleted || r.reviewCount > 0).length;
+      _activeSessionSnapshot = activeSession;
       _hasActiveSession = activeSession != null;
       _loading = false;
     });
@@ -78,98 +80,40 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
 
   Future<void> _openNewVerses() async {
     final prefs = await SharedPreferences.getInstance();
-    
-    final result = await Navigator.push<NewVersesSetupResult>(
+    if (!mounted) return;
+
+    await Navigator.push<NewVersesSetupResult>(
       context,
       MaterialPageRoute(
         builder: (_) => HifzNewVersesSetupScreen(
           quranRepository: widget.quranRepository,
+          foundationRepository: widget.foundationRepository,
           initialSurah: prefs.getInt('hifz_nv_surah') ?? 1,
           initialStartVerse: prefs.getInt('hifz_nv_start_verse') ?? 1,
           initialEndVerse: prefs.getInt('hifz_nv_end_verse') ?? 3,
+          initialRepeatStart: prefs.getInt('hifz_nv_repeat_start') ?? 1,
           initialPage: prefs.getInt('hifz_nv_page') ?? 1,
           initialIsSurahMode: prefs.getBool('hifz_nv_is_surah_mode') ?? true,
         ),
       ),
     );
-    
-    if (result != null && mounted) {
-      if (result.resumeSnapshot != null) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => HifzMemorizeScreen(
-              quranRepository: widget.quranRepository,
-              foundationRepository: widget.foundationRepository,
-              resumeSessionSnapshot: result.resumeSnapshot,
-            ),
-          ),
-        );
-        return;
-      }
-
-      await prefs.setInt('hifz_nv_surah', result.surah);
-      await prefs.setInt('hifz_nv_start_verse', result.startVerse);
-      await prefs.setInt('hifz_nv_end_verse', result.endVerse);
-      await prefs.setInt('hifz_nv_page', result.page);
-      await prefs.setBool('hifz_nv_is_surah_mode', result.isSurahMode);
-
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => HifzMemorizeScreen(
-            quranRepository: widget.quranRepository,
-            foundationRepository: widget.foundationRepository,
-            surahNumber: result.surah,
-            startVerse: result.startVerse,
-            endVerse: result.endVerse,
-            initialSessionType: HifzSessionType.newVerses,
-            repeatStart: result.repeatStart,
-            initialPage: result.page,
-            isSurahMode: result.isSurahMode,
-          ),
-        ),
-      );
+    if (mounted) {
+      _loadStats();
     }
   }
 
   Future<void> _openReview() async {
-    final result =
-        await Navigator.push<(ReviewGranularity, ReviewTargetParams, ActiveSessionSnapshot?)>(
+    await Navigator.push<(ReviewGranularity, ReviewTargetParams, ActiveSessionSnapshot?)>(
       context,
       MaterialPageRoute(
-        builder: (_) =>
-            HifzReviewSetupScreen(quranRepository: widget.quranRepository),
+        builder: (_) => HifzReviewSetupScreen(
+          quranRepository: widget.quranRepository,
+          foundationRepository: widget.foundationRepository,
+        ),
       ),
     );
-    if (result != null && mounted) {
-      final (granularity, params, resumeSnap) = result;
-      if (resumeSnap != null) {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => HifzMemorizeScreen(
-              quranRepository: widget.quranRepository,
-              foundationRepository: widget.foundationRepository,
-              resumeSessionSnapshot: resumeSnap,
-            ),
-          ),
-        );
-        return;
-      }
-      
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (_) => HifzMemorizeScreen(
-            quranRepository: widget.quranRepository,
-            foundationRepository: widget.foundationRepository,
-            initialSessionType: HifzSessionType.review,
-            reviewGranularity: granularity,
-            reviewTargetParams: params,
-          ),
-        ),
-      );
+    if (mounted) {
+      _loadStats();
     }
   }
 
@@ -195,16 +139,22 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
     );
   }
 
-  void _resumeSession() {
-    Navigator.push(
+  Future<void> _resumeSession() async {
+    final snap = _activeSessionSnapshot ?? await HifzRepository().loadActiveSession();
+    if (snap == null || !mounted) return;
+    await Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) => HifzMemorizeScreen(
           quranRepository: widget.quranRepository,
           foundationRepository: widget.foundationRepository,
+          resumeSessionSnapshot: snap,
         ),
       ),
     );
+    if (mounted) {
+      _loadStats();
+    }
   }
 
   @override
@@ -216,14 +166,12 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
     final isThai = settings.languageCode == 'th';
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
       body: CustomScrollView(
         slivers: [
           // ── Hero Header ─────────────────────────────────────────────────────
           SliverAppBar(
             expandedHeight: screenHeight * 0.24,
             pinned: true,
-            backgroundColor: colorScheme.surface,
             foregroundColor: colorScheme.onSurface,
             elevation: 0,
             flexibleSpace: FlexibleSpaceBar(
@@ -410,11 +358,8 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colorScheme.surfaceContainerLow,
+        color: colorScheme.surface,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: colorScheme.outlineVariant.withValues(alpha: 0.4),
-        ),
       ),
       child: _loading
           ? const Center(
@@ -457,8 +402,56 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
     );
   }
 
+  String _getResumeSessionSubtitle(ActiveSessionSnapshot snap, bool isThai) {
+    if (snap.sessionType == HifzSessionType.newVerses) {
+      final surah = snap.nvSurahNumber ?? 1;
+      final start = snap.nvStartVerse ?? 1;
+      final end = snap.nvEndVerse ?? 1;
+      final task = snap.currentStepIndex + 1;
+      if (isThai) {
+        return 'สูเราะฮ์ $surah:$start-$end • งานที่ $task • แตะเพื่อทำต่อ';
+      } else {
+        return 'Surah $surah:$start-$end • Task $task • Tap to resume';
+      }
+    } else {
+      final gran = snap.reviewGranularity ?? ReviewGranularity.bySurah;
+      final step = snap.currentStepIndex + 1;
+      final mode = snap.currentMode == 'hidden'
+          ? (isThai ? 'ซ่อน' : 'Hidden')
+          : (isThai ? 'แสดง' : 'Visible');
+      if (gran == ReviewGranularity.bySurah) {
+        final surah = snap.reviewTargetParams?.startSurah ?? 1;
+        if (isThai) {
+          return 'ทบทวน สูเราะฮ์ $surah • ขั้นตอน $step ($mode) • แตะเพื่อทำต่อ';
+        } else {
+          return 'Review Surah $surah • Step $step ($mode) • Tap to resume';
+        }
+      } else if (gran == ReviewGranularity.byVerses) {
+        final surah = snap.reviewTargetParams?.surahNumber ?? 1;
+        final start = snap.reviewTargetParams?.startVerse ?? 1;
+        final end = snap.reviewTargetParams?.endVerse ?? 1;
+        if (isThai) {
+          return 'ทบทวน สูเราะฮ์ $surah:$start-$end • ขั้นตอน $step • แตะเพื่อทำต่อ';
+        } else {
+          return 'Review Surah $surah:$start-$end • Step $step • Tap to resume';
+        }
+      } else {
+        final page = snap.reviewTargetParams?.startPage ?? 1;
+        if (isThai) {
+          return 'ทบทวน หน้า $page • ขั้นตอน $step • แตะเพื่อทำต่อ';
+        } else {
+          return 'Review Page $page • Step $step • Tap to resume';
+        }
+      }
+    }
+  }
+
   // ── Resume Banner ────────────────────────────────────────────────────────────
   Widget _buildResumeBanner(ColorScheme colorScheme, TextTheme textTheme, bool isThai) {
+    final subtitle = _activeSessionSnapshot != null
+        ? _getResumeSessionSubtitle(_activeSessionSnapshot!, isThai)
+        : (isThai ? 'แตะเพื่ออ่านต่อจากที่คุณทำค้างไว้' : 'Tap to resume where you left off');
+
     return GestureDetector(
       onTap: _resumeSession,
       child: Container(
@@ -466,8 +459,7 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
         decoration: BoxDecoration(
           color: colorScheme.primaryContainer,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: colorScheme.primary.withValues(alpha: 0.3)),
+          borderRadius: BorderRadius.circular(20),
         ),
         child: Row(
           children: [
@@ -484,10 +476,11 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
                       color: colorScheme.onPrimaryContainer,
                     ),
                   ),
+                  const SizedBox(height: 2),
                   Text(
-                    isThai ? 'แตะเพื่ออ่านต่อจากที่คุณทำค้างไว้' : 'Tap to resume where you left off',
+                    subtitle,
                     style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onPrimaryContainer.withValues(alpha: 0.7),
+                      color: colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -508,10 +501,8 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerLow,
+          color: colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-              color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
         ),
         child: Row(
           children: [
@@ -553,10 +544,8 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
       child: Container(
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: colorScheme.surfaceContainerLow,
+          color: colorScheme.surface,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-              color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -602,7 +591,8 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
                   ? '${(progress * 100).toStringAsFixed(1)}% ของอัลกุรอานทั้งหมดถูกท่องจำแล้ว'
                   : '${(progress * 100).toStringAsFixed(1)}% of full Quran memorized',
               style: textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurfaceVariant,
+                color: colorScheme.primary,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ],
@@ -663,12 +653,8 @@ class _HifzModeCardState extends State<_HifzModeCard> {
           decoration: BoxDecoration(
             color: _pressed
                 ? widget.accentColor.withValues(alpha: 0.06)
-                : cs.surfaceContainerLow,
+                : cs.surface,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: widget.accentColor.withValues(alpha: _pressed ? 0.5 : 0.25),
-              width: 1.5,
-            ),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,

@@ -8,12 +8,16 @@ enum BleConnectionState { disconnected, scanning, connecting, connected }
 
 class BleRemoteProvider extends ChangeNotifier {
   static const String _bleDevicePrefKey = 'ble_remote_device_id';
+  static const String _bleDeviceNamePrefKey = 'ble_remote_device_name';
 
   BleConnectionState _connectionState = BleConnectionState.disconnected;
   List<ScanResult> _scanResults = [];
   BluetoothDevice? _connectedDevice;
   StreamSubscription<BluetoothConnectionState>? _connectionSubscription;
   final List<StreamSubscription<List<int>>> _notificationSubscriptions = [];
+
+  String? _savedDeviceId;
+  String? _savedDeviceName;
 
   int _clickCount = 0;
   int? _lastMode;
@@ -26,6 +30,8 @@ class BleRemoteProvider extends ChangeNotifier {
   List<ScanResult> get scanResults => _scanResults;
   BluetoothDevice? get connectedDevice => _connectedDevice;
   int get clickCount => _clickCount;
+  String? get savedDeviceId => _savedDeviceId;
+  String? get savedDeviceName => _savedDeviceName;
 
   BleRemoteProvider() {
     _autoConnect();
@@ -33,9 +39,18 @@ class BleRemoteProvider extends ChangeNotifier {
 
   Future<void> _autoConnect() async {
     final prefs = await SharedPreferences.getInstance();
-    final deviceId = prefs.getString(_bleDevicePrefKey);
-    if (deviceId != null) {
-      final device = BluetoothDevice.fromId(deviceId);
+    _savedDeviceId = prefs.getString(_bleDevicePrefKey);
+    _savedDeviceName = prefs.getString(_bleDeviceNamePrefKey);
+    notifyListeners();
+    if (_savedDeviceId != null) {
+      final device = BluetoothDevice.fromId(_savedDeviceId!);
+      await connectToDevice(device);
+    }
+  }
+
+  Future<void> connectToSavedDevice() async {
+    if (_savedDeviceId != null) {
+      final device = BluetoothDevice.fromId(_savedDeviceId!);
       await connectToDevice(device);
     }
   }
@@ -100,8 +115,22 @@ class BleRemoteProvider extends ChangeNotifier {
         if (state == BluetoothConnectionState.connected) {
           _connectedDevice = device;
           _connectionState = BleConnectionState.connected;
+          
+          String name = device.platformName;
+          if (name.isEmpty && _savedDeviceName != null && _savedDeviceName!.isNotEmpty) {
+            name = _savedDeviceName!;
+          }
+          if (name.isEmpty) {
+            for (var r in _scanResults) {
+              if (r.device.remoteId == device.remoteId && r.device.platformName.isNotEmpty) {
+                name = r.device.platformName;
+                break;
+              }
+            }
+          }
+
           await _discoverServicesAndListen(device);
-          await _saveDevice(device.remoteId.toString());
+          await _saveDevice(device.remoteId.toString(), name: name);
         } else if (state == BluetoothConnectionState.disconnected) {
           await disconnect();
         }
@@ -257,14 +286,24 @@ class BleRemoteProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _saveDevice(String deviceId) async {
+  Future<void> _saveDevice(String deviceId, {String? name}) async {
+    _savedDeviceId = deviceId;
+    if (name != null && name.isNotEmpty) {
+      _savedDeviceName = name;
+    }
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_bleDevicePrefKey, deviceId);
+    if (_savedDeviceName != null && _savedDeviceName!.isNotEmpty) {
+      await prefs.setString(_bleDeviceNamePrefKey, _savedDeviceName!);
+    }
   }
 
   Future<void> _clearSavedDevice() async {
+    _savedDeviceId = null;
+    _savedDeviceName = null;
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_bleDevicePrefKey);
+    await prefs.remove(_bleDeviceNamePrefKey);
   }
 
   @override

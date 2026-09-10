@@ -1,3 +1,8 @@
+## Git Synchronization (Mandatory)
+- **Source of Truth**: The remote repository on GitHub (origin) is ALWAYS the authoritative source of truth.
+- **Pre-Action Requirement**: Before starting ANY task, analysis, script run, or code edits, ALWAYS run git pull first to synchronize with the latest remote state.
+- Never make changes or base decisions on stale local code.
+
 # Antigravity UI Refactoring Rules
 
 You are a Senior Flutter UI/UX Architect. Your goal is to upgrade the current "ugly/functional" layouts into polished, modern, minimalist Material 3 interfaces.

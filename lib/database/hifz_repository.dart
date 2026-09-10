@@ -162,11 +162,19 @@ class HifzRepository {
   Future<void> saveActiveSession(ActiveSessionSnapshot snapshot) async {
     try {
       final db = await database;
-      await db.insert(
-        'active_session',
-        _snapshotToRow(snapshot),
-        conflictAlgorithm: ConflictAlgorithm.replace,
-      );
+      await db.transaction((txn) async {
+        // Clear any old active session of the same type so we don't leave zombie sessions
+        await txn.delete(
+          'active_session',
+          where: 'session_type = ? AND session_id != ?',
+          whereArgs: [snapshot.sessionType.name, snapshot.sessionId],
+        );
+        await txn.insert(
+          'active_session',
+          _snapshotToRow(snapshot),
+          conflictAlgorithm: ConflictAlgorithm.replace,
+        );
+      });
     } catch (e) {
       // Never throw on auto-save — log and continue.
       debugLog('HifzRepository.saveActiveSession error: $e');
@@ -254,6 +262,16 @@ class HifzRepository {
       }
     } catch (e) {
       debugLog('HifzRepository.clearActiveSession error: $e');
+    }
+  }
+
+  /// Deletes all active sessions for a specific session type.
+  Future<void> clearActiveSessionsByType(HifzSessionType type) async {
+    try {
+      final db = await database;
+      await db.delete('active_session', where: 'session_type = ?', whereArgs: [type.name]);
+    } catch (e) {
+      debugLog('HifzRepository.clearActiveSessionsByType error: $e');
     }
   }
 

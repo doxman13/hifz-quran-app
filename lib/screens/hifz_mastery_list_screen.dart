@@ -95,7 +95,6 @@ class _HifzMasteryListScreenState extends State<HifzMasteryListScreen> {
     final textTheme = Theme.of(context).textTheme;
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         centerTitle: true,
         title: Text(

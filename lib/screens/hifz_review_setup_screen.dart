@@ -12,17 +12,21 @@ import 'package:provider/provider.dart';
 import 'package:qcf_quran/qcf_quran.dart' as qcf;
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../data/quran_foundation_repository.dart';
 import '../data/quran_repository.dart';
 import '../models/hifz_session_config.dart';
 import '../database/hifz_repository.dart';
 import '../providers/settings_provider.dart';
+import 'hifz_memorize_screen.dart';
 
 class HifzReviewSetupScreen extends StatefulWidget {
   final QuranRepository quranRepository;
+  final QuranFoundationRepository? foundationRepository;
 
   const HifzReviewSetupScreen({
     super.key,
     required this.quranRepository,
+    this.foundationRepository,
   });
 
   @override
@@ -153,10 +157,25 @@ class _HifzReviewSetupScreenState extends State<HifzReviewSetupScreen>
 
     if (!mounted) return;
     if (resume == true) {
+      if (widget.foundationRepository != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => HifzMemorizeScreen(
+              quranRepository: widget.quranRepository,
+              foundationRepository: widget.foundationRepository!,
+              resumeSessionSnapshot: snap,
+            ),
+          ),
+        );
+        return;
+      }
       Navigator.pop(
         context,
         (snap.reviewGranularity ?? ReviewGranularity.bySurah, snap.reviewTargetParams ?? ReviewTargetParams.bySurah(startSurah: 114, endSurah: 114), snap),
       );
+    } else if (resume == false) {
+      await repo.clearActiveSession(sessionId: snap.sessionId);
     }
   }
 
@@ -247,7 +266,24 @@ class _HifzReviewSetupScreenState extends State<HifzReviewSetupScreen>
     }
 
     await _saveLastSetup();
-    Navigator.pop(context, (granularity, params, null));
+    if (widget.foundationRepository != null && mounted) {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (_) => HifzMemorizeScreen(
+            quranRepository: widget.quranRepository,
+            foundationRepository: widget.foundationRepository!,
+            initialSessionType: HifzSessionType.review,
+            reviewGranularity: granularity,
+            reviewTargetParams: params,
+          ),
+        ),
+      );
+      return;
+    }
+    if (mounted) {
+      Navigator.pop(context, (granularity, params, null));
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -261,7 +297,6 @@ class _HifzReviewSetupScreenState extends State<HifzReviewSetupScreen>
     final isThai = context.watch<SettingsProvider>().languageCode == 'th';
 
     return Scaffold(
-      backgroundColor: colorScheme.surface,
       appBar: AppBar(
         centerTitle: true,
         title: Text(
