@@ -107,6 +107,225 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
   late AnimationController _chromeAnimController;
   late Animation<double> _chromeAnim;
 
+  // List view scrolling & item keys
+  final ScrollController _listScrollController = ScrollController();
+  final Map<String, GlobalKey> _verseItemKeys = {};
+
+  // Audio recitation tracking for page/list synchronization
+  MushafAudioProvider? _audioProvider;
+  String? _lastObservedAudioVerseKey;
+
+  GlobalKey _keyForVerse(int surah, int verse) {
+    return _verseItemKeys.putIfAbsent('$surah:$verse', GlobalKey.new);
+  }
+
+  Future<void> _animateToMushafPage(int targetPage, {bool animate = true}) async {
+    final clampedPage = targetPage.clamp(1, 604);
+    if (_currentPage == clampedPage) return;
+
+    _currentPage = clampedPage;
+    _selectedPage = clampedPage;
+
+    if (!mounted) return;
+
+    try {
+      final isNewVerses = _hifzProvider.sessionType == HifzSessionType.newVerses;
+      if (isNewVerses) {
+        if (_newVersesPageController.hasClients) {
+          final pageIndex = (clampedPage - 1).clamp(0, 603);
+          if (animate) {
+            await _newVersesPageController.animateToPage(
+              pageIndex,
+              duration: const Duration(milliseconds: 400),
+              curve: Curves.easeInOutCubic,
+            );
+          } else {
+            _newVersesPageController.jumpToPage(pageIndex);
+          }
+        }
+      } else {
+        if (_reviewPageController.hasClients) {
+          final step = _hifzProvider.currentReviewStep;
+          if (step != null) {
+            final int basePageForStep;
+            if (_hifzProvider.reviewGranularity == ReviewGranularity.byPage) {
+              basePageForStep = step.primaryIndex;
+            } else {
+              final surah = step.surahNumber ?? step.primaryIndex;
+              final verse = step.verseStart ?? 1;
+              basePageForStep = qcf.getPageNumber(surah, verse);
+            }
+            final offset = clampedPage - basePageForStep;
+            _reviewPageOffset = offset;
+            final targetIndex = 10000 + offset;
+            if (animate) {
+              await _reviewPageController.animateToPage(
+                targetIndex,
+                duration: const Duration(milliseconds: 400),
+                curve: Curves.easeInOutCubic,
+              );
+            } else {
+              _reviewPageController.jumpToPage(targetIndex);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('Error navigating to page $clampedPage: $e');
+    }
+  }
+
+  void _scrollToVerse(int surah, int verse, {bool animate = true}) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final key = _verseItemKeys['$surah:$verse'];
+      final targetContext = key?.currentContext;
+      if (targetContext != null) {
+        Scrollable.ensureVisible(
+          targetContext,
+          duration: animate ? const Duration(milliseconds: 350) : Duration.zero,
+          curve: Curves.easeInOutCubic,
+          alignment: 0.12,
+        );
+      } else if (_listScrollController.hasClients) {
+        final isNewVerses = _hifzProvider.sessionType == HifzSessionType.newVerses;
+        int index = 0;
+        if (isNewVerses) {
+          final startDisplayVerse = _selectedRepeatStart < _selectedStartVerse
+              ? _selectedRepeatStart
+              : _selectedStartVerse;
+          index = (verse - startDisplayVerse).clamp(0, 999);
+        } else {
+          final step = _hifzProvider.currentReviewStep;
+          if (step != null) {
+            final verses = _getVersesForReviewStep(step, _hifzProvider.reviewGranularity);
+            final idx = verses.indexWhere((v) => v.$1 == surah && v.$2 == verse);
+            if (idx >= 0) index = idx;
+          }
+        }
+        final estimatedOffset = (index * 140.0).clamp(0.0, _listScrollController.position.maxScrollExtent);
+        if (animate) {
+          _listScrollController.animateTo(
+            estimatedOffset,
+            duration: const Duration(milliseconds: 350),
+            curve: Curves.easeInOutCubic,
+          );
+        } else {
+          _listScrollController.jumpTo(estimatedOffset);
+        }
+      }
+    });
+  }
+
+  (int surah, int verse) _getLatestReadingVerse() {
+    final surahNumber = _hifzProvider.currentSurahNumber;
+
+    final tracker = Provider.of<RecitationTrackerProvider>(context, listen: false);
+    if (tracker.isListening) {
+      return (surahNumber, tracker.currentExpectedAyah);
+    }
+
+    final audio = Provider.of<MushafAudioProvider>(context, listen: false);
+    if (audio.currentVerseKey != null) {
+      final parts = audio.currentVerseKey!.split(':');
+      if (parts.length == 2) {
+        final s = int.tryParse(parts[0]) ?? surahNumber;
+        final v = int.tryParse(parts[1]);
+        if (v != null) return (s, v);
+      }
+    }
+
+    if (_voiceRevealedVerses.isNotEmpty) {
+      return (surahNumber, _voiceRevealedVerses.last);
+    }
+
+    if (_hifzProvider.sessionType == HifzSessionType.newVerses) {
+      final task = _hifzProvider.currentTask;
+      if (task != null && task.verseNumbers.isNotEmpty) {
+        return (surahNumber, task.verseNumbers.first);
+      }
+      return (surahNumber, _selectedRepeatStart);
+    }
+
+    final step = _hifzProvider.currentReviewStep;
+    if (step != null) {
+      if (step.verseStart != null) {
+        return (step.surahNumber ?? surahNumber, step.verseStart!);
+      }
+      final pageData = qcf.getPageData(_currentPage);
+      if (pageData.isNotEmpty) {
+        final firstItem = pageData.first;
+        return (firstItem['surah'] as int, firstItem['start'] as int);
+      }
+    }
+
+    return (surahNumber, 1);
+  }
+
+  void _toggleMushafListView() {
+    final switchingToListView = _isMushafView;
+    setState(() {
+      _isMushafView = !_isMushafView;
+    });
+    if (switchingToListView) {
+      final (surah, verse) = _getLatestReadingVerse();
+      _scrollToVerse(surah, verse, animate: true);
+    } else {
+      final (surah, verse) = _getLatestReadingVerse();
+      final targetPage = qcf.getPageNumber(surah, verse);
+      if (targetPage != _currentPage) {
+        _animateToMushafPage(targetPage, animate: false);
+      }
+    }
+  }
+
+  void _handleRoundRestartOrStepChange(int surah, int startAyah) {
+    final targetPage = qcf.getPageNumber(surah, startAyah);
+    if (_isMushafView) {
+      if (targetPage != _currentPage) {
+        _animateToMushafPage(targetPage, animate: true);
+      }
+    } else {
+      _scrollToVerse(surah, startAyah, animate: true);
+    }
+  }
+
+  void _syncToCurrentTaskOrStepStart() {
+    final surahNumber = _hifzProvider.currentSurahNumber;
+    final int startAyah;
+    if (_hifzProvider.sessionType == HifzSessionType.newVerses) {
+      final task = _hifzProvider.currentTask;
+      startAyah = task != null ? task.verseNumbers.first : _selectedRepeatStart;
+    } else {
+      final step = _hifzProvider.currentReviewStep;
+      startAyah = step?.verseStart ?? 1;
+    }
+    _handleRoundRestartOrStepChange(surahNumber, startAyah);
+  }
+
+  void _onAudioStateChanged() {
+    final audio = _audioProvider;
+    if (audio == null || !audio.isPlaying) return;
+    final key = audio.currentVerseKey;
+    if (key == null || key == _lastObservedAudioVerseKey) return;
+    _lastObservedAudioVerseKey = key;
+
+    final parts = key.split(':');
+    if (parts.length != 2) return;
+    final surah = int.tryParse(parts[0]);
+    final verse = int.tryParse(parts[1]);
+    if (surah == null || verse == null) return;
+
+    final targetPage = qcf.getPageNumber(surah, verse);
+    if (_isMushafView) {
+      if (targetPage != _currentPage) {
+        _animateToMushafPage(targetPage, animate: true);
+      }
+    } else {
+      _scrollToVerse(surah, verse, animate: true);
+    }
+  }
+
   bool _isVerseHidden(int verseNum, HifzTask? currentTask) {
     final isReview = _hifzProvider.sessionType == HifzSessionType.review;
     if (isReview) {
@@ -439,8 +658,25 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
                 if (tracker.isListening) {
                   tracker.setExpectedAyah(startAyah);
                 }
+                _handleRoundRestartOrStepChange(surahNumber, startAyah);
               }
             });
+          } else {
+            final nextAyah = ayah + 1;
+            if (nextAyah <= endAyah) {
+              final targetPage = qcf.getPageNumber(surahNumber, nextAyah);
+              if (_isMushafView) {
+                if (targetPage != _currentPage) {
+                  Future.delayed(const Duration(milliseconds: 350), () {
+                    if (mounted && _isMushafView && targetPage != _currentPage) {
+                      _animateToMushafPage(targetPage, animate: true);
+                    }
+                  });
+                }
+              } else {
+                _scrollToVerse(surahNumber, nextAyah, animate: true);
+              }
+            }
           }
         },
         onVerseSkipped: (expectedAyah, jumpedToAyah) {
@@ -527,8 +763,25 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
           if (tracker.isListening) {
             tracker.setExpectedAyah(startAyah);
           }
+          _handleRoundRestartOrStepChange(surahNumber, startAyah);
         }
       });
+    } else {
+      final nextAyah = stuckAyah + 1;
+      if (nextAyah <= endAyah) {
+        final targetPage = qcf.getPageNumber(surahNumber, nextAyah);
+        if (_isMushafView) {
+          if (targetPage != _currentPage) {
+            Future.delayed(const Duration(milliseconds: 350), () {
+              if (mounted && _isMushafView && targetPage != _currentPage) {
+                _animateToMushafPage(targetPage, animate: true);
+              }
+            });
+          }
+        } else {
+          _scrollToVerse(surahNumber, nextAyah, animate: true);
+        }
+      }
     }
   }
 
@@ -536,6 +789,13 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
   void didChangeDependencies() {
     super.didChangeDependencies();
     _applyInputModeSettings();
+
+    final audio = Provider.of<MushafAudioProvider>(context);
+    if (_audioProvider != audio) {
+      _audioProvider?.removeListener(_onAudioStateChanged);
+      _audioProvider = audio;
+      _audioProvider?.addListener(_onAudioStateChanged);
+    }
   }
 
   void _onBleClick() {
@@ -562,6 +822,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    _audioProvider?.removeListener(_onAudioStateChanged);
     final tracker = Provider.of<RecitationTrackerProvider>(context, listen: false);
     if (tracker.isListening) {
       tracker.stopTracking();
@@ -576,6 +837,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
     _channel.invokeMethod('setInputMode', {'mode': 'none'});
     _channel.setMethodCallHandler(null);
 
+    _listScrollController.dispose();
     _newVersesPageController.dispose();
     _reviewPageController.dispose();
     _hiddenInputFocusNode.dispose();
@@ -2080,7 +2342,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
               size: 20,
             ),
             tooltip: _isMushafView ? 'List View' : 'Mushaf View',
-            onPressed: () => setState(() => _isMushafView = !_isMushafView),
+            onPressed: _toggleMushafListView,
           ),
 
           // Visibility toggle (Show / Hide text override)
@@ -2264,6 +2526,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
       onPageChanged: (index) {
         setState(() {
           _reviewPageOffset = index - 10000;
+          _currentPage = (basePageForStep + _reviewPageOffset).clamp(1, 604);
         });
       },
       itemBuilder: (context, index) {
@@ -2333,6 +2596,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
     }
 
     return ListView.separated(
+      controller: _listScrollController,
       padding: const EdgeInsets.all(16),
       itemCount: verses.length,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
@@ -2342,7 +2606,9 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
         final translation = _getVerseTranslationText(context, surahNum, verseNum);
         final isVerseHidden = isHidden && !_voiceRevealedVerses.contains(verseNum);
 
-        return Consumer<MushafAudioProvider>(
+        return KeyedSubtree(
+          key: _keyForVerse(surahNum, verseNum),
+          child: Consumer<MushafAudioProvider>(
           builder: (context, audio, _) {
             final isCurrentPlaying =
                 audio.isPlaying && audio.currentVerseKey == verseKey;
@@ -2855,6 +3121,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
               ],
             );
           },
+        ),
         );
       },
     );
@@ -3590,6 +3857,14 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
 
     // When advancing round via tally click, immediately clear revealed verses so the new round hides the range again
     if (clearVoiceImmediately) {
+      final int startAyah;
+      if (isNewVerses) {
+        final task = _hifzProvider.currentTask;
+        startAyah = task != null ? task.verseNumbers.first : _selectedRepeatStart;
+      } else {
+        final step = _hifzProvider.currentReviewStep;
+        startAyah = step?.verseStart ?? 1;
+      }
       setState(() {
         _voiceRevealedVerses.clear();
         _lastSkippedVerse = null;
@@ -3597,16 +3872,9 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
       });
       final tracker = Provider.of<RecitationTrackerProvider>(context, listen: false);
       if (tracker.isListening) {
-        final int startAyah;
-        if (isNewVerses) {
-          final task = _hifzProvider.currentTask;
-          startAyah = task != null ? task.verseNumbers.first : _selectedRepeatStart;
-        } else {
-          final step = _hifzProvider.currentReviewStep;
-          startAyah = step?.verseStart ?? 1;
-        }
         tracker.setExpectedAyah(startAyah);
       }
+      _handleRoundRestartOrStepChange(_hifzProvider.currentSurahNumber, startAyah);
     }
 
     final int newCount = isNewVerses
@@ -3642,6 +3910,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
         _isTransitioningStep = false;
         _transitionBannerMessage = '';
       });
+      _syncToCurrentTaskOrStepStart();
     });
   }
 
@@ -3659,6 +3928,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
       tracker.stopTracking();
       _updateWakelockState();
     }
+    _syncToCurrentTaskOrStepStart();
     setState(() {});
   }
 
@@ -3716,12 +3986,16 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
           _updateWakelockState();
         }
       }
+      _syncToCurrentTaskOrStepStart();
+      setState(() {});
     } else if (choice == 'all') {
       _hifzProvider.resetSession();
       if (tracker.isListening) {
         tracker.stopTracking();
         _updateWakelockState();
       }
+      _syncToCurrentTaskOrStepStart();
+      setState(() {});
     }
   }
 
@@ -4016,6 +4290,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
         : _selectedStartVerse;
 
     return ListView.separated(
+      controller: _listScrollController,
       padding: const EdgeInsets.all(16),
       itemCount: _selectedEndVerse - startDisplayVerse + 1,
       separatorBuilder: (_, _) => const SizedBox(height: 12),
@@ -4027,7 +4302,9 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
         final translation =
             _getVerseTranslationText(context, provider.surahNumber, verseNum);
 
-        return Consumer<MushafAudioProvider>(
+        return KeyedSubtree(
+          key: _keyForVerse(provider.surahNumber, verseNum),
+          child: Consumer<MushafAudioProvider>(
           builder: (context, audio, _) {
             final isCurrentPlaying = audio.isPlaying &&
                 audio.currentVerseKey == '${provider.surahNumber}:$verseNum';
@@ -4538,6 +4815,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
               ],
             );
           },
+        ),
         );
       },
     );

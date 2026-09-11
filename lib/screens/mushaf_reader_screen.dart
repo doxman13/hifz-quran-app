@@ -25,6 +25,10 @@ import '../theme/app_theme.dart';
 import '../shared/shared.dart';
 import '../utils/html_parser.dart';
 import '../widgets/tadabbur_panel.dart';
+import 'hifz_memorize_screen.dart';
+import 'hifz_mushaf_range_picker_screen.dart';
+import 'hifz_new_verses_setup_screen.dart';
+import '../models/hifz_session_config.dart';
 
 class MushafReaderScreen extends StatefulWidget {
   final QuranRepository quranRepository;
@@ -417,6 +421,212 @@ class _MushafReaderScreenState extends State<MushafReaderScreen> {
             .isVerseBookmarked(profile.mushafId, _pageNumber, verseKey);
       });
     }
+  }
+
+  Future<void> _openHifzFromReader(String verseKey) async {
+    final parts = verseKey.split(':');
+    if (parts.length != 2) return;
+    final surah = int.tryParse(parts[0]) ?? 1;
+    final verse = int.tryParse(parts[1]) ?? 1;
+    final page = qcf.getPageNumber(surah, verse);
+    final totalVerses = qcf.getVerseCount(surah);
+    final surahName = widget.quranRepository.getSurahName(surah.toString());
+    final isThai = context.read<SettingsProvider>().languageCode == 'th';
+
+    _translationTimer?.cancel();
+
+    if (!mounted) return;
+
+    await showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        final colorScheme = Theme.of(ctx).colorScheme;
+        final textTheme = Theme.of(ctx).textTheme;
+
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: colorScheme.outlineVariant,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: colorScheme.primaryContainer,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Icon(
+                        Icons.psychology_rounded,
+                        color: colorScheme.onPrimaryContainer,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            isThai ? 'ท่องจำฮิฟซ์ (Hifz)' : 'Hifz Memorization',
+                            style: textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            '$surahName · ${isThai ? 'อายะห์' : 'Verse'} $verse',
+                            style: textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                ListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  tileColor: colorScheme.surfaceContainerLow,
+                  leading: Icon(Icons.auto_stories_rounded, color: colorScheme.primary),
+                  title: Text(
+                    isThai ? 'เลือกช่วงจากมุศฮัฟ (Visual Range)' : 'Select Range from Mushaf (Visual)',
+                    style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: Text(
+                    isThai ? 'แตะ 2 ครั้งเพื่อเลือกช่วงอายะห์แบบเห็นภาพ' : '2-tap visual range picker with live highlights',
+                    style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                  ),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () async {
+                    Navigator.pop(ctx);
+                    final result = await Navigator.push<HifzMushafRangePickerResult>(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => HifzMushafRangePickerScreen(
+                          quranRepository: widget.quranRepository,
+                          foundationRepository: widget.foundationRepository,
+                          initialSurah: surah,
+                          initialStartVerse: verse,
+                          initialEndVerse: verse,
+                          initialPage: page,
+                        ),
+                      ),
+                    );
+                    if (result != null && mounted) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => HifzNewVersesSetupScreen(
+                            quranRepository: widget.quranRepository,
+                            foundationRepository: widget.foundationRepository,
+                            initialSurah: result.surah,
+                            initialStartVerse: result.startVerse,
+                            initialEndVerse: result.endVerse,
+                            initialRepeatStart: result.startVerse,
+                            initialPage: result.page,
+                            initialIsSurahMode: true,
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(height: 12),
+                ListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  tileColor: colorScheme.surfaceContainerLow,
+                  leading: Icon(Icons.tune_rounded, color: colorScheme.primary),
+                  title: Text(
+                    isThai ? 'ตั้งค่าการท่องจำ (Setup Session)' : 'Setup Memorization Session',
+                    style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: Text(
+                    isThai ? 'กำหนดจำนวนรอบและการซ้ำของชุดอายะห์' : 'Customize repetitions, rounds, and stepping',
+                    style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                  ),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => HifzNewVersesSetupScreen(
+                          quranRepository: widget.quranRepository,
+                          foundationRepository: widget.foundationRepository,
+                          initialSurah: surah,
+                          initialStartVerse: verse,
+                          initialEndVerse: (verse + 2).clamp(1, totalVerses),
+                          initialRepeatStart: verse,
+                          initialPage: page,
+                          initialIsSurahMode: true,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                const SizedBox(height: 12),
+                ListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  tileColor: colorScheme.surfaceContainerLow,
+                  leading: Icon(Icons.play_arrow_rounded, color: colorScheme.primary),
+                  title: Text(
+                    isThai ? 'เริ่มท่องจำทันที (Quick Start)' : 'Quick Start (Ayah $verse)',
+                    style: textTheme.bodyLarge?.copyWith(fontWeight: FontWeight.w600),
+                  ),
+                  subtitle: Text(
+                    isThai ? 'ท่องจำอายะห์นี้ทันทีด้วยระบบ 3 รอบ' : 'Start right away with 3 rounds (10V + 5H)',
+                    style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurfaceVariant),
+                  ),
+                  trailing: const Icon(Icons.chevron_right_rounded),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => HifzMemorizeScreen(
+                          quranRepository: widget.quranRepository,
+                          foundationRepository: widget.foundationRepository,
+                          surahNumber: surah,
+                          startVerse: verse,
+                          endVerse: verse,
+                          initialSessionType: HifzSessionType.newVerses,
+                          repeatStart: verse,
+                          initialPage: page,
+                          isSurahMode: true,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _playVerseOnCurrentPage(String verseKey) async {
@@ -974,6 +1184,10 @@ class _MushafReaderScreenState extends State<MushafReaderScreen> {
                                       onFavorite: () =>
                                           _toggleCurrentVerseFavorite(
                                             askForNote: true,
+                                          ),
+                                      onMemorize: () =>
+                                          _openHifzFromReader(
+                                            _translationVerseKey ?? '',
                                           ),
                                       onClose: _dismissTranslation,
                                       fontSize: context
@@ -2592,6 +2806,7 @@ class _TranslationPanel extends StatelessWidget {
   final bool favorited;
   final VoidCallback onBookmark;
   final VoidCallback onFavorite;
+  final VoidCallback? onMemorize;
   final VoidCallback onClose;
   final double fontSize;
   final bool isAudioPlaying;
@@ -2606,6 +2821,7 @@ class _TranslationPanel extends StatelessWidget {
     required this.favorited,
     required this.onBookmark,
     required this.onFavorite,
+    this.onMemorize,
     required this.onClose,
     required this.fontSize,
     required this.isAudioPlaying,
@@ -2641,6 +2857,15 @@ class _TranslationPanel extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (onMemorize != null)
+                  IconButton(
+                    tooltip: 'Memorize (Hifz)',
+                    onPressed: onMemorize,
+                    icon: Icon(
+                      Icons.psychology_outlined,
+                      color: colors.primary,
+                    ),
+                  ),
                 IconButton(
                   tooltip: isAudioPlaying ? 'Pause verse' : 'Play verse',
                   onPressed: onPlay,

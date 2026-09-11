@@ -18,6 +18,7 @@ import '../models/hifz_session_config.dart';
 import '../database/hifz_repository.dart';
 import '../providers/settings_provider.dart';
 import 'hifz_memorize_screen.dart';
+import 'hifz_mushaf_range_picker_screen.dart';
 
 class HifzReviewSetupScreen extends StatefulWidget {
   final QuranRepository quranRepository;
@@ -341,6 +342,7 @@ class _HifzReviewSetupScreenState extends State<HifzReviewSetupScreen>
             startVerse: _versesStart,
             endVerse: _versesEnd,
             quranRepository: widget.quranRepository,
+            foundationRepository: widget.foundationRepository,
             onChanged: (surah, vs, ve) => setState(() {
               _versesSurah = surah;
               _versesStart = vs;
@@ -350,6 +352,8 @@ class _HifzReviewSetupScreenState extends State<HifzReviewSetupScreen>
           _ByPageTab(
             startPage: _startPage,
             endPage: _endPage,
+            quranRepository: widget.quranRepository,
+            foundationRepository: widget.foundationRepository,
             onChanged: (sp, ep) => setState(() {
               _startPage = sp;
               _endPage = ep;
@@ -485,6 +489,7 @@ class _ByVersesTab extends StatefulWidget {
   final int startVerse;
   final int endVerse;
   final QuranRepository quranRepository;
+  final QuranFoundationRepository? foundationRepository;
   final void Function(int surah, int start, int end) onChanged;
 
   const _ByVersesTab({
@@ -492,6 +497,7 @@ class _ByVersesTab extends StatefulWidget {
     required this.startVerse,
     required this.endVerse,
     required this.quranRepository,
+    this.foundationRepository,
     required this.onChanged,
   });
 
@@ -528,6 +534,32 @@ class _ByVersesTabState extends State<_ByVersesTab> {
 
   int get _totalVerses => qcf.getVerseCount(_surah);
 
+  Future<void> _openVisualPicker() async {
+    final initialPage = qcf.getPageNumber(_surah, _start);
+    final result = await Navigator.push<HifzMushafRangePickerResult>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => HifzMushafRangePickerScreen(
+          quranRepository: widget.quranRepository,
+          foundationRepository:
+              widget.foundationRepository ?? QuranFoundationRepository(),
+          initialSurah: _surah,
+          initialStartVerse: _start,
+          initialEndVerse: _end,
+          initialPage: initialPage,
+        ),
+      ),
+    );
+    if (result != null && mounted) {
+      setState(() {
+        _surah = result.surah;
+        _start = result.startVerse;
+        _end = result.endVerse;
+      });
+      _notify();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -544,7 +576,25 @@ class _ByVersesTabState extends State<_ByVersesTab> {
               ? 'ทบทวนอายะห์ที่เป็นชุด — เห็น 2× แล้วซ่อน 2×'
               : 'Review a specific verse block — displayed as a single unit, 2× visible then 2× hidden.',
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 16),
+        OutlinedButton.icon(
+          onPressed: _openVisualPicker,
+          icon: const Icon(Icons.auto_stories_rounded, size: 20),
+          label: Text(
+            isThai
+                ? 'เลือกช่วงจากหน้ามุศฮัฟ (Visual Picker)'
+                : 'Select Range from Mushaf (Visual)',
+            style: const TextStyle(fontWeight: FontWeight.bold),
+          ),
+          style: OutlinedButton.styleFrom(
+            minimumSize: const Size.fromHeight(48),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            side:
+                BorderSide(color: colorScheme.primary.withValues(alpha: 0.6)),
+          ),
+        ),
+        const SizedBox(height: 20),
         _LabeledDropdown<int>(
           label: isThai ? 'ซูเราะฮ์' : 'Surah',
           value: _surah,
@@ -615,11 +665,15 @@ class _ByVersesTabState extends State<_ByVersesTab> {
 class _ByPageTab extends StatefulWidget {
   final int startPage;
   final int endPage;
+  final QuranRepository? quranRepository;
+  final QuranFoundationRepository? foundationRepository;
   final void Function(int start, int end) onChanged;
 
   const _ByPageTab({
     required this.startPage,
     required this.endPage,
+    this.quranRepository,
+    this.foundationRepository,
     required this.onChanged,
   });
 
@@ -649,6 +703,29 @@ class _ByPageTabState extends State<_ByPageTab> {
 
   void _notify() => widget.onChanged(_start, _end);
 
+  Future<void> _openVisualPicker() async {
+    if (widget.quranRepository == null) return;
+    final result = await Navigator.push<HifzMushafRangePickerResult>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => HifzMushafRangePickerScreen(
+          quranRepository: widget.quranRepository!,
+          foundationRepository:
+              widget.foundationRepository ?? QuranFoundationRepository(),
+          initialPage: _start,
+        ),
+      ),
+    );
+    if (result != null && mounted) {
+      final endP = qcf.getPageNumber(result.surah, result.endVerse);
+      setState(() {
+        _start = result.page;
+        _end = endP >= _start ? endP : _start;
+      });
+      _notify();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -665,7 +742,27 @@ class _ByPageTabState extends State<_ByPageTab> {
               ? 'ทบทวนทีละหน้า — เห็น 2× แล้วซ่อน 2× เลื่อนอัตโนมัติ'
               : 'Review page by page — 2× visible then 2× hidden, auto-advance to next page.',
         ),
-        const SizedBox(height: 24),
+        if (widget.quranRepository != null) ...[
+          const SizedBox(height: 16),
+          OutlinedButton.icon(
+            onPressed: _openVisualPicker,
+            icon: const Icon(Icons.auto_stories_rounded, size: 20),
+            label: Text(
+              isThai
+                  ? 'เลือกหน้าจากมุศฮัฟ (Visual Picker)'
+                  : 'Select Page from Mushaf (Visual)',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            style: OutlinedButton.styleFrom(
+              minimumSize: const Size.fromHeight(48),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16)),
+              side: BorderSide(
+                  color: colorScheme.primary.withValues(alpha: 0.6)),
+            ),
+          ),
+        ],
+        const SizedBox(height: 20),
         Row(
           children: [
             Expanded(
