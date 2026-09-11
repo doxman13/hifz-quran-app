@@ -16,7 +16,7 @@ class QuranRepository {
   Map<String, dynamic>? _tafsirDataEn;
   Map<String, String> _offlineArabicData = {};
   
-  static bool globalIsThaiName = true;
+  static bool globalIsThaiName = false;
   final Map<String, String> surahNames = {};
 
   // Loads all Surahs from the local JSON asset and fetches Surah Names

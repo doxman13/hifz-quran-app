@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'main_app_shell.dart';
 import '../data/quran_repository.dart';
 import '../data/quran_foundation_repository.dart';
+import '../providers/settings_provider.dart';
 import '../services/remote_content_service.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../shared/shared.dart';
@@ -134,14 +136,26 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     const SizedBox(height: 24),
 
                     // Translation
-                    Text(
-                      context.tr('welcome_bismillah'),
-                      style: GoogleFonts.notoSansThai(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: textColor,
-                      ),
-                      textAlign: TextAlign.center,
+                    Consumer<SettingsProvider>(
+                      builder: (context, settings, _) {
+                        final isThai = settings.languageCode == 'th';
+                        return Text(
+                          context.tr('welcome_bismillah'),
+                          style: isThai
+                              ? GoogleFonts.notoSansThai(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: textColor,
+                                )
+                              : GoogleFonts.inter(
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  color: textColor,
+                                  letterSpacing: 0.2,
+                                ),
+                          textAlign: TextAlign.center,
+                        );
+                      },
                     ),
 
                     const Spacer(),

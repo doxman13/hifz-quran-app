@@ -135,10 +135,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     items: const [
                       DropdownMenuItem(
+                        value: 'en',
+                        child: Text('English (Global)'),
+                      ),
+                      DropdownMenuItem(
                         value: 'th',
                         child: Text('ภาษาไทย (Thai)'),
                       ),
-                      DropdownMenuItem(value: 'en', child: Text('English')),
                     ],
                     onChanged: (val) {
                       if (val != null) settings.setLanguageCode(val);

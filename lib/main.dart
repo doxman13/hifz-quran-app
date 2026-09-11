@@ -33,7 +33,7 @@ void main() async {
   final foundationRepository = QuranFoundationRepository();
 
   runApp(
-    ThaiQuranBootstrap(
+    HifzAppBootstrap(
       repository: repository,
       foundationRepository: foundationRepository,
       initialization: _initializeAppServices(),
@@ -73,12 +73,12 @@ Future<void> _initializeAudioBackground() async {
   }
 }
 
-class ThaiQuranBootstrap extends StatelessWidget {
+class HifzAppBootstrap extends StatelessWidget {
   final QuranRepository repository;
   final QuranFoundationRepository foundationRepository;
   final Future<void> initialization;
 
-  const ThaiQuranBootstrap({
+  const HifzAppBootstrap({
     super.key,
     required this.repository,
     required this.foundationRepository,
@@ -113,7 +113,7 @@ class ThaiQuranBootstrap extends StatelessWidget {
             ChangeNotifierProvider(create: (_) => MushafAudioProvider()),
             ChangeNotifierProvider(create: (_) => RecitationTrackerProvider()),
           ],
-          child: ThaiQuranApp(
+          child: HifzApp(
             repository: repository,
             foundationRepository: foundationRepository,
           ),
@@ -172,7 +172,7 @@ class _StartupErrorScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  'Unable to start Thai Quran',
+                  'Unable to start HifzSpace',
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.w700,
                   ),
@@ -195,11 +195,11 @@ class _StartupErrorScreen extends StatelessWidget {
   }
 }
 
-class ThaiQuranApp extends StatelessWidget {
+class HifzApp extends StatelessWidget {
   final QuranRepository repository;
   final QuranFoundationRepository foundationRepository;
 
-  const ThaiQuranApp({
+  const HifzApp({
     Key? key,
     required this.repository,
     required this.foundationRepository,
@@ -220,10 +220,12 @@ class ThaiQuranApp extends StatelessWidget {
           theme: AppTheme.toThemeData(
             isDark: false,
             palette: settings.themeColor,
+            languageCode: settings.languageCode,
           ),
           darkTheme: AppTheme.toThemeData(
             isDark: true,
             palette: settings.themeColor,
+            languageCode: settings.languageCode,
           ),
 
           home: WelcomeScreen(

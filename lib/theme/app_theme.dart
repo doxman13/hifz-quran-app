@@ -105,21 +105,28 @@ class AppTheme {
   static ThemeData toThemeData({
     required bool isDark,
     String palette = 'teal',
+    String languageCode = 'en',
   }) {
     final c = colors(isDark: isDark, palette: palette);
     final baseTheme = ThemeData(
       useMaterial3: true,
       brightness: isDark ? Brightness.dark : Brightness.light,
     );
-    final textTheme = GoogleFonts.notoSansThaiTextTheme(
-      baseTheme.textTheme,
-    ).apply(bodyColor: c.textStrong, displayColor: c.textStrong);
+    final isThai = languageCode == 'th';
+    final textTheme = (isThai
+            ? GoogleFonts.notoSansThaiTextTheme(baseTheme.textTheme)
+            : GoogleFonts.interTextTheme(baseTheme.textTheme))
+        .apply(bodyColor: c.textStrong, displayColor: c.textStrong);
+
+    final baseFontFamily = isThai
+        ? GoogleFonts.notoSansThai().fontFamily
+        : GoogleFonts.inter().fontFamily;
 
     return ThemeData(
       useMaterial3: true,
       brightness: isDark ? Brightness.dark : Brightness.light,
       scaffoldBackgroundColor: c.background,
-      fontFamily: GoogleFonts.notoSansThai().fontFamily,
+      fontFamily: baseFontFamily,
       textTheme: textTheme,
       primaryTextTheme: textTheme,
 
@@ -151,11 +158,17 @@ class AppTheme {
         backgroundColor: c.surface,
         elevation: 0,
         iconTheme: IconThemeData(color: c.textStrong),
-        titleTextStyle: GoogleFonts.notoSansThai(
-          color: c.textStrong,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-        ),
+        titleTextStyle: isThai
+            ? GoogleFonts.notoSansThai(
+                color: c.textStrong,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              )
+            : GoogleFonts.inter(
+                color: c.textStrong,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
       ),
     );
   }

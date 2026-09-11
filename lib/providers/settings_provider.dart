@@ -33,7 +33,7 @@ class SettingsProvider extends ChangeNotifier {
   String _themeColor = 'teal';
   String _webHostUrl = 'http://10.0.2.2:3000'; // Default emulator localhost
   DateTime _settingsUpdatedAt = DateTime.fromMillisecondsSinceEpoch(0);
-  String _languageCode = 'th'; // Default to Thai
+  String _languageCode = 'en'; // Default to English for global launch
 
   // Setting for Hifz input mode (default: inAppTally)
   static const String _hifzInputModeKey = 'hifz_input_mode';
@@ -53,8 +53,8 @@ class SettingsProvider extends ChangeNotifier {
   bool get voiceRecitationAdaptiveNoise => _voiceRecitationAdaptiveNoise;
 
   // Dual-slot translation model
-  // Built-in ID: 'thai_v3'. Other active IDs should come from downloaded API translations.
-  String _primaryTranslationId = 'thai_v3';
+  // Built-in ID: 'en_usmani' (English offline) or 'thai_v3' (Thai offline)
+  String _primaryTranslationId = 'en_usmani';
   String? _secondaryTranslationId;
 
   StreamSubscription<AuthState>? _authSubscription;
@@ -80,7 +80,7 @@ class SettingsProvider extends ChangeNotifier {
   // Word by word display setting
   bool _showWordByWord = false;
   bool get showWordByWord => _showWordByWord;
-  String _wordByWordLanguage = 'th'; // 'th', 'en', 'ms'
+  String _wordByWordLanguage = 'en'; // 'en', 'th', 'ms'
   String get wordByWordLanguage => _wordByWordLanguage;
 
   // Footnotes display setting (default: true)
@@ -102,20 +102,8 @@ class SettingsProvider extends ChangeNotifier {
       _primaryTranslationId == 'english' ||
       _secondaryTranslationId == 'english';
 
-  /// Effective UI and theme language code ('th' or 'en') derived from the active primary translation.
-  String get effectiveLanguageCode {
-    final primary = _primaryTranslationId.trim().toLowerCase();
-    if (primary == 'english' || primary.startsWith('en')) {
-      return 'en';
-    }
-    if (primary == 'ms_basmeih' || primary == 'malay' || primary.startsWith('ms')) {
-      return 'en';
-    }
-    if (primary == 'thai_v3' || primary == 'thai_v2' || primary.startsWith('th') || primary.startsWith('thai')) {
-      return 'th';
-    }
-    return _languageCode;
-  }
+  /// Effective UI and theme language code ('th' or 'en') chosen by the user.
+  String get effectiveLanguageCode => _languageCode;
 
   SettingsProvider() {
     _loadSettings();
@@ -311,11 +299,11 @@ class SettingsProvider extends ChangeNotifier {
 
   Future<void> _loadSettings() async {
     final prefs = await SharedPreferences.getInstance();
-    _languageCode = prefs.getString('languageCode') ?? 'th';
+    _languageCode = prefs.getString('languageCode') ?? 'en';
     _isDarkMode = prefs.getBool('isDarkMode') ?? false;
     _keepAwake = prefs.getBool('keepAwake') ?? true;
     _showWordByWord = prefs.getBool('showWordByWord') ?? false;
-    _wordByWordLanguage = prefs.getString('wordByWordLanguage') ?? 'th';
+    _wordByWordLanguage = prefs.getString('wordByWordLanguage') ?? 'en';
     _showFootnotes = prefs.getBool('showFootnotes') ?? true;
     _voiceRecitationEnabled = prefs.getBool(_voiceRecitationEnabledKey) ?? true;
     _voiceRecitationAdaptiveNoise = prefs.getBool(_voiceRecitationAdaptiveNoiseKey) ?? true;
@@ -383,13 +371,13 @@ class SettingsProvider extends ChangeNotifier {
       final bool hasShowThaiV3 = prefs.containsKey('showThaiV3');
       bool v3, v2, en;
       if (!hasShowThaiV3) {
-        v3 = true;
+        v3 = _languageCode == 'th';
         v2 = false;
-        en = false;
+        en = _languageCode != 'th';
       } else {
-        v3 = prefs.getBool('showThaiV3') ?? true;
+        v3 = prefs.getBool('showThaiV3') ?? (_languageCode == 'th');
         v2 = prefs.getBool('showThaiV2') ?? false;
-        en = prefs.getBool('showEnglish') ?? false;
+        en = prefs.getBool('showEnglish') ?? (_languageCode != 'th');
       }
       final ids = _deriveSlotIds(v3: v3, v2: v2, en: en);
       _primaryTranslationId = ids.$1;
@@ -408,15 +396,13 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   /// Derive dual-slot IDs from legacy boolean flags.
-  /// Priority: thai_v3 only. Thai 2 and English should come from API downloads.
   (String, String?) _deriveSlotIds({
     required bool v3,
     required bool v2,
     required bool en,
   }) {
-    final enabled = [if (v3 || v2 || en) 'thai_v3'];
-    if (enabled.isEmpty) return ('thai_v3', null);
-    return (enabled[0], enabled.length > 1 ? enabled[1] : null);
+    if (v3) return ('thai_v3', en ? 'en_usmani' : null);
+    return ('en_usmani', null);
   }
 
   String _normalizeReadingDisplayMode(String value) {
@@ -446,7 +432,8 @@ class SettingsProvider extends ChangeNotifier {
     final primaryAvailable = await _isTranslationAvailableOnDevice(primary);
     final secondaryAvailable = await _isTranslationAvailableOnDevice(secondary);
 
-    String resolvedPrimary = primaryAvailable ? primary : 'thai_v3';
+    final defaultId = _languageCode == 'th' ? 'thai_v3' : 'en_usmani';
+    String resolvedPrimary = primaryAvailable ? primary : defaultId;
     String? resolvedSecondary =
         secondaryAvailable && secondary != resolvedPrimary ? secondary : null;
 
@@ -456,7 +443,7 @@ class SettingsProvider extends ChangeNotifier {
     }
 
     if (resolvedPrimary.isEmpty) {
-      resolvedPrimary = 'thai_v3';
+      resolvedPrimary = defaultId;
     }
 
     return (resolvedPrimary, resolvedSecondary);
@@ -473,7 +460,7 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   void _syncGlobalState() {
-    QuranRepository.globalIsThaiName = effectiveLanguageCode == 'th';
+    QuranRepository.globalIsThaiName = _languageCode == 'th';
   }
 
   Future<void> _markSettingsChanged(SharedPreferences prefs) async {
@@ -594,10 +581,16 @@ class SettingsProvider extends ChangeNotifier {
   void setLanguageCode(String value) async {
     if (value != 'th' && value != 'en') return;
     _languageCode = value;
+    if (value == 'th' && (_primaryTranslationId == 'en_usmani' || _primaryTranslationId == 'english')) {
+      _primaryTranslationId = 'thai_v3';
+    } else if (value == 'en' && (_primaryTranslationId == 'thai_v3' || _primaryTranslationId == 'thai_v2')) {
+      _primaryTranslationId = 'en_usmani';
+    }
     _syncGlobalState();
     notifyListeners();
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('languageCode', _languageCode);
+    await prefs.setString('primaryTranslationId', _primaryTranslationId);
     await _markSettingsChanged(prefs);
     await _syncToSupabase();
   }
