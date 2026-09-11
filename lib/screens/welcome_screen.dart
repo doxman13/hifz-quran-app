@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'hifz_landing_screen.dart';
+import 'main_app_shell.dart';
 import '../data/quran_repository.dart';
 import '../data/quran_foundation_repository.dart';
 import '../services/remote_content_service.dart';
@@ -90,8 +90,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   parent: animation,
                   curve: Curves.easeOutCubic,
                 ),
-                child: HifzLandingScreen(
-                  quranRepository: widget.repository,
+                child: MainAppShell(
+                  repository: widget.repository,
                   foundationRepository: widget.foundationRepository,
                 ),
               ),

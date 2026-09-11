@@ -24,11 +24,13 @@ import 'hifz_review_setup_screen.dart';
 class HifzLandingScreen extends StatefulWidget {
   final QuranRepository quranRepository;
   final QuranFoundationRepository foundationRepository;
+  final bool isEmbedded;
 
   const HifzLandingScreen({
     super.key,
     required this.quranRepository,
     required this.foundationRepository,
+    this.isEmbedded = false,
   });
 
   @override
@@ -177,10 +179,12 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
             flexibleSpace: FlexibleSpaceBar(
               background: _buildHeroHeader(colorScheme, textTheme, isThai),
             ),
-            leading: IconButton(
-              icon: const Icon(Icons.arrow_back_ios_new_rounded),
-              onPressed: () => Navigator.pop(context),
-            ),
+            leading: (widget.isEmbedded || !Navigator.canPop(context))
+                ? null
+                : IconButton(
+                    icon: const Icon(Icons.arrow_back_ios_new_rounded),
+                    onPressed: () => Navigator.pop(context),
+                  ),
             actions: [
               IconButton(
                 icon: const Icon(Icons.settings_outlined),

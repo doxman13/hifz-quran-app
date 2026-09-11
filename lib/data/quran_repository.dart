@@ -153,6 +153,10 @@ class QuranRepository {
     return '$surahId. ${name ?? 'Surah $surahId'}';
   }
 
+  String getSurahNameAr(String surahId) {
+    return offlineSurahNamesAr[surahId] ?? '';
+  }
+
   // Gets the verses for a specific Surah
   List<Verse> getSurahVerses(String surahId) {
     final versesMap = _getVersesMap(surahId);
