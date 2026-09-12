@@ -18,61 +18,10 @@ class TranslationManagerSection extends StatefulWidget {
 }
 
 class _TranslationManagerSectionState extends State<TranslationManagerSection> {
-  static const _builtInThaiV3 = _TranslationOption(
-    id: 'thai_v3',
-    apiId: null,
-    name: 'Society of Institutes and Universities (Language revised edition)',
-    nameTh: 'Society of Institutes and Universities (ฉบับปรับปรุงภาษา)',
-    author: 'Society of Institutes and Universities',
-    language: 'thai',
-  );
-
-  static const List<_TranslationOption> _availableTranslations = [
-    _TranslationOption(
-      id: '51',
-      apiId: 51,
-      name: 'Thai Translation (King Fahad Quran Complex)',
-      nameTh: 'ศูนย์กษัตริย์ฟะฮัดเพื่อการพิมพ์อัลกุรอาน',
-      author: 'King Fahad Quran Complex',
-      language: 'thai',
-    ),
-    _TranslationOption(
-      id: '230',
-      apiId: 230,
-      name: 'Society of Institutes and Universities',
-      nameTh: 'Society of Institutes and Universities (Original)',
-      author: 'Society of Institutes and Universities',
-      language: 'thai',
-    ),
-    _TranslationOption(
-      id: '85',
-      apiId: 85,
-      name: 'M.A.S. Abdel Haleem',
-      author: 'Abdul Haleem',
-      language: 'english',
-    ),
-    _TranslationOption(
-      id: '20',
-      apiId: 20,
-      name: 'Saheeh International',
-      author: 'Saheeh International',
-      language: 'english',
-    ),
-    _TranslationOption(
-      id: '84',
-      apiId: 84,
-      name: 'T. Usmani',
-      author: 'Mufti Taqi Usmani',
-      language: 'english',
-    ),
-    _TranslationOption(
-      id: '39',
-      apiId: 39,
-      name: 'Abdullah Muhammad Basmeih',
-      author: 'Abdullah Muhammad Basmeih',
-      language: 'malay',
-    ),
-  ];
+  static final List<AppTranslationOption> _availableTranslations =
+      TranslationConstants.downloadableTranslations
+          .where((t) => t.language.toLowerCase() != 'thai' && t.id != '230' && t.id != '51')
+          .toList();
 
   int? _activeDownloadingId;
   Map<int, double> get _downloadProgress =>
@@ -94,7 +43,6 @@ class _TranslationManagerSectionState extends State<TranslationManagerSection> {
     final transManager = context.watch<TranslationManagerProvider>();
     final settings = context.watch<SettingsProvider>();
     final colorScheme = Theme.of(context).colorScheme;
-    final availableOptions = _allAvailableOptions(transManager);
 
     // Sync progress overlay if active
     if (_progressOverlayEntry != null && _activeProgressNotifier != null && _activeDownloadingId != null) {
@@ -123,98 +71,71 @@ class _TranslationManagerSectionState extends State<TranslationManagerSection> {
 
     final downloadedOptions = _downloadedOptions(transManager);
 
-    return Card(
-      color: colorScheme.surfaceContainerLow,
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24),
+      decoration: BoxDecoration(
+        color: colorScheme.surface,
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _sectionTitle(colorScheme, context.tr('active_translations')),
-            const SizedBox(height: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  context.tr('primary'),
-                  style: GoogleFonts.notoSansThai(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                DropdownButtonFormField<String>(
-                  value: settings.primaryTranslationId,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: colorScheme.surface,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: colorScheme.outline, width: 1),
-                    ),
-                  ),
-                  items: availableOptions.map((opt) {
-                    return DropdownMenuItem<String>(
-                      value: opt.id,
-                      child: Text(opt.displayName(settings.languageCode)),
-                    );
-                  }).toList(),
-                  onChanged: (val) {
-                    if (val != null) {
-                      settings.updateTranslationSlot('primary', val);
-                    }
-                  },
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  context.tr('secondary'),
-                  style: GoogleFonts.notoSansThai(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w600,
-                    color: colorScheme.onSurface,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                DropdownButtonFormField<String>(
-                  value: settings.secondaryTranslationId ?? '',
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: colorScheme.surface,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: colorScheme.outline, width: 1),
-                    ),
-                  ),
-                  items: [
-                    const DropdownMenuItem<String>(value: '', child: Text('None / ไม่เลือก')),
-                    ...availableOptions.map((opt) {
-                      return DropdownMenuItem<String>(
-                        value: opt.id,
-                        child: Text(opt.displayName(settings.languageCode)),
-                      );
-                    }).toList(),
-                  ],
-                  onChanged: (val) {
-                    if (val == null || val.isEmpty) {
-                      settings.updateTranslationSlot('secondary', null);
-                    } else if (val != settings.primaryTranslationId) {
-                      settings.updateTranslationSlot('secondary', val);
-                    }
-                  },
-                ),
-              ],
+            _sectionTitle(
+              colorScheme,
+              settings.languageCode == 'th'
+                  ? 'คำแปลอัลกุรอาน (ออฟไลน์ 100%)'
+                  : 'Quran Translations (100% Offline)',
+            ),
+            const SizedBox(height: 4),
+            Text(
+              settings.languageCode == 'th'
+                  ? 'เลือกคำแปลหลักและคำแปลรองสำหรับอ่านเปรียบเทียบ พร้อมใช้งานทันที'
+                  : 'Select primary and secondary translations. Ready offline anytime.',
+              style: GoogleFonts.notoSansThai(
+                fontSize: 12,
+                color: colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 16),
-            Divider(height: 1, color: colorScheme.outlineVariant),
+
+            // PRIMARY TRANSLATION SLOT
+            _buildSlotCard(
+              context: context,
+              slot: 'primary',
+              settings: settings,
+              transManager: transManager,
+              colorScheme: colorScheme,
+              languageGroups: TranslationHierarchy.getAllLanguageGroups(
+                downloadedTranslations: transManager.downloadedTranslations,
+              ),
+            ),
+
             const SizedBox(height: 16),
-            _sectionTitle(colorScheme, context.tr('download_more')),
+            Divider(
+              height: 1,
+              color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+            ),
             const SizedBox(height: 16),
-            Divider(height: 1, color: colorScheme.outlineVariant),
+
+            // SECONDARY TRANSLATION SLOT
+            _buildSlotCard(
+              context: context,
+              slot: 'secondary',
+              settings: settings,
+              transManager: transManager,
+              colorScheme: colorScheme,
+              languageGroups: TranslationHierarchy.getAllLanguageGroups(
+                downloadedTranslations: transManager.downloadedTranslations,
+              ),
+            ),
+            const SizedBox(height: 20),
+            Divider(
+              height: 1,
+              color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+            ),
             const SizedBox(height: 16),
             _sectionTitle(colorScheme, context.tr('download_more')),
             const SizedBox(height: 8),
@@ -267,6 +188,552 @@ class _TranslationManagerSectionState extends State<TranslationManagerSection> {
     );
   }
 
+  Widget _buildSlotCard({
+    required BuildContext context,
+    required String slot,
+    required SettingsProvider settings,
+    required TranslationManagerProvider transManager,
+    required ColorScheme colorScheme,
+    required List<TranslationLanguageGroup> languageGroups,
+  }) {
+    final isPrimary = slot == 'primary';
+    final isThai = settings.languageCode == 'th';
+    final currentSelectedId = isPrimary
+        ? TranslationConstants.resolveTranslationId(settings.primaryTranslationId)
+        : (settings.secondaryTranslationId != null
+            ? TranslationConstants.resolveTranslationId(settings.secondaryTranslationId)
+            : null);
+    final otherSelectedId = isPrimary
+        ? (settings.secondaryTranslationId != null
+            ? TranslationConstants.resolveTranslationId(settings.secondaryTranslationId)
+            : null)
+        : TranslationConstants.resolveTranslationId(settings.primaryTranslationId);
+
+    final isNoneSelected = !isPrimary &&
+        (currentSelectedId == null ||
+            currentSelectedId.isEmpty ||
+            currentSelectedId == 'none');
+
+    final currentLangId = isNoneSelected
+        ? 'none'
+        : TranslationHierarchy.getLanguageForTranslationId(currentSelectedId);
+
+    final activeGroup = isNoneSelected
+        ? null
+        : languageGroups.firstWhere(
+            (g) => g.id == currentLangId,
+            orElse: () => languageGroups.first,
+          );
+
+    final activeEdition = isNoneSelected
+        ? null
+        : TranslationHierarchy.getEditionInfo(
+            currentSelectedId,
+            downloadedTranslations: transManager.downloadedTranslations,
+          );
+
+    final slotNumber = isPrimary ? '1' : '2';
+    final slotBadgeBg = isPrimary ? colorScheme.primary : colorScheme.tertiary;
+    final slotBadgeFg = isPrimary ? colorScheme.onPrimary : colorScheme.onTertiary;
+    final statusBg = isPrimary
+        ? colorScheme.primaryContainer
+        : (!isNoneSelected
+            ? colorScheme.tertiaryContainer
+            : colorScheme.surfaceContainerHigh);
+    final statusFg = isPrimary
+        ? colorScheme.onPrimaryContainer
+        : (!isNoneSelected
+            ? colorScheme.onTertiaryContainer
+            : colorScheme.onSurfaceVariant);
+    final statusText = isPrimary
+        ? (isThai ? 'เปิดใช้งาน' : 'Active')
+        : (!isNoneSelected
+            ? (isThai ? 'เปิดใช้งาน' : 'Active')
+            : (isThai ? 'ปิดอยู่' : 'Disabled'));
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Slot Header Row
+        Row(
+          children: [
+            Container(
+              width: 28,
+              height: 28,
+              decoration: BoxDecoration(
+                color: slotBadgeBg,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              alignment: Alignment.center,
+              child: Text(
+                slotNumber,
+                style: GoogleFonts.notoSansThai(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: slotBadgeFg,
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    isPrimary
+                        ? (isThai ? 'คำแปลหลัก (Primary Translation)' : 'Primary Translation')
+                        : (isThai ? 'คำแปลรอง (Secondary Translation)' : 'Secondary Translation'),
+                    style: GoogleFonts.notoSansThai(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 1),
+                  Text(
+                    isPrimary
+                        ? (isThai ? 'แสดงข้อความหลักใต้ภาษาอาหรับ' : 'Displayed directly below Arabic verses')
+                        : (isThai ? 'สำหรับอ่านเทียบสองภาษาพร้อมกัน (ตัวเลือกเสริม)' : 'For bilingual reading side-by-side (Optional)'),
+                    style: GoogleFonts.notoSansThai(
+                      fontSize: 11,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: statusBg,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                statusText,
+                style: GoogleFonts.notoSansThai(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: statusFg,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 12),
+
+        // LEVEL 1: LANGUAGE SELECTION
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.language_rounded,
+                  size: 14,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  isPrimary
+                      ? (isThai ? 'ภาษาคำแปลหลัก' : 'Primary Language')
+                      : (isThai ? 'ภาษาคำแปลรอง' : 'Secondary Language'),
+                  style: GoogleFonts.notoSansThai(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+            if (!isPrimary && !isNoneSelected)
+              InkWell(
+                onTap: () {
+                  settings.updateTranslationSlot('secondary', null);
+                },
+                borderRadius: BorderRadius.circular(4),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                  child: Text(
+                    isThai ? 'ปิดคำแปลรอง' : 'Disable',
+                    style: GoogleFonts.notoSansThai(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: colorScheme.error,
+                    ),
+                  ),
+                ),
+              ),
+          ],
+        ),
+        const SizedBox(height: 6),
+
+        // Level 1 Dropdown
+        DropdownButtonFormField<String>(
+          initialValue: isNoneSelected ? 'none' : currentLangId,
+          dropdownColor: colorScheme.surfaceContainerLow,
+          isExpanded: true,
+          decoration: _inputDecoration(colorScheme),
+          items: [
+            if (!isPrimary)
+              DropdownMenuItem<String>(
+                value: 'none',
+                child: Text(
+                  isThai ? '— ไม่แสดงคำแปลรอง (None) —' : '— None (Single translation only) —',
+                  style: GoogleFonts.notoSansThai(
+                    fontSize: 13,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            ...languageGroups.map((group) {
+              final isOnlyEditionUsedAsPrimary = !isPrimary &&
+                  group.editions.length == 1 &&
+                  otherSelectedId != null &&
+                  group.editions.any((e) =>
+                      e.id == otherSelectedId ||
+                      (e.apiId != null && e.apiId.toString() == otherSelectedId));
+
+              return DropdownMenuItem<String>(
+                value: group.id,
+                enabled: !isOnlyEditionUsedAsPrimary,
+                child: Text(
+                  group.name(settings.languageCode) +
+                      (isOnlyEditionUsedAsPrimary
+                          ? (isThai ? ' (ใช้งานเป็นคำแปลหลักอยู่)' : ' (In use as primary)')
+                          : ''),
+                  style: GoogleFonts.notoSansThai(
+                    fontSize: 13,
+                    fontWeight: isOnlyEditionUsedAsPrimary ? FontWeight.normal : FontWeight.w600,
+                    color: isOnlyEditionUsedAsPrimary
+                        ? colorScheme.onSurfaceVariant.withValues(alpha: 0.5)
+                        : colorScheme.onSurface,
+                  ),
+                ),
+              );
+            }),
+          ],
+          onChanged: (newLangId) async {
+            if (newLangId == null) return;
+            if (!isPrimary && newLangId == 'none') {
+              settings.updateTranslationSlot('secondary', null);
+              return;
+            }
+
+            final group = languageGroups.firstWhere((g) => g.id == newLangId);
+            if (group.editions.isEmpty) return;
+
+            // Pick first edition not used in the other slot
+            final availableEdition = group.editions.firstWhere(
+              (e) =>
+                  e.id != otherSelectedId &&
+                  (e.apiId == null || e.apiId.toString() != otherSelectedId),
+              orElse: () => group.editions.first,
+            );
+
+            await _selectEdition(
+              slot: slot,
+              edition: availableEdition,
+              settings: settings,
+              transManager: transManager,
+            );
+          },
+        ),
+
+        // LEVEL 2: EDITION SELECTION
+        if (!isNoneSelected && activeGroup != null && activeGroup.editions.length > 1) ...[
+          const SizedBox(height: 12),
+          Text(
+            isThai
+                ? 'เลือกฉบับ / สำนวนแปล (${activeGroup.nameTh})'
+                : 'Choose Edition (${activeGroup.nameEn})',
+            style: GoogleFonts.notoSansThai(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: 6),
+          DropdownButtonFormField<String>(
+            initialValue: activeGroup.editions.any((e) =>
+                    e.id == currentSelectedId ||
+                    (e.apiId != null && e.apiId.toString() == currentSelectedId))
+                ? (activeGroup.editions
+                    .firstWhere((e) =>
+                        e.id == currentSelectedId ||
+                        (e.apiId != null && e.apiId.toString() == currentSelectedId))
+                    .id)
+                : activeGroup.editions.first.id,
+            dropdownColor: colorScheme.surfaceContainerLow,
+            isExpanded: true,
+            decoration: _inputDecoration(colorScheme),
+            items: activeGroup.editions.map((edition) {
+              final isUsed = otherSelectedId != null &&
+                  (otherSelectedId == edition.id ||
+                      (edition.apiId != null && otherSelectedId == edition.apiId.toString()));
+              final isDownloaded = transManager.isDownloaded(edition.id) ||
+                  (edition.apiId != null && transManager.isDownloaded(edition.apiId));
+              final tagText = edition.tag(settings.languageCode);
+
+              return DropdownMenuItem<String>(
+                value: edition.id,
+                enabled: !isUsed,
+                child: Row(
+                  children: [
+                    if (!isDownloaded) ...[
+                      Icon(Icons.download_for_offline_outlined,
+                          size: 14, color: colorScheme.primary),
+                      const SizedBox(width: 6),
+                    ],
+                    Expanded(
+                      child: Text(
+                        '${edition.versionNumber}. ${edition.title(settings.languageCode)}${tagText != null ? ' · $tagText' : ''}${isUsed ? (isPrimary ? (isThai ? ' [ใช้ในคำแปลรอง]' : ' [In secondary]') : (isThai ? ' [ใช้ในคำแปลหลัก]' : ' [In primary]')) : ''}',
+                        overflow: TextOverflow.ellipsis,
+                        style: GoogleFonts.notoSansThai(
+                          fontSize: 13,
+                          fontWeight: isUsed ? FontWeight.normal : FontWeight.w600,
+                          color: isUsed
+                              ? colorScheme.onSurfaceVariant.withValues(alpha: 0.5)
+                              : (isDownloaded ? colorScheme.onSurface : colorScheme.primary),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+            onChanged: (newEditionId) async {
+              if (newEditionId == null) return;
+              final edition =
+                  activeGroup.editions.firstWhere((e) => e.id == newEditionId);
+              await _selectEdition(
+                slot: slot,
+                edition: edition,
+                settings: settings,
+                transManager: transManager,
+              );
+            },
+          ),
+          if (activeEdition != null) ...[
+            const SizedBox(height: 8),
+            _buildEditionDetailsCard(
+              edition: activeEdition,
+              languageCode: settings.languageCode,
+              colorScheme: colorScheme,
+            ),
+          ],
+        ],
+
+        // SINGLE EDITION INFO
+        if (!isNoneSelected &&
+            activeGroup != null &&
+            activeGroup.editions.length == 1 &&
+            activeEdition != null) ...[
+          const SizedBox(height: 8),
+          _buildSingleEditionCard(
+            edition: activeEdition,
+            languageCode: settings.languageCode,
+            colorScheme: colorScheme,
+          ),
+        ],
+
+        // DISABLED NOTICE
+        if (isNoneSelected && !isPrimary) ...[
+          const SizedBox(height: 6),
+          Text(
+            isThai
+                ? 'เลือกภาษาด้านบนเพื่อเปิดคำแปลภาษาที่สองสำหรับอ่านเทียบ'
+                : 'Select a language above to read side-by-side with secondary translation.',
+            style: GoogleFonts.notoSansThai(
+              fontSize: 11,
+              fontStyle: FontStyle.italic,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Future<void> _selectEdition({
+    required String slot,
+    required TranslationEdition edition,
+    required SettingsProvider settings,
+    required TranslationManagerProvider transManager,
+  }) async {
+    final editionId = edition.id;
+    final isDownloaded = transManager.isDownloaded(editionId) ||
+        (edition.apiId != null && transManager.isDownloaded(edition.apiId));
+
+    if (isDownloaded) {
+      settings.updateTranslationSlot(slot, editionId);
+      transManager.loadTranslationIntoCache(editionId);
+    } else {
+      final opt = TranslationConstants.getKnownOption(editionId) ??
+          AppTranslationOption(
+            id: editionId,
+            apiId: edition.apiId,
+            name: edition.titleEn,
+            nameTh: edition.titleTh,
+            author: edition.authorEn,
+            language: edition.languageId,
+          );
+      await _downloadTranslation(opt);
+      settings.updateTranslationSlot(slot, editionId);
+    }
+  }
+
+  Widget _buildEditionDetailsCard({
+    required TranslationEdition edition,
+    required String languageCode,
+    required ColorScheme colorScheme,
+  }) {
+    final tagText = edition.tag(languageCode);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  edition.title(languageCode),
+                  style: GoogleFonts.notoSansThai(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  edition.subtitle(languageCode),
+                  style: GoogleFonts.notoSansThai(
+                    fontSize: 11,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          if (tagText != null) ...[
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+              decoration: BoxDecoration(
+                color: colorScheme.secondaryContainer.withValues(alpha: 0.7),
+                borderRadius: BorderRadius.circular(6),
+              ),
+              child: Text(
+                tagText,
+                style: GoogleFonts.notoSansThai(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSecondaryContainer,
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSingleEditionCard({
+    required TranslationEdition edition,
+    required String languageCode,
+    required ColorScheme colorScheme,
+  }) {
+    final isThai = languageCode == 'th';
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  edition.title(languageCode),
+                  style: GoogleFonts.notoSansThai(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  edition.subtitle(languageCode),
+                  style: GoogleFonts.notoSansThai(
+                    fontSize: 11,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(width: 8),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+            decoration: BoxDecoration(
+              color: colorScheme.primaryContainer.withValues(alpha: 0.7),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Text(
+              isThai ? 'ฉบับมาตรฐาน' : 'Standard',
+              style: GoogleFonts.notoSansThai(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onPrimaryContainer,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  InputDecoration _inputDecoration(ColorScheme colorScheme) {
+    return InputDecoration(
+      filled: true,
+      fillColor: colorScheme.surface,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+        ),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: colorScheme.primary,
+          width: 1.5,
+        ),
+      ),
+    );
+  }
+
   Widget _sectionTitle(ColorScheme colorScheme, String title) {
     return Text(
       title,
@@ -278,7 +745,7 @@ class _TranslationManagerSectionState extends State<TranslationManagerSection> {
   }
 
   Widget _buildTranslationRow({
-    required _TranslationOption option,
+    required AppTranslationOption option,
     required SettingsProvider settings,
     required ColorScheme colorScheme,
     bool isDownloaded = true,
@@ -427,7 +894,7 @@ class _TranslationManagerSectionState extends State<TranslationManagerSection> {
     settings.updateTranslationSlot('secondary', null);
   }
 
-  Future<void> _downloadTranslation(_TranslationOption option) async {
+  Future<void> _downloadTranslation(AppTranslationOption option) async {
     final id = option.apiId;
     if (id == null) return;
 
@@ -501,7 +968,7 @@ class _TranslationManagerSectionState extends State<TranslationManagerSection> {
     ).showSnackBar(const SnackBar(content: Text('Translation deleted.')));
   }
 
-  List<_TranslationOption> _downloadedOptions(
+  List<AppTranslationOption> _downloadedOptions(
     TranslationManagerProvider transManager,
   ) {
     return transManager.downloadedTranslations.map((item) {
@@ -511,60 +978,25 @@ class _TranslationManagerSectionState extends State<TranslationManagerSection> {
           .firstOrNull;
       if (known != null) return known;
 
-      return _TranslationOption(
+      return AppTranslationOption(
         id: id,
         apiId: int.tryParse(id),
         name: item['name']?.toString() ?? 'Downloaded translation',
         author: item['author_name']?.toString() ?? '',
         language: item['language_name']?.toString() ?? '',
       );
-    }).toList()..sort(_compareTranslationOptions);
+    }).toList()..sort(TranslationConstants.compareOptions);
   }
 
-  List<_TranslationOption> _allAvailableOptions(TranslationManagerProvider transManager) {
-    final downloaded = _downloadedOptions(transManager);
-
-    final builtIns = <_TranslationOption>[];
-    builtIns.add(_builtInThaiV3);
-
-    final all = <String, _TranslationOption>{};
-    for (final opt in builtIns) {
-      all[opt.id] = opt;
-    }
-    for (final opt in downloaded) {
-      all[opt.id] = opt;
-    }
-
-    final result = all.values.toList();
-    result.sort(_compareTranslationOptions);
-    return result;
-  }
-
-  Map<String, List<_TranslationOption>> _groupedAvailableTranslations() {
-    final sorted = [..._availableTranslations]
-      ..sort(_compareTranslationOptions);
-    final groups = <String, List<_TranslationOption>>{};
+  Map<String, List<AppTranslationOption>> _groupedAvailableTranslations() {
+    final sorted = [
+      ..._availableTranslations,
+    ]..sort(TranslationConstants.compareOptions);
+    final groups = <String, List<AppTranslationOption>>{};
     for (final option in sorted) {
       groups.putIfAbsent(option.language, () => []).add(option);
     }
     return groups;
-  }
-
-  int _compareTranslationOptions(_TranslationOption a, _TranslationOption b) {
-    final languageCompare = _languageSortOrder(
-      a.language,
-    ).compareTo(_languageSortOrder(b.language));
-    if (languageCompare != 0) return languageCompare;
-    return a.name.compareTo(b.name);
-  }
-
-  int _languageSortOrder(String language) {
-    return switch (language.toLowerCase()) {
-      'thai' => 0,
-      'english' => 1,
-      'malay' => 2,
-      _ => 99,
-    };
   }
 
   String _languageLabel(String language, String appLanguage) {
@@ -605,33 +1037,8 @@ class _TranslationManagerSectionState extends State<TranslationManagerSection> {
   }
 }
 
-class _TranslationOption {
-  final String id;
-  final int? apiId;
-  final String name;
-  final String? nameTh;
-  final String author;
-  final String language;
-
-  const _TranslationOption({
-    required this.id,
-    required this.apiId,
-    required this.name,
-    this.nameTh,
-    required this.author,
-    required this.language,
-  });
-
-  String displayName(String appLanguage) {
-    if (appLanguage == 'th' && nameTh != null && nameTh!.isNotEmpty) {
-      return nameTh!;
-    }
-    return name;
-  }
-}
-
 class _DownloadProgressOverlay extends StatefulWidget {
-  final _TranslationOption option;
+  final AppTranslationOption option;
   final ValueNotifier<double> progressNotifier;
   final BuildContext sectionContext;
   final VoidCallback onClose;
@@ -794,7 +1201,7 @@ class _DownloadProgressOverlayState extends State<_DownloadProgressOverlay> with
                     const SizedBox(height: 8),
                     if (isFinished) ...[
                       Text(
-                        'Translation is ready. Open Settings to activate it.',
+                        'Translation is ready to read.',
                         style: GoogleFonts.notoSansThai(
                           fontSize: 12,
                           color: colorScheme.onSurfaceVariant,
@@ -811,15 +1218,12 @@ class _DownloadProgressOverlayState extends State<_DownloadProgressOverlay> with
                           const SizedBox(width: 8),
                           FilledButton.icon(
                             onPressed: () {
-                              Scrollable.ensureVisible(
-                                widget.sectionContext,
-                                duration: const Duration(milliseconds: 300),
-                                curve: Curves.easeOutCubic,
-                              );
+                              final settings = widget.sectionContext.read<SettingsProvider>();
+                              settings.updateTranslationSlot('primary', widget.option.id);
                               widget.onClose();
                             },
-                            icon: const Icon(Icons.settings_rounded, size: 16),
-                            label: const Text('Open Settings'),
+                            icon: const Icon(Icons.check_rounded, size: 16),
+                            label: const Text('Activate Now'),
                           ),
                         ],
                       ),
@@ -840,7 +1244,7 @@ class _DownloadProgressOverlayState extends State<_DownloadProgressOverlay> with
                           const SizedBox(width: 12),
                           Text(
                             '$percent%',
-                            style: GoogleFonts.inter(
+                            style: GoogleFonts.notoSansThai(
                               fontSize: 12,
                               fontWeight: FontWeight.w700,
                               color: colorScheme.primary,
@@ -850,7 +1254,7 @@ class _DownloadProgressOverlayState extends State<_DownloadProgressOverlay> with
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Loading in the background...',
+                        settingsLanguage == 'th' ? 'กำลังดำเนินการในพื้นหลัง...' : 'Loading in the background...',
                         style: GoogleFonts.notoSansThai(
                           fontSize: 11,
                           color: colorScheme.onSurfaceVariant,
