@@ -67,6 +67,24 @@ class HtmlParser {
     workingText = workingText.replaceAll(RegExp(r'''</?(?:span|i|em|b|strong|p|small|div|font)(?:\s+[^>]*)?>''', caseSensitive: false), '');
     workingText = workingText.replaceAll(RegExp(r'''<br\s*/?>''', caseSensitive: false), ' ');
 
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final colorScheme = theme.colorScheme;
+    final fallbackTextColor = style.color ?? colorScheme.onSurface;
+
+    // Ensure linkColor has high contrast in dark mode.
+    // If a caller passes Theme.of(context).primaryColor (which defaults to dark grey in dark mode if unset)
+    // or any color with low luminance on dark surfaces, use colorScheme.primary or bright emerald.
+    Color effectiveLinkColor = linkColor;
+    if (isDark) {
+      if (effectiveLinkColor.computeLuminance() < 0.15 || effectiveLinkColor == theme.primaryColor) {
+        effectiveLinkColor = colorScheme.primary;
+      }
+      if (effectiveLinkColor.computeLuminance() < 0.15) {
+        effectiveLinkColor = const Color(0xFF529665);
+      }
+    }
+
     final List<TextSpan> spans = [];
 
     // Combined regex to find:
@@ -94,7 +112,7 @@ class HtmlParser {
             style: style.copyWith(
               fontSize: (style.fontSize ?? 14) * 0.75,
               fontWeight: FontWeight.w600,
-              color: (style.color ?? Colors.black).withValues(alpha: 0.65),
+              color: fallbackTextColor.withValues(alpha: 0.65),
             ),
           ),
         );
@@ -117,7 +135,7 @@ class HtmlParser {
         TextSpan(
           text: '[$fnId]',
           style: style.copyWith(
-            color: linkColor,
+            color: effectiveLinkColor,
             fontWeight: FontWeight.bold,
             fontSize: (style.fontSize ?? 14) * 0.75,
           ),
@@ -129,7 +147,7 @@ class HtmlParser {
                     fnId: fnId,
                     rawOrigId: rawOrigId,
                     footnoteEntry: footnoteEntry,
-                    textColor: style.color ?? Colors.black,
+                    textColor: fallbackTextColor,
                     translationId: translationId,
                   );
                 })
@@ -203,24 +221,30 @@ class HtmlParser {
       editionTitle = 'King Fahd Complex (ฉบับสมาคมนักเรียนเก่าอาหรับ)';
     }
 
-    final colorScheme = Theme.of(context).colorScheme;
+    final parentTheme = Theme.of(context);
+    final parentColorScheme = parentTheme.colorScheme;
 
     showModalBottomSheet(
       context: context,
-      backgroundColor: colorScheme.surface,
+      backgroundColor: parentColorScheme.surface,
       elevation: 0,
       isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       builder: (ctx) {
+        final modalTheme = Theme.of(ctx);
+        final modalColorScheme = modalTheme.colorScheme;
+        final isDark = modalTheme.brightness == Brightness.dark;
+        final footnoteTextColor = isDark ? const Color(0xFFF1F5F9) : modalColorScheme.onSurface;
+
         Widget content;
         if (offlineText != null && offlineText.isNotEmpty) {
           content = SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: Text(
               offlineText,
-              style: GoogleFonts.notoSansThai(fontSize: 15, height: 1.6, color: colorScheme.onSurface),
+              style: GoogleFonts.notoSansThai(fontSize: 15, height: 1.6, color: footnoteTextColor),
             ),
           );
         } else if (rawOrigId != null) {
@@ -230,7 +254,7 @@ class HtmlParser {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Padding(
                   padding: const EdgeInsets.all(32.0),
-                  child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: colorScheme.primary)),
+                  child: Center(child: CircularProgressIndicator(strokeWidth: 2, color: modalColorScheme.primary)),
                 );
               }
               if (snapshot.hasError || !snapshot.hasData) {
@@ -239,7 +263,7 @@ class HtmlParser {
                   child: Center(
                     child: Text(
                       isThai ? 'โหลดเชิงอรรถล้มเหลว' : 'Failed to load footnote.',
-                      style: GoogleFonts.notoSansThai(color: colorScheme.onSurfaceVariant),
+                      style: GoogleFonts.notoSansThai(color: modalColorScheme.onSurfaceVariant),
                     ),
                   ),
                 );
@@ -249,7 +273,7 @@ class HtmlParser {
                 padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
                 child: Text(
                   clean,
-                  style: GoogleFonts.notoSansThai(fontSize: 15, height: 1.6, color: colorScheme.onSurface),
+                  style: GoogleFonts.notoSansThai(fontSize: 15, height: 1.6, color: footnoteTextColor),
                 ),
               );
             },
@@ -260,7 +284,7 @@ class HtmlParser {
             child: Center(
               child: Text(
                 isThai ? 'ไม่พบข้อมูลเชิงอรรถ' : 'Footnote not found.',
-                style: GoogleFonts.notoSansThai(color: colorScheme.onSurfaceVariant),
+                style: GoogleFonts.notoSansThai(color: modalColorScheme.onSurfaceVariant),
               ),
             ),
           );
@@ -275,7 +299,7 @@ class HtmlParser {
                 width: 36,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: colorScheme.onSurfaceVariant.withValues(alpha: 0.4),
+                  color: modalColorScheme.onSurfaceVariant.withValues(alpha: 0.4),
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -294,7 +318,7 @@ class HtmlParser {
                             style: GoogleFonts.notoSansThai(
                               fontWeight: FontWeight.bold,
                               fontSize: 18,
-                              color: colorScheme.primary,
+                              color: modalColorScheme.primary,
                             ),
                           ),
                           const SizedBox(height: 2),
@@ -302,21 +326,21 @@ class HtmlParser {
                             editionTitle,
                             style: GoogleFonts.notoSansThai(
                               fontSize: 12,
-                              color: colorScheme.onSurfaceVariant,
+                              color: modalColorScheme.onSurfaceVariant,
                             ),
                           ),
                         ],
                       ),
                     ),
                     IconButton(
-                      icon: Icon(Icons.close_rounded, size: 20, color: colorScheme.onSurfaceVariant),
+                      icon: Icon(Icons.close_rounded, size: 20, color: modalColorScheme.onSurfaceVariant),
                       onPressed: () => Navigator.pop(ctx),
                     ),
                   ],
                 ),
               ),
               const SizedBox(height: 8),
-              Divider(height: 1, color: colorScheme.outlineVariant.withValues(alpha: 0.4)),
+              Divider(height: 1, color: modalColorScheme.outlineVariant.withValues(alpha: 0.4)),
               Flexible(child: content),
               const SizedBox(height: 16),
             ],

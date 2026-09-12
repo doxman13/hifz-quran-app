@@ -125,6 +125,7 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: isDark ? Brightness.dark : Brightness.light,
+      primaryColor: c.primary,
       scaffoldBackgroundColor: c.background,
       fontFamily: baseFontFamily,
       textTheme: textTheme,

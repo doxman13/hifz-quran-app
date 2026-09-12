@@ -26,6 +26,7 @@ import '../providers/thai_text_protection_provider.dart';
 import '../providers/mushaf_audio_provider.dart';
 import '../shared/shared.dart';
 import '../utils/html_parser.dart';
+import '../services/footnote_service.dart';
 import 'tadabbur_panel.dart';
 
 class VerseCardController extends ChangeNotifier {
@@ -164,6 +165,7 @@ class _VerseCardState extends State<VerseCard> {
   @override
   void initState() {
     super.initState();
+    FootnoteService().addListener(_onFootnoteLoaded);
     _communityNotesFuture = _tadabburRepository.fetchCommunityNotes(
       widget.verse.surahId,
       widget.verse.id,
@@ -265,8 +267,15 @@ class _VerseCardState extends State<VerseCard> {
 
   @override
   void dispose() {
+    FootnoteService().removeListener(_onFootnoteLoaded);
     _auditController.dispose();
     super.dispose();
+  }
+
+  void _onFootnoteLoaded() {
+    if (mounted) {
+      setState(() {});
+    }
   }
 
   void _openTadabburModal() {
@@ -1212,6 +1221,7 @@ class _VerseCardState extends State<VerseCard> {
         label: label,
         text: text,
         locale: locale,
+        translationId: translationId,
         labelFg: isDark ? Colors.blueGrey.shade500 : Colors.blueGrey.shade400,
         textStyle: GoogleFonts.notoSansThai(
           fontSize: settings.translationFontSize + (isPrimary ? 1.0 : -1.0),
@@ -1229,6 +1239,7 @@ class _VerseCardState extends State<VerseCard> {
     required Color labelFg,
     required TextStyle textStyle,
     Locale? locale,
+    String? translationId,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1242,7 +1253,9 @@ class _VerseCardState extends State<VerseCard> {
               context,
               text,
               textStyle,
-              Theme.of(context).primaryColor,
+              Theme.of(context).colorScheme.primary,
+              verseKey: '${widget.verse.surahId}:${widget.verse.id}',
+              translationId: translationId,
             ),
           ),
         ),
