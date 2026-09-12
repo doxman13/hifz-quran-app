@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
-class GundalTallyPainter extends CustomPainter {
+/// Custom painter that draws classical 5-stroke tally marks (||||/) for Takrar repetition counts.
+class TakrarTallyPainter extends CustomPainter {
   final int count;
   final Color color;
   final double strokeWidth;
 
-  GundalTallyPainter({
+  TakrarTallyPainter({
     required this.count,
     required this.color,
     this.strokeWidth = 3.0,
@@ -56,20 +57,21 @@ class GundalTallyPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant GundalTallyPainter oldDelegate) {
+  bool shouldRepaint(covariant TakrarTallyPainter oldDelegate) {
     return oldDelegate.count != count ||
         oldDelegate.color != color ||
         oldDelegate.strokeWidth != strokeWidth;
   }
 }
 
-class GundalTallyWidget extends StatelessWidget {
+/// Tally counter widget that displays counts as groups of 5 tally marks for Takrar repetition.
+class TakrarTallyWidget extends StatelessWidget {
   final int count;
   final Color? color;
   final double strokeWidth;
   final double height;
 
-  const GundalTallyWidget({
+  const TakrarTallyWidget({
     super.key,
     required this.count,
     this.color,
@@ -93,7 +95,7 @@ class GundalTallyWidget extends StatelessWidget {
 
     return CustomPaint(
       size: Size(calculatedWidth, height),
-      painter: GundalTallyPainter(
+      painter: TakrarTallyPainter(
         count: count,
         color: effectiveColor,
         strokeWidth: strokeWidth,
@@ -101,3 +103,7 @@ class GundalTallyWidget extends StatelessWidget {
     );
   }
 }
+
+// Backwards-compatible aliases
+typedef GundalTallyPainter = TakrarTallyPainter;
+typedef GundalTallyWidget = TakrarTallyWidget;

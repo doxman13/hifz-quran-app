@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import '../models/mushaf_models.dart';
 import '../services/tajweed_service.dart';
 import 'package:qcf_quran/qcf_quran.dart' as qcf;
+import 'medina_mushaf_pages.dart';
 
 class QuranFoundationConfig {
   static const liveContentBaseUrl =
@@ -186,11 +187,11 @@ class QuranFoundationRepository {
     if (mushafId == qcfPackageMushafId) {
       final List<MushafVerse> verses = [];
       try {
-        final pageItems = qcf.getPageData(safePage);
+        final pageItems = getMedinaMushafPageData(safePage);
         for (final item in pageItems) {
-          final int surah = item['surah'];
-          final int start = item['start'];
-          final int end = item['end'];
+          final int surah = item['surah']!;
+          final int start = item['start']!;
+          final int end = item['end']!;
           for (int v = start; v <= end; v++) {
             verses.add(MushafVerse(
               verseKey: '$surah:$v',
@@ -355,9 +356,9 @@ class QuranFoundationRepository {
     if (mushafTypeById(mushafId).pageCount == 604) {
       if (cacheSuffix.startsWith('surah:')) {
         final surahNumber = int.parse(cacheSuffix.substring(6));
-        final startPage = qcf.getPageNumber(surahNumber, 1);
+        final startPage = getMedinaMushafPageNumber(surahNumber, 1);
         final totalVerses = qcf.getVerseCount(surahNumber);
-        final endPage = qcf.getPageNumber(surahNumber, totalVerses);
+        final endPage = getMedinaMushafPageNumber(surahNumber, totalVerses);
         return MushafPageRange(startPage: startPage, endPage: endPage);
       } else if (cacheSuffix.startsWith('juz:')) {
         final juzNumber = int.parse(cacheSuffix.substring(4));
@@ -376,8 +377,8 @@ class QuranFoundationRepository {
           final fromVerse = int.parse(parts[1]);
           final toSurah = int.parse(parts[2]);
           final toVerse = int.parse(parts[3]);
-          final startPage = qcf.getPageNumber(fromSurah, fromVerse);
-          final endPage = qcf.getPageNumber(toSurah, toVerse);
+          final startPage = getMedinaMushafPageNumber(fromSurah, fromVerse);
+          final endPage = getMedinaMushafPageNumber(toSurah, toVerse);
           return MushafPageRange(startPage: startPage, endPage: endPage);
         }
       }

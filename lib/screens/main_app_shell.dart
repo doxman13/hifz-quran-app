@@ -16,8 +16,8 @@ import '../providers/settings_provider.dart';
 import 'browse_screen.dart';
 import 'hifz_landing_screen.dart';
 import 'hifz_mastery_list_screen.dart';
+import 'hifz_settings_screen.dart';
 import 'mushaf_reader_screen.dart';
-import 'settings_screen.dart';
 
 class MainAppShell extends StatefulWidget {
   final QuranRepository repository;
@@ -80,8 +80,8 @@ class _MainAppShellState extends State<MainAppShell> {
           HifzMasteryListScreen(
             quranRepository: widget.repository,
           ),
-          SettingsScreen(
-            repository: widget.repository,
+          const HifzSettingsScreen(
+            isEmbedded: true,
           ),
         ],
       ),

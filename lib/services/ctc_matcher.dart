@@ -21,6 +21,20 @@ class AlignmentResult {
   });
 }
 
+class VerseSearchResult {
+  final int surah;
+  final int ayah;
+  final double score;
+  final String text;
+
+  const VerseSearchResult({
+    required this.surah,
+    required this.ayah,
+    required this.score,
+    required this.text,
+  });
+}
+
 class CtcMatcher {
   final Map<String, List<int>> ctcTokens;
   final Map<int, String> vocab;
@@ -634,6 +648,8 @@ class CtcMatcher {
     required List<int> candidateTokens,
     String? candidateText,
     int windowAhead = 2,
+    int windowBehind = 1,
+    int minAyah = 1,
     int maxAyah = 286,
     double? recallThreshold,
     double? scoreThreshold,
@@ -681,7 +697,48 @@ class CtcMatcher {
       );
     }
 
-    // 2. Second priority: Check if user skipped ahead (e.g. expected + 1, expected + 2)
+    // 2. Second priority: Check if user repeated / resumed from the previous verse (isti'naf)
+    if (windowBehind > 0) {
+      final lowerLimit = math.max(minAyah, expectedAyah - windowBehind);
+      for (int prevAyah = expectedAyah - 1; prevAyah >= lowerLimit; prevAyah--) {
+        final (prevRecall, prevScore) = getAdaptiveThresholds(
+          surah,
+          prevAyah,
+          sensitivity: sensitivity,
+        );
+        final effectivePrevRecall = recallThreshold ?? prevRecall;
+        final effectivePrevScore = scoreThreshold ?? prevScore;
+
+        final prevAlign = evaluateAyahMatch(
+          surah,
+          prevAyah,
+          candidateTokens,
+          candidateText: text,
+          recallThreshold: effectivePrevRecall,
+          scoreThreshold: effectivePrevScore,
+          sensitivity: sensitivity,
+        );
+
+        if (prevAlign.recall >= effectivePrevRecall && prevAlign.score >= effectivePrevScore) {
+          return RecitationMatchResult(
+            surah: surah,
+            expectedAyah: expectedAyah,
+            detectedAyah: prevAyah,
+            confidence: prevAlign.score,
+            isSkip: false,
+            matchedTokens: candidateTokens.sublist(
+              0,
+              math.min(prevAlign.endIndex, candidateTokens.length),
+            ),
+            tokensConsumed: prevAlign.endIndex,
+            wordsConsumed: prevAlign.wordsConsumed,
+            decodedText: text,
+          );
+        }
+      }
+    }
+
+    // 3. Third priority: Check if user skipped ahead (e.g. expected + 1, expected + 2)
     final upperLimit = math.min(maxAyah, expectedAyah + windowAhead);
     for (int nextAyah = expectedAyah + 1; nextAyah <= upperLimit; nextAyah++) {
       final (skipRecall, skipScore) = getAdaptiveThresholds(
@@ -721,5 +778,74 @@ class CtcMatcher {
     }
 
     return null;
+  }
+
+  /// Searches the entire Quran for the best matching Ayahs for [candidateTokens].
+  /// Returns up to [limit] results sorted by confidence score (descending).
+  List<VerseSearchResult> searchVerses(
+    List<int> candidateTokens, {
+    int limit = 5,
+    double minScore = 0.35,
+  }) {
+    if (candidateTokens.isEmpty) return const [];
+
+    final candSet = candidateTokens.toSet();
+    final cLen = candidateTokens.length;
+    final results = <VerseSearchResult>[];
+
+    for (final entry in ctcTokens.entries) {
+      final keyParts = entry.key.split(':');
+      if (keyParts.length != 3 || keyParts[1] != keyParts[2]) continue;
+      final surah = int.tryParse(keyParts[0]);
+      final ayah = int.tryParse(keyParts[1]);
+      if (surah == null || ayah == null) continue;
+
+      final variants = getTargetVariants(surah, ayah);
+      if (variants.isEmpty) continue;
+
+      double bestScore = 0.0;
+      for (final target in variants) {
+        if (target.isEmpty) continue;
+
+        int intersection = 0;
+        for (final t in target) {
+          if (candSet.contains(t)) intersection++;
+        }
+        if (intersection == 0) continue;
+
+        final rough = (2.0 * intersection) / (cLen + target.length);
+        if (rough < minScore * 0.55) continue;
+
+        final lcs = longestCommonSubsequence(candidateTokens, target);
+        if (lcs == 0) continue;
+
+        final rec = lcs / target.length;
+        final prec = lcs / cLen;
+        final f1 = (rec + prec) > 0 ? (2.0 * rec * prec) / (rec + prec) : 0.0;
+        final phraseScore = (lcs / cLen) * 0.8 + (lcs / target.length) * 0.2;
+        final score = math.max(f1, phraseScore);
+
+        if (score > bestScore) {
+          bestScore = score;
+        }
+      }
+
+      if (bestScore >= minScore) {
+        final textVariants = getTargetTextVariants(surah, ayah);
+        final displayTxt = textVariants.isNotEmpty ? textVariants.first : '';
+        results.add(VerseSearchResult(
+          surah: surah,
+          ayah: ayah,
+          score: bestScore,
+          text: displayTxt,
+        ));
+      }
+    }
+
+    results.sort((a, b) => b.score.compareTo(a.score));
+    if (results.length > limit) {
+      return results.sublist(0, limit);
+    }
+    return results;
   }
 }

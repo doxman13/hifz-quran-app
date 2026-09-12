@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/ble_remote_provider.dart';
@@ -6,47 +7,71 @@ import '../providers/mushaf_audio_provider.dart';
 import '../providers/settings_provider.dart';
 import '../providers/translation_manager_provider.dart';
 import '../widgets/translation_download_dialog.dart';
+import '../widgets/translation_manager_section.dart';
 import '../shared/translation_constants.dart';
-import 'settings_screen.dart';
 
 class HifzSettingsScreen extends StatelessWidget {
-  const HifzSettingsScreen({super.key});
+  final bool isEmbedded;
+
+  const HifzSettingsScreen({
+    super.key,
+    this.isEmbedded = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     final settings = Provider.of<SettingsProvider>(context);
-    final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-
+    final isThai = settings.languageCode == 'th';
     final isBleSelected = settings.hifzInputMode == HifzInputMode.bleSmartRing;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Memorization Settings'),
+        automaticallyImplyLeading: !isEmbedded,
+        title: Text(
+          isThai ? 'การตั้งค่า' : 'Settings',
+          style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
       ),
       body: ListView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         children: [
-          Text(
-            'Input Mode',
-            style: textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: colorScheme.onSurface,
-            ),
+          // ── 1. Display & Language ──
+          _SectionTitle(
+            title: isThai ? 'การแสดงผลและภาษา' : 'Display & Language',
+            subtitle: isThai
+                ? 'โหมดมืด ภาษา และการเปิดหน้าจอ'
+                : 'Theme mode, app language, and screen wake settings.',
           ),
-          const SizedBox(height: 4),
-          Text(
-            'Choose how you advance through verses during memorization.',
-            style: textTheme.bodyMedium?.copyWith(
-              color: colorScheme.onSurfaceVariant,
-            ),
+          const SizedBox(height: 12),
+          const _DisplayLanguageSettingCard(),
+          const SizedBox(height: 28),
+
+          // ── 2. Memorization Controls / Input Mode ──
+          _SectionTitle(
+            title: isThai ? 'อุปกรณ์และการควบคุม' : 'Input & Remote Mode',
+            subtitle: isThai
+                ? 'เลือกวิธีเลื่อนอายะห์ขณะท่องจำ (ปุ่มในแอป รีโมท หรือแหวนสมาร์ต)'
+                : 'Choose how you advance through verses during memorization.',
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 12),
           _InputModeOptionCard(
-            title: 'Bluetooth Remote / Shutter',
-            subtitle:
-                'Use a Bluetooth shutter or remote to tap through verses. Volume keys are captured by the app for navigation.',
+            title: isThai ? 'ปุ่มนับในแอป (หน้าจอ)' : 'In-App Tally Button',
+            subtitle: isThai
+                ? 'ใช้ปุ่มนับที่ด้านล่างของหน้าจอเพื่อบันทึกและเลื่อนอายะห์ ไม่จำเป็นต้องใช้อุปกรณ์ภายนอก'
+                : 'Use the tally button at the bottom of the screen to manually advance each verse. No hardware needed.',
+            icon: Icons.touch_app_rounded,
+            value: HifzInputMode.inAppTally,
+            groupValue: settings.hifzInputMode,
+            onSelect: () => settings.setHifzInputMode(HifzInputMode.inAppTally),
+          ),
+          const SizedBox(height: 12),
+          _InputModeOptionCard(
+            title: isThai ? 'รีโมทบลูทูธ / ชัตเตอร์' : 'Bluetooth Remote / Shutter',
+            subtitle: isThai
+                ? 'ใช้ปุ่มชัตเตอร์หรือปุ่มปรับเสียงของรีโมทเลื่อนอายะห์ สะดวกเมื่อถือมือถือหรือวางไว้บนแท่น'
+                : 'Use a Bluetooth shutter or remote to tap through verses. Volume keys are captured for navigation.',
             icon: Icons.bluetooth_searching_rounded,
             value: HifzInputMode.bluetoothShutter,
             groupValue: settings.hifzInputMode,
@@ -54,9 +79,10 @@ class HifzSettingsScreen extends StatelessWidget {
           ),
           const SizedBox(height: 12),
           _InputModeOptionCard(
-            title: 'BLE Smart Ring',
-            subtitle:
-                'Connect to a BLE smart ring for hands-free verse advancement. Compatible with Smart Tasbih, Zikir Ring, Bluetooth Tasbih, iQibla Ring, etc.',
+            title: isThai ? 'แหวนบลูทูธอัจฉริยะ (BLE Smart Ring)' : 'BLE Smart Ring',
+            subtitle: isThai
+                ? 'เชื่อมต่อแหวน Smart Tasbih, Zikir Ring, iQibla เพื่อเลื่อนอายะห์แบบแฮนด์ฟรี'
+                : 'Connect to a BLE smart ring for hands-free verse advancement (Smart Tasbih, Zikir Ring, iQibla, etc.).',
             icon: Icons.watch_rounded,
             value: HifzInputMode.bleSmartRing,
             groupValue: settings.hifzInputMode,
@@ -66,48 +92,97 @@ class HifzSettingsScreen extends StatelessWidget {
             const SizedBox(height: 12),
             const BleDeviceManagementUI(),
           ],
+          const SizedBox(height: 28),
+
+          // ── 3. Voice Recitation Tracking ──
+          _SectionTitle(
+            title: isThai ? 'ตรวจจับเสียงอ่าน (AI Recitation)' : 'Voice Recitation Tracking',
+            subtitle: isThai
+                ? 'ระบบตรวจจับเสียงอ่านออฟไลน์บนเครื่อง ตรวจจับการอ่านข้ามอายะห์'
+                : 'On-device speech recognition to auto-advance and detect skipped verses.',
+          ),
           const SizedBox(height: 12),
-          _InputModeOptionCard(
-            title: 'In-App Tally Button',
-            subtitle:
-                'Use the tally button at the bottom of the reading page to manually mark each verse. No external hardware needed.',
-            icon: Icons.touch_app_rounded,
-            value: HifzInputMode.inAppTally,
-            groupValue: settings.hifzInputMode,
-            onSelect: () => settings.setHifzInputMode(HifzInputMode.inAppTally),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'Voice Recitation Tracking',
-            style: textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: colorScheme.onSurface,
-            ),
-          ),
-          const SizedBox(height: 8),
           const _VoiceRecitationSettingCard(),
-          const SizedBox(height: 24),
-          Text(
-            'Audio Control',
-            style: textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: colorScheme.onSurface,
-            ),
+          const SizedBox(height: 28),
+
+          // ── 4. Audio Playback & Volume ──
+          _SectionTitle(
+            title: isThai ? 'เสียงผู้อ่านและระดับเสียง' : 'Audio Playback',
+            subtitle: isThai
+                ? 'ปรับระดับเสียงของแอปโดยตรงเมื่อปุ่มเสียงของเครื่องถูกใช้เป็นชัตเตอร์'
+                : 'Adjust recitation volume directly in-app when hardware keys are used as shutters.',
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
           const _InAppVolumeControlCard(),
-          const SizedBox(height: 24),
-          Text(
-            'Translation Settings',
-            style: textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: colorScheme.onSurface,
-            ),
+          const SizedBox(height: 28),
+
+          // ── 5. Quran Text & Font Sizes ──
+          _SectionTitle(
+            title: isThai ? 'ตัวอักษรและขนาด' : 'Quran Text & Font Sizes',
+            subtitle: isThai
+                ? 'ปรับขนาดตัวอักษรอาหรับ คำแปล และการแสดงคำต่อคำ'
+                : 'Customize font sizes for Arabic, translation, and word-by-word display.',
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
+          const _QuranTextFontSettingCard(),
+          const SizedBox(height: 28),
+
+          // ── 6. Translations ──
+          _SectionTitle(
+            title: isThai ? 'คำแปลอัลกุรอาน' : 'Translations',
+            subtitle: isThai
+                ? 'เลือกคำแปลหลักที่ใช้ในโหมดแอบดูและรายการอายะห์'
+                : 'Select translation used during verse peek, reveal & list view.',
+          ),
+          const SizedBox(height: 12),
           const _TranslationSettingCard(),
+          const SizedBox(height: 28),
+
+          // ── 7. About App ──
+          _SectionTitle(
+            title: isThai ? 'เกี่ยวกับแอป' : 'About Hifz Quran',
+            subtitle: isThai
+                ? 'ข้อมูลแอปพลิเคชันสำหรับท่องจำอัลกุรอาน'
+                : 'Application information and version.',
+          ),
+          const SizedBox(height: 12),
+          const _AboutAppCard(),
+          const SizedBox(height: 24),
         ],
       ),
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  final String title;
+  final String subtitle;
+
+  const _SectionTitle({required this.title, required this.subtitle});
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.bold,
+            color: colorScheme.onSurface,
+          ),
+        ),
+        const SizedBox(height: 2),
+        Text(
+          subtitle,
+          style: textTheme.bodySmall?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
     );
   }
 }
@@ -508,6 +583,7 @@ class _InAppVolumeControlCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final isThai = Provider.of<SettingsProvider>(context).languageCode == 'th';
 
     return Consumer<MushafAudioProvider>(
       builder: (context, audioProvider, _) {
@@ -556,7 +632,7 @@ class _InAppVolumeControlCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Reciter Playback Volume',
+                          isThai ? 'ระดับเสียงผู้อ่านอัลกุรอาน' : 'Reciter Playback Volume',
                           style: textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                             color: colorScheme.onSurface,
@@ -564,7 +640,9 @@ class _InAppVolumeControlCard extends StatelessWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Adjust app audio volume directly since hardware keys advance verses in shutter mode.',
+                          isThai
+                              ? 'ปรับระดับเสียงของแอปโดยตรงเมื่อปุ่มเสียงของเครื่องถูกใช้เลื่อนอายะห์ในโหมดชัตเตอร์'
+                              : 'Adjust app audio volume directly since hardware keys advance verses in shutter mode.',
                           style: textTheme.bodySmall?.copyWith(
                             color: colorScheme.onSurfaceVariant,
                           ),
@@ -621,8 +699,473 @@ class _InAppVolumeControlCard extends StatelessWidget {
   }
 }
 
+class _DisplayLanguageSettingCard extends StatelessWidget {
+  const _DisplayLanguageSettingCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = Provider.of<SettingsProvider>(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final isThai = settings.languageCode == 'th';
+
+    return Container(
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLow.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+          width: 1.0,
+        ),
+      ),
+      child: Column(
+        children: [
+          // Dark Mode
+          SwitchListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            secondary: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: colorScheme.primary.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                settings.isDarkMode ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+                color: colorScheme.primary,
+                size: 20,
+              ),
+            ),
+            title: Text(
+              isThai ? 'โหมดมืด (Dark Mode)' : 'Dark Mode',
+              style: textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: colorScheme.onSurface,
+              ),
+            ),
+            subtitle: Text(
+              isThai
+                  ? 'ปรับธีมสีให้อ่านสบายตาในที่มืด'
+                  : 'Use a darker color scheme for night recitation',
+              style: textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+            value: settings.isDarkMode,
+            activeThumbColor: colorScheme.primary,
+            onChanged: (val) => settings.toggleDarkMode(val),
+          ),
+          Divider(
+            height: 1,
+            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+          ),
+          // Keep Screen Awake
+          SwitchListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+            secondary: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: colorScheme.primary.withValues(alpha: 0.12),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.screen_lock_portrait_rounded,
+                color: colorScheme.primary,
+                size: 20,
+              ),
+            ),
+            title: Text(
+              isThai ? 'เปิดหน้าจอค้างไว้' : 'Keep Screen Awake',
+              style: textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: colorScheme.onSurface,
+              ),
+            ),
+            subtitle: Text(
+              isThai
+                  ? 'ป้องกันหน้าจอดับขณะท่องจำหรือทบทวน'
+                  : 'Prevent screen from turning off during memorization',
+              style: textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+            value: settings.keepAwake,
+            activeThumbColor: colorScheme.primary,
+            onChanged: (val) => settings.toggleKeepAwake(val),
+          ),
+          Divider(
+            height: 1,
+            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+          ),
+          // App Language
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary.withValues(alpha: 0.12),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.language_rounded,
+                    color: colorScheme.primary,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        isThai ? 'ภาษาของแอป' : 'App Language',
+                        style: textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        isThai ? 'เลือกภาษาเมนูและข้อความ' : 'Choose interface language',
+                        style: textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(width: 8),
+                DropdownButton<String>(
+                  value: settings.languageCode,
+                  dropdownColor: colorScheme.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(12),
+                  underline: const SizedBox.shrink(),
+                  items: const [
+                    DropdownMenuItem(
+                      value: 'en',
+                      child: Text('English'),
+                    ),
+                    DropdownMenuItem(
+                      value: 'th',
+                      child: Text('ภาษาไทย'),
+                    ),
+                  ],
+                  onChanged: (val) {
+                    if (val != null) settings.setLanguageCode(val);
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _QuranTextFontSettingCard extends StatelessWidget {
+  const _QuranTextFontSettingCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final settings = Provider.of<SettingsProvider>(context);
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final isThai = settings.languageCode == 'th';
+
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLow.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+          width: 1.0,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Arabic Font Size Header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary.withValues(alpha: 0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.format_size_rounded,
+                      color: colorScheme.primary,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    isThai ? 'ขนาดตัวอักษรอาหรับ' : 'Arabic Font Size',
+                    style: textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${settings.arabicFontSize.round()} px',
+                  style: textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.text_fields_rounded, size: 16, color: colorScheme.onSurfaceVariant),
+              Expanded(
+                child: Slider(
+                  value: settings.arabicFontSize.clamp(20.0, 48.0),
+                  min: 20.0,
+                  max: 48.0,
+                  onChanged: (val) => settings.setArabicFontSize(val),
+                  activeColor: colorScheme.primary,
+                ),
+              ),
+              Icon(Icons.text_fields_rounded, size: 24, color: colorScheme.onSurfaceVariant),
+            ],
+          ),
+          // Arabic live preview box
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: colorScheme.outlineVariant.withValues(alpha: 0.25),
+              ),
+            ),
+            child: Text(
+              'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+              textAlign: TextAlign.center,
+              textDirection: TextDirection.rtl,
+              style: TextStyle(
+                fontFamily: 'UthmanicHafs',
+                fontSize: settings.arabicFontSize,
+                color: colorScheme.onSurface,
+                height: 1.8,
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Divider(
+            height: 1,
+            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+          ),
+          const SizedBox(height: 16),
+          // Translation Font Size Header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary.withValues(alpha: 0.12),
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.translate_rounded,
+                      color: colorScheme.primary,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    isThai ? 'ขนาดตัวอักษรคำแปล' : 'Translation Font Size',
+                    style: textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer.withValues(alpha: 0.5),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${settings.translationFontSize.round()} px',
+                  style: textTheme.labelLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Icon(Icons.text_fields_rounded, size: 16, color: colorScheme.onSurfaceVariant),
+              Expanded(
+                child: Slider(
+                  value: settings.translationFontSize.clamp(12.0, 30.0),
+                  min: 12.0,
+                  max: 30.0,
+                  onChanged: (val) => settings.setTranslationFontSize(val),
+                  activeColor: colorScheme.primary,
+                ),
+              ),
+              Icon(Icons.text_fields_rounded, size: 22, color: colorScheme.onSurfaceVariant),
+            ],
+          ),
+          // Translation live preview box
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            decoration: BoxDecoration(
+              color: colorScheme.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: colorScheme.outlineVariant.withValues(alpha: 0.25),
+              ),
+            ),
+            child: Text(
+              isThai
+                  ? 'ด้วยพระนามของอัลลอฮ์ ผู้ทรงกรุณาปรานี ผู้ทรงเมตตาเสมอ'
+                  : 'In the name of Allah, the Entirely Merciful, the Especially Merciful',
+              textAlign: TextAlign.center,
+              style: GoogleFonts.notoSansThai(
+                fontSize: settings.translationFontSize,
+                color: colorScheme.onSurface,
+                height: 1.4,
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          Divider(
+            height: 1,
+            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+          ),
+          const SizedBox(height: 8),
+          // Word-by-Word Switch
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(
+              isThai ? 'คำต่อคำ (Word-by-Word) ในมุมมองรายการ' : 'Word-by-Word (WBW) in List View',
+              style: textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.w600,
+                color: colorScheme.onSurface,
+              ),
+            ),
+            subtitle: Text(
+              isThai
+                  ? 'แสดงคำแปลแยกทีละคำศัพท์ขณะเปิดดูรายการอายะห์'
+                  : 'Show word-level breakdown and translations during memorization.',
+              style: textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+            value: settings.showWordByWord,
+            activeThumbColor: colorScheme.primary,
+            onChanged: (val) => settings.toggleShowWordByWord(val),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _TranslationSettingCard extends StatelessWidget {
   const _TranslationSettingCard();
+
+  void _openTranslationManagerModal(BuildContext context, SettingsProvider settings) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
+      builder: (ctx) {
+        final colorScheme = Theme.of(ctx).colorScheme;
+        final isThai = settings.languageCode == 'th';
+        return DraggableScrollableSheet(
+          initialChildSize: 0.8,
+          minChildSize: 0.5,
+          maxChildSize: 0.95,
+          expand: false,
+          builder: (sheetCtx, scrollController) {
+            return SafeArea(
+              child: Column(
+                children: [
+                  const SizedBox(height: 12),
+                  Center(
+                    child: Container(
+                      width: 40,
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: colorScheme.outlineVariant,
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                    child: Row(
+                      children: [
+                        Text(
+                          isThai ? 'จัดการชุดคำแปล' : 'Manage Translations',
+                          style: Theme.of(ctx).textTheme.titleLarge?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const Spacer(),
+                        IconButton(
+                          icon: const Icon(Icons.close_rounded),
+                          onPressed: () => Navigator.pop(ctx),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Divider(
+                    height: 1,
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      controller: scrollController,
+                      padding: const EdgeInsets.all(16),
+                      child: TranslationManagerSection(
+                        colors: settings.getAppColors(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -630,6 +1173,7 @@ class _TranslationSettingCard extends StatelessWidget {
     final transManager = Provider.of<TranslationManagerProvider>(context);
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
+    final isThai = settings.languageCode == 'th';
 
     final translationList = TranslationConstants.getAllOptions(
       downloadedTranslations: transManager.downloadedTranslations,
@@ -672,7 +1216,7 @@ class _TranslationSettingCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Translation Language',
+                      isThai ? 'ภาษาของคำแปลหลัก' : 'Translation Language',
                       style: textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                         color: colorScheme.onSurface,
@@ -680,7 +1224,9 @@ class _TranslationSettingCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 2),
                     Text(
-                      'Select translation used during verse peek, reveal & list view.',
+                      isThai
+                          ? 'เลือกคำแปลที่ใช้ขณะแอบดูอายะห์และแสดงในรายการ'
+                          : 'Select translation used during verse peek, reveal & list view.',
                       style: textTheme.bodySmall?.copyWith(
                         color: colorScheme.onSurfaceVariant,
                       ),
@@ -741,7 +1287,7 @@ class _TranslationSettingCard extends StatelessWidget {
               DropdownMenuItem<String>(
                 value: 'download_more',
                 child: Text(
-                  '+ ดาวน์โหลดเพิ่มเติม... / Download more...',
+                  isThai ? '+ จัดการชุดคำแปลเพิ่มเติม...' : '+ Manage & Download More...',
                   style: textTheme.bodyMedium?.copyWith(
                     fontWeight: FontWeight.w700,
                     color: colorScheme.primary,
@@ -752,12 +1298,7 @@ class _TranslationSettingCard extends StatelessWidget {
             onChanged: (val) async {
               if (val == null) return;
               if (val == 'download_more') {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => const SettingsScreen(),
-                  ),
-                );
+                _openTranslationManagerModal(context, settings);
                 return;
               }
               final opt = TranslationConstants.getKnownOption(val) ??
@@ -777,65 +1318,89 @@ class _TranslationSettingCard extends StatelessWidget {
               }
             },
           ),
-          const SizedBox(height: 14),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Translation Font Size',
-                style: textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w500,
-                  color: colorScheme.onSurface,
-                ),
-              ),
-              Text(
-                '${settings.translationFontSize.round()} px',
-                style: textTheme.labelLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.primary,
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: [
-              Icon(Icons.text_fields_rounded, size: 16, color: colorScheme.onSurfaceVariant),
-              Expanded(
-                child: Slider(
-                  value: settings.translationFontSize,
-                  min: 12.0,
-                  max: 28.0,
-                  onChanged: (val) => settings.setTranslationFontSize(val),
-                  activeColor: colorScheme.primary,
-                ),
-              ),
-              Icon(Icons.text_fields_rounded, size: 22, color: colorScheme.onSurfaceVariant),
-            ],
-          ),
           const SizedBox(height: 12),
-          Divider(
-            height: 1,
-            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: () => _openTranslationManagerModal(context, settings),
+              icon: const Icon(Icons.download_for_offline_outlined, size: 18),
+              label: Text(
+                isThai
+                    ? 'จัดการและดาวน์โหลดชุดคำแปล'
+                    : 'Manage & Download Translations',
+              ),
+              style: OutlinedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                side: BorderSide(
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.4),
+                ),
+              ),
+            ),
           ),
-          const SizedBox(height: 8),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            title: Text(
-              'Word-by-Word (WBW) in List View',
-              style: textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: colorScheme.onSurface,
-              ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AboutAppCard extends StatelessWidget {
+  const _AboutAppCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final isThai = context.watch<SettingsProvider>().languageCode == 'th';
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLow.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+          width: 1.0,
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(16),
             ),
-            subtitle: Text(
-              'Show word-level breakdown and translations during memorization.',
-              style: textTheme.bodySmall?.copyWith(
-                color: colorScheme.onSurfaceVariant,
-              ),
+            child: Icon(
+              Icons.psychology_rounded,
+              color: colorScheme.primary,
+              size: 28,
             ),
-            value: settings.showWordByWord,
-            activeThumbColor: colorScheme.primary,
-            onChanged: (val) => settings.toggleShowWordByWord(val),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isThai ? 'ฮิฟซ์อัลกุรอาน (Hifz Quran)' : 'Hifz Quran App',
+                  style: textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  isThai
+                      ? 'แอปเฉพาะทางสำหรับท่องจำและทบทวนอัลกุรอาน · เวอร์ชัน 1.0.0'
+                      : 'Quran Memorization & Review · v1.0.0',
+                  style: textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

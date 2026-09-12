@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:qcf_quran/qcf_quran.dart' as qcf;
+import '../data/medina_mushaf_pages.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/mushaf_models.dart';
@@ -26,6 +27,7 @@ import 'hifz_review_setup_screen.dart';
 import '../providers/ble_remote_provider.dart';
 import 'hifz_mastery_list_screen.dart';
 import 'hifz_settings_screen.dart';
+import 'hifz_guide_screen.dart';
 
 import 'package:wakelock_plus/wakelock_plus.dart';
 import '../providers/translation_manager_provider.dart';
@@ -37,6 +39,9 @@ import '../shared/quran_translation_helper.dart';
 import '../utils/html_parser.dart';
 import '../providers/recitation_tracker_provider.dart';
 import '../widgets/voice_recitation_banner.dart';
+import '../models/hifz_verse_chunk.dart';
+import '../services/waqf_chunker_service.dart';
+import '../widgets/mushaf_page_skeleton.dart';
 
 class HifzMemorizeScreen extends StatefulWidget {
   final QuranRepository quranRepository;
@@ -51,6 +56,7 @@ class HifzMemorizeScreen extends StatefulWidget {
   final ReviewGranularity? reviewGranularity;
   final ReviewTargetParams? reviewTargetParams;
   final ActiveSessionSnapshot? resumeSessionSnapshot;
+  final bool chunkLongVerses;
 
   const HifzMemorizeScreen({
     super.key,
@@ -66,6 +72,7 @@ class HifzMemorizeScreen extends StatefulWidget {
     this.reviewGranularity,
     this.reviewTargetParams,
     this.resumeSessionSnapshot,
+    this.chunkLongVerses = true,
   });
 
   @override
@@ -79,6 +86,8 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
   bool _isBleListenerAttached = false;
   DateTime? _lastShutterClickTime;
   late HifzSessionProvider _hifzProvider;
+  bool _chunkLongVerses = true;
+  Map<int, List<HifzVerseChunk>> _verseChunksMap = {};
   bool _isMushafView = true;
   bool _isTajweedMushaf = false;
   bool _showWbw = false;
@@ -153,7 +162,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
             } else {
               final surah = step.surahNumber ?? step.primaryIndex;
               final verse = step.verseStart ?? 1;
-              basePageForStep = qcf.getPageNumber(surah, verse);
+              basePageForStep = getMedinaMushafPageNumber(surah, verse);
             }
             final offset = clampedPage - basePageForStep;
             _reviewPageOffset = offset;
@@ -252,7 +261,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
       if (step.verseStart != null) {
         return (step.surahNumber ?? surahNumber, step.verseStart!);
       }
-      final pageData = qcf.getPageData(_currentPage);
+      final pageData = getMedinaMushafPageData(_currentPage);
       if (pageData.isNotEmpty) {
         final firstItem = pageData.first;
         return (firstItem['surah'] as int, firstItem['start'] as int);
@@ -272,7 +281,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
       _scrollToVerse(surah, verse, animate: true);
     } else {
       final (surah, verse) = _getLatestReadingVerse();
-      final targetPage = qcf.getPageNumber(surah, verse);
+      final targetPage = getMedinaMushafPageNumber(surah, verse);
       if (targetPage != _currentPage) {
         _animateToMushafPage(targetPage, animate: false);
       }
@@ -280,7 +289,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
   }
 
   void _handleRoundRestartOrStepChange(int surah, int startAyah) {
-    final targetPage = qcf.getPageNumber(surah, startAyah);
+    final targetPage = getMedinaMushafPageNumber(surah, startAyah);
     if (_isMushafView) {
       if (targetPage != _currentPage) {
         _animateToMushafPage(targetPage, animate: true);
@@ -316,7 +325,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
     final verse = int.tryParse(parts[1]);
     if (surah == null || verse == null) return;
 
-    final targetPage = qcf.getPageNumber(surah, verse);
+    final targetPage = getMedinaMushafPageNumber(surah, verse);
     if (_isMushafView) {
       if (targetPage != _currentPage) {
         _animateToMushafPage(targetPage, animate: true);
@@ -327,6 +336,10 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
   }
 
   bool _isVerseHidden(int verseNum, HifzTask? currentTask) {
+    if (_hifzProvider.isPeekActive) {
+      return false;
+    }
+
     final isReview = _hifzProvider.sessionType == HifzSessionType.review;
     if (isReview) {
       // In review mode: only hidden when in hidden review phase
@@ -366,12 +379,100 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
     return !_voiceRevealedVerses.contains(verseNum);
   }
 
+  bool _isWordHidden(int verseNum, int wordPosition, HifzTask? currentTask) {
+    if (_hifzProvider.isPeekActive) {
+      return false;
+    }
+
+    if (currentTask == null) return false;
+
+    // Hint: reveal 1st word only
+    if (_hintedVerse != null && verseNum == _hintedVerse) {
+      return wordPosition != 1;
+    }
+
+    if (verseNum < _selectedRepeatStart || verseNum > _selectedEndVerse) {
+      return false;
+    }
+
+    final targetVerse = currentTask.verseNumbers.last;
+    if (verseNum > targetVerse) {
+      // Future verses in progressive memorization are completely hidden
+      return true;
+    }
+
+    if (verseNum < targetVerse) {
+      if (currentTask.type == TaskType.cumulativeLink) {
+        if (!_hifzProvider.isTargetHidden) return false;
+        return !_voiceRevealedVerses.contains(verseNum);
+      } else {
+        return false;
+      }
+    }
+
+    // verseNum == targetVerse (the active target verse)
+    if (!currentTask.isChunk) {
+      if (!_hifzProvider.isTargetHidden) return false;
+      return !_voiceRevealedVerses.contains(verseNum);
+    }
+
+    // It's a sub-verse chunk task!
+    final startWord = currentTask.startWordPosition ?? 1;
+    final endWord = currentTask.endWordPosition ?? 999;
+
+    // Words beyond this chunk in the verse are future unreached words
+    if (wordPosition > endWord) {
+      return true;
+    }
+
+    // Words before this chunk in the same verse:
+    // Keep them visible (dimmed by the rendering layer) so the user sees context
+    // of already-memorized portions, matching how earlier verses stay visible.
+    if (wordPosition < startWord) {
+      return false;
+    }
+
+    // Inside current chunk [startWord..endWord]
+    if (!_hifzProvider.isTargetHidden) {
+      return false;
+    }
+
+    return !_voiceRevealedVerses.contains(verseNum);
+  }
+
+  bool _isWordHighlighted(int verseNum, int wordPosition, HifzTask? currentTask) {
+    if (currentTask == null) return false;
+    if (!currentTask.verseNumbers.contains(verseNum)) return false;
+
+    if (!currentTask.isChunk) {
+      return true;
+    }
+
+    final startWord = currentTask.startWordPosition ?? 1;
+    final endWord = currentTask.endWordPosition ?? 999;
+
+    return wordPosition >= startWord && wordPosition <= endWord;
+  }
+
+  bool _isWordDimmed(int verseNum, int wordPosition, HifzTask? currentTask) {
+    if (currentTask == null) return false;
+    if (!currentTask.verseNumbers.contains(verseNum)) return false;
+
+    if (!currentTask.isChunk) {
+      return false;
+    }
+
+    final startWord = currentTask.startWordPosition ?? 1;
+    return wordPosition < startWord;
+  }
+
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _currentPage = widget.initialPage;
     _selectedPage = widget.initialPage;
+    _chunkLongVerses = widget.chunkLongVerses;
 
     _chromeAnimController = AnimationController(
       vsync: this,
@@ -417,6 +518,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
               startVerse: snap.nvStartVerse ?? widget.startVerse,
               endVerse: snap.nvEndVerse ?? widget.endVerse,
               sessionId: snap.sessionId,
+              chunkLongVerses: _chunkLongVerses,
             )
           : HifzSessionProvider.review(
               granularity: snap.reviewGranularity ?? ReviewGranularity.bySurah,
@@ -433,7 +535,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
         _selectedStartVerse = snap.nvStartVerse ?? widget.startVerse;
         _selectedEndVerse = snap.nvEndVerse ?? widget.endVerse;
         final targetSurah = snap.nvSurahNumber ?? widget.surahNumber;
-        _currentPage = qcf.getPageNumber(targetSurah, _selectedStartVerse);
+        _currentPage = getMedinaMushafPageNumber(targetSurah, _selectedStartVerse);
         _selectedPage = _currentPage;
       } else {
         _isSurahMode = true;
@@ -444,7 +546,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
           } else {
             final surah = step.surahNumber ?? step.primaryIndex;
             final verse = step.verseStart ?? 1;
-            _currentPage = qcf.getPageNumber(surah, verse);
+            _currentPage = getMedinaMushafPageNumber(surah, verse);
           }
         } else {
           _currentPage = widget.initialPage;
@@ -460,7 +562,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
       _selectedStartVerse = widget.startVerse;
       _selectedEndVerse = widget.endVerse;
       _currentPage = _isSurahMode
-          ? qcf.getPageNumber(widget.surahNumber, _selectedStartVerse)
+          ? getMedinaMushafPageNumber(widget.surahNumber, _selectedStartVerse)
           : widget.initialPage;
       _selectedPage = _currentPage;
       _hifzProvider = HifzSessionProvider(
@@ -468,6 +570,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
         repeatStart: _selectedRepeatStart,
         startVerse: _selectedStartVerse,
         endVerse: _selectedEndVerse,
+        chunkLongVerses: _chunkLongVerses,
       );
     } else if (widget.initialSessionType == HifzSessionType.review) {
       _selectedRepeatStart = 1;
@@ -484,29 +587,70 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
         } else {
           final surah = step.surahNumber ?? step.primaryIndex;
           final verse = step.verseStart ?? 1;
-          _currentPage = qcf.getPageNumber(surah, verse);
+          _currentPage = getMedinaMushafPageNumber(surah, verse);
         }
       } else {
         _currentPage = widget.initialPage;
       }
       _selectedPage = _currentPage;
     } else {
+      _isSurahMode = widget.isSurahMode ?? true;
       _selectedRepeatStart = widget.repeatStart ?? widget.startVerse;
       _selectedStartVerse = widget.startVerse;
       _selectedEndVerse = widget.endVerse;
-      _currentPage = widget.initialPage;
-      _selectedPage = widget.initialPage;
+      _currentPage = _isSurahMode
+          ? getMedinaMushafPageNumber(widget.surahNumber, _selectedStartVerse)
+          : widget.initialPage;
+      _selectedPage = _currentPage;
       _hifzProvider = HifzSessionProvider(
         surahNumber: widget.surahNumber,
         repeatStart: _selectedRepeatStart,
         startVerse: _selectedStartVerse,
         endVerse: _selectedEndVerse,
+        chunkLongVerses: _chunkLongVerses,
       );
     }
 
     _newVersesPageController = PageController(initialPage: (_currentPage - 1).clamp(0, 603));
     _reviewPageController = PageController(initialPage: 10000 + _reviewPageOffset);
 
+    if (widget.initialSessionType != HifzSessionType.review) {
+      _loadVerseChunks();
+    }
+  }
+
+  Future<void> _loadVerseChunks({bool regenerate = true}) async {
+    if (!_chunkLongVerses) {
+      if (mounted) {
+        setState(() {
+          _verseChunksMap = {};
+        });
+      }
+      if (regenerate) {
+        _hifzProvider.setVerseChunks({}, enable: false);
+      }
+      return;
+    }
+    final surah = _hifzProvider.surahNumber;
+    final start = _selectedStartVerse;
+    final end = _selectedEndVerse;
+    try {
+      final chunksMap = await WaqfChunkerService.getChunksForVerseRange(
+        surah: surah,
+        startVerse: start,
+        endVerse: end,
+        enabled: true,
+      );
+      if (!mounted) return;
+      setState(() {
+        _verseChunksMap = chunksMap;
+      });
+      if (regenerate) {
+        _hifzProvider.setVerseChunks(chunksMap, enable: true);
+      }
+    } catch (e) {
+      debugPrint('Error loading verse chunks: $e');
+    }
   }
 
   void _applyInputModeSettings() {
@@ -622,9 +766,21 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
       totalNeeded = _selectedEndVerse - _selectedRepeatStart + 1;
     }
 
-    _voiceRevealedVerses.clear();
-    _lastSkippedVerse = null;
-    _hintedVerse = null;
+    final bool isMidSessionResume = _voiceRevealedVerses.isNotEmpty &&
+        _voiceRevealedVerses.length < totalNeeded;
+
+    final int initialExpectedAyah;
+    if (isMidSessionResume) {
+      final lastMatched = _voiceRevealedVerses.reduce((a, b) => a > b ? a : b);
+      initialExpectedAyah = (lastMatched + 1).clamp(startAyah, endAyah);
+      _lastSkippedVerse = null;
+      _hintedVerse = null;
+    } else {
+      _voiceRevealedVerses.clear();
+      _lastSkippedVerse = null;
+      _hintedVerse = null;
+      initialExpectedAyah = startAyah;
+    }
 
     try {
       final settings = Provider.of<SettingsProvider>(context, listen: false);
@@ -633,6 +789,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
         surah: surahNumber,
         startAyah: startAyah,
         endAyah: endAyah,
+        initialExpectedAyah: initialExpectedAyah,
         sensitivity: settings.voiceRecitationSensitivity,
         adaptiveNoise: settings.voiceRecitationAdaptiveNoise,
         onVerseMatched: (ayah) {
@@ -664,7 +821,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
           } else {
             final nextAyah = ayah + 1;
             if (nextAyah <= endAyah) {
-              final targetPage = qcf.getPageNumber(surahNumber, nextAyah);
+              final targetPage = getMedinaMushafPageNumber(surahNumber, nextAyah);
               if (_isMushafView) {
                 if (targetPage != _currentPage) {
                   Future.delayed(const Duration(milliseconds: 350), () {
@@ -687,6 +844,13 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
           });
         },
       );
+
+      if (isMidSessionResume && _isMushafView) {
+        final resumePage = getMedinaMushafPageNumber(surahNumber, initialExpectedAyah);
+        if (resumePage != _currentPage) {
+          _animateToMushafPage(resumePage, animate: true);
+        }
+      }
     } catch (e) {
       _updateWakelockState();
       if (mounted) {
@@ -769,7 +933,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
     } else {
       final nextAyah = stuckAyah + 1;
       if (nextAyah <= endAyah) {
-        final targetPage = qcf.getPageNumber(surahNumber, nextAyah);
+        final targetPage = getMedinaMushafPageNumber(surahNumber, nextAyah);
         if (_isMushafView) {
           if (targetPage != _currentPage) {
             Future.delayed(const Duration(milliseconds: 350), () {
@@ -994,7 +1158,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
         _selectedStartVerse = snap.nvStartVerse ?? _selectedStartVerse;
         _selectedEndVerse = snap.nvEndVerse ?? _selectedEndVerse;
         targetPage =
-            qcf.getPageNumber(restored.surahNumber, _selectedStartVerse);
+            getMedinaMushafPageNumber(restored.surahNumber, _selectedStartVerse);
       } else {
         final step = restored.currentReviewStep;
         if (step != null) {
@@ -1003,7 +1167,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
           } else {
             final surah = step.surahNumber ?? step.primaryIndex;
             final verse = step.verseStart ?? 1;
-            targetPage = qcf.getPageNumber(surah, verse);
+            targetPage = getMedinaMushafPageNumber(surah, verse);
           }
         }
       }
@@ -1045,27 +1209,32 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
           initialRepeatStart: _selectedRepeatStart,
           initialPage: _selectedPage,
           initialIsSurahMode: _isSurahMode,
+          initialChunkLongVerses: _chunkLongVerses,
         ),
       ),
     );
     if (result != null && mounted) {
       final page = result.isSurahMode
-          ? qcf.getPageNumber(result.surah, result.startVerse)
+          ? getMedinaMushafPageNumber(result.surah, result.startVerse)
           : result.page;
       setState(() {
+        _chunkLongVerses = result.chunkLongVerses;
         _selectedRepeatStart = result.repeatStart;
         _selectedStartVerse = result.startVerse;
         _selectedEndVerse = result.endVerse;
         _isSurahMode = result.isSurahMode;
         _selectedPage = result.page;
         _currentPage = page;
-        _hifzProvider.initRoutine(
-          result.repeatStart,
-          result.startVerse,
-          result.endVerse,
-          surah: result.surah,
-        );
       });
+      await _loadVerseChunks(regenerate: false);
+      _hifzProvider.initRoutine(
+        result.repeatStart,
+        result.startVerse,
+        result.endVerse,
+        surah: result.surah,
+        chunkLongVerses: _chunkLongVerses,
+        verseChunksMap: (_chunkLongVerses && _verseChunksMap.isNotEmpty) ? _verseChunksMap : null,
+      );
       if (_newVersesPageController.hasClients) {
         _newVersesPageController.jumpToPage((page - 1).clamp(0, 603));
       }
@@ -1094,7 +1263,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
           } else {
             final surah = step.surahNumber ?? step.primaryIndex;
             final verse = step.verseStart ?? 1;
-            _currentPage = qcf.getPageNumber(surah, verse);
+            _currentPage = getMedinaMushafPageNumber(surah, verse);
           }
           _selectedPage = _currentPage;
         }
@@ -1222,9 +1391,13 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
 
         final taskLabel = currentTask == null
             ? 'Current Verse ($surahStr:${currentTaskVerses.first})'
-            : currentTask.type == TaskType.singleVerse
-                ? 'Current Verse ($surahStr:${currentTaskVerses.first})'
-                : 'Current Sequence ($surahStr:${currentTaskVerses.first}–${currentTaskVerses.last})';
+            : currentTask.isChunk
+                ? (currentTask.type == TaskType.singleVerse
+                    ? 'Current Chunk ($surahStr:${currentTaskVerses.first} Part ${currentTask.chunkIndex}/${currentTask.totalChunks})'
+                    : 'Current Sequence ($surahStr:${currentTaskVerses.first} Link 1–${currentTask.chunkIndex}/${currentTask.totalChunks})')
+                : currentTask.type == TaskType.singleVerse
+                    ? 'Current Verse ($surahStr:${currentTaskVerses.first})'
+                    : 'Current Sequence ($surahStr:${currentTaskVerses.first}–${currentTaskVerses.last})';
 
         final fullRangeLabel =
             'Full Selected Range ($surahStr:$_selectedRepeatStart–$_selectedEndVerse)';
@@ -1315,7 +1488,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
                             ?.copyWith(fontWeight: FontWeight.bold)),
                     subtitle: Text(
                       verseRepeat > 1 || rangeRepeat > 1
-                          ? 'Repeat verse: ${verseRepeat}× · Range: ${rangeRepeat}×'
+                          ? 'Repeat verse: $verseRepeat× · Range: $rangeRepeat×'
                           : 'Recite active verse or current sequence',
                     ),
                     shape: RoundedRectangleBorder(
@@ -1340,7 +1513,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
                             ?.copyWith(fontWeight: FontWeight.bold)),
                     subtitle: Text(
                       verseRepeat > 1 || rangeRepeat > 1
-                          ? 'Repeat verse: ${verseRepeat}× · Range: ${rangeRepeat}×'
+                          ? 'Repeat verse: $verseRepeat× · Range: $rangeRepeat×'
                           : 'Recite entire selected range including sequence start',
                     ),
                     shape: RoundedRectangleBorder(
@@ -1421,7 +1594,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
     } else {
       final surah = step.surahNumber ?? step.primaryIndex;
       final verse = step.verseStart ?? 1;
-      basePageForStep = qcf.getPageNumber(surah, verse);
+      basePageForStep = getMedinaMushafPageNumber(surah, verse);
     }
     final int currentReviewPage =
         (basePageForStep + _reviewPageOffset).clamp(1, 604);
@@ -1527,7 +1700,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
                             ?.copyWith(fontWeight: FontWeight.bold)),
                     subtitle: Text(
                       verseRepeat > 1 || rangeRepeat > 1
-                          ? 'Repeat verse: ${verseRepeat}× · Range: ${rangeRepeat}×'
+                          ? 'Repeat verse: $verseRepeat× · Range: $rangeRepeat×'
                           : 'Recite active review step',
                     ),
                     shape: RoundedRectangleBorder(
@@ -1569,7 +1742,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
                             ?.copyWith(fontWeight: FontWeight.bold)),
                     subtitle: Text(
                       verseRepeat > 1 || rangeRepeat > 1
-                          ? 'Repeat verse: ${verseRepeat}× · Range: ${rangeRepeat}×'
+                          ? 'Repeat verse: $verseRepeat× · Range: $rangeRepeat×'
                           : 'Recite page currently displayed on screen',
                     ),
                     shape: RoundedRectangleBorder(
@@ -1633,12 +1806,12 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
 
   void _playPageAudio(MushafAudioProvider audio, int pageNumber,
       {int verseRepeat = 1, int rangeRepeat = 1}) {
-    final pageItems = qcf.getPageData(pageNumber);
+    final pageItems = getMedinaMushafPageData(pageNumber);
     if (pageItems.isEmpty) return;
     final firstItem = pageItems.first;
-    final int surah = firstItem['surah'];
-    final int start = firstItem['start'];
-    final int end = pageItems.last['end'];
+    final int surah = firstItem['surah']!;
+    final int start = firstItem['start']!;
+    final int end = pageItems.last['end']!;
     final verseList = List.generate(end - start + 1, (i) => start + i);
     audio.playRange(
       surah.toString(),
@@ -1755,7 +1928,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
   }
 
 
-  void _showGundalReportModal(BuildContext context, HifzSessionProvider provider) {
+  void _showRepetitionReportModal(BuildContext context, HifzSessionProvider provider) {
     final isReview = provider.sessionType == HifzSessionType.review;
     final String col1Title;
     if (isReview) {
@@ -1781,6 +1954,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
       builder: (context) {
         final colorScheme = Theme.of(context).colorScheme;
         final textTheme = Theme.of(context).textTheme;
+        final isThai = Provider.of<SettingsProvider>(context, listen: false).languageCode == 'th';
         final elapsed = DateTime.now().difference(provider.startTime);
         final elapsedStr = '${elapsed.inMinutes}m ${elapsed.inSeconds % 60}s';
 
@@ -1837,8 +2011,12 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
                 ),
               ),
               const SizedBox(height: 24),
-              Text(isReview ? 'Review Summary' : 'Gundal Grid',
-                  style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                isReview
+                    ? (isThai ? 'สรุปการทบทวน' : 'Review Summary')
+                    : (isThai ? 'ตารางบันทึกการท่องซ้ำ (Takrar Grid)' : 'Takrar Repetition Grid'),
+                style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
               const SizedBox(height: 12),
               Flexible(
                 child: SingleChildScrollView(
@@ -2425,7 +2603,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
                       _openNewVersesSetup(context);
                       break;
                     case 'report':
-                      _showGundalReportModal(context, provider);
+                      _showRepetitionReportModal(context, provider);
                       break;
                     case 'mastery':
                       await Navigator.push(
@@ -2453,6 +2631,34 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
                         setState(() {});
                       }
                       break;
+                    case 'guide':
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const HifzGuideScreen(),
+                        ),
+                      );
+                      break;
+                    case 'chunk_toggle':
+                      final newChunkVal = !_chunkLongVerses;
+                      setState(() {
+                        _chunkLongVerses = newChunkVal;
+                      });
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool('hifz_chunk_long_verses', newChunkVal);
+                      await _loadVerseChunks(regenerate: true);
+                      if (context.mounted) {
+                        final isThai = Localizations.localeOf(context).languageCode == 'th';
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(newChunkVal
+                                ? (isThai ? 'เปิดการแบ่งย่อยอายะฮ์ยาวแล้ว' : 'Chunk long verses enabled')
+                                : (isThai ? 'ปิดการแบ่งย่อยอายะฮ์ยาวแล้ว' : 'Chunk long verses disabled')),
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      }
+                      break;
                   }
                 },
                 itemBuilder: (_) => [
@@ -2471,9 +2677,16 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
                   _buildPopupItem('tajweed', Icons.font_download_outlined, _isTajweedMushaf ? 'Standard Mushaf' : 'Tajweed Mushaf'),
                   _buildPopupItem('ble_settings', Icons.settings_outlined, 'Hifz & Translation Settings'),
                   if (!isReview)
+                    _buildPopupItem(
+                      'chunk_toggle',
+                      Icons.auto_stories_rounded,
+                      _chunkLongVerses ? 'Chunk Long Verses (ON)' : 'Chunk Long Verses (OFF)',
+                    ),
+                  if (!isReview)
                     _buildPopupItem('range', Icons.tune_rounded, 'Select Range'),
                   _buildPopupItem('report', Icons.analytics_outlined, 'Report'),
                   _buildPopupItem('mastery', Icons.workspace_premium_outlined, 'Mastery'),
+                  _buildPopupItem('guide', Icons.menu_book_outlined, 'How to Hifz (Guide)'),
                 ],
               );
             },
@@ -2505,7 +2718,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
     } else {
       final surah = step.surahNumber ?? step.primaryIndex;
       final verse = step.verseStart ?? 1;
-      basePageForStep = qcf.getPageNumber(surah, verse);
+      basePageForStep = getMedinaMushafPageNumber(surah, verse);
     }
 
     final activeSurah = (granularity != ReviewGranularity.byPage)
@@ -2553,11 +2766,11 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
   ) {
     final List<(int surah, int verseNum)> verses = [];
     if (granularity == ReviewGranularity.byPage) {
-      final pageData = qcf.getPageData(step.primaryIndex);
+      final pageData = getMedinaMushafPageData(step.primaryIndex);
       for (final item in pageData) {
-        final int s = item['surah'];
-        final int start = item['start'];
-        final int end = item['end'];
+        final int s = item['surah']!;
+        final int start = item['start']!;
+        final int end = item['end']!;
         for (int v = start; v <= end; v++) {
           verses.add((s, v));
         }
@@ -3153,7 +3366,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
                   mushafId: _isTajweedMushaf ? 11 : 2, pageNumber: pageToShow),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
-                  return const Center(child: CircularProgressIndicator());
+                  return const MushafPageSkeleton();
                 }
                 final mushafPage = snapshot.data!;
                 final actualMushafId = _isTajweedMushaf ? 11 : 2;
@@ -3261,7 +3474,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
                                   }
                                   return false;
                                 },
-                                isPeekActive: false,
+                                isPeekActive: provider.isPeekActive,
                               ),
                             ],
                             if (surahFrameOnPageBottom[mushafPage.pageNumber] != null)
@@ -3721,9 +3934,13 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          currentTask.type == TaskType.singleVerse
-                              ? 'V${currentTask.verseNumbers.join()}'
-                              : 'V${currentTask.verseNumbers.first}–${currentTask.verseNumbers.last}',
+                          currentTask.isChunk
+                              ? (currentTask.type == TaskType.singleVerse
+                                  ? 'V${currentTask.verseNumbers.first} (${currentTask.chunkIndex}/${currentTask.totalChunks})'
+                                  : 'V${currentTask.verseNumbers.first} (1–${currentTask.chunkIndex}/${currentTask.totalChunks})')
+                              : (currentTask.type == TaskType.singleVerse
+                                  ? 'V${currentTask.verseNumbers.join()}'
+                                  : 'V${currentTask.verseNumbers.first}–${currentTask.verseNumbers.last}'),
                           style: textTheme.labelMedium?.copyWith(
                               color: taskColor, fontWeight: FontWeight.bold),
                         ),
@@ -3999,6 +4216,33 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
     }
   }
 
+  void _startImmediateReviewOfCompletedRange(HifzSessionProvider provider) {
+    final surah = provider.surahNumber;
+    final start = _selectedStartVerse;
+    final end = _selectedEndVerse;
+
+    provider.initReviewRoutine(
+      ReviewGranularity.byVerses,
+      ReviewTargetParams.byVerses(
+        surahNumber: surah,
+        startVerse: start,
+        endVerse: end,
+      ),
+    );
+
+    setState(() {
+      _selectedPage = getMedinaMushafPageNumber(surah, start);
+      _currentPage = _selectedPage;
+      _reviewPageOffset = 0;
+      _voiceRevealedVerses.clear();
+      _weakOrAssistedVerses.clear();
+      _lastSkippedVerse = null;
+      _hintedVerse = null;
+    });
+
+    _animateToMushafPage(_selectedPage);
+  }
+
   // ---------------------------------------------------------------------------
   // Completed Bottom Bar
   // ---------------------------------------------------------------------------
@@ -4054,11 +4298,86 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
                   icon: const Icon(Icons.assessment_outlined, size: 20),
                   tooltip: isThai ? 'รายงานสถิติ' : 'View Report',
                   color: colorScheme.primary,
-                  onPressed: () => _showGundalReportModal(context, provider),
+                  onPressed: () => _showRepetitionReportModal(context, provider),
                 ),
               ],
             ),
           ),
+
+          // ── Prominent Review Reminder for New Verses Completion ──────────────
+          if (!isReview) ...[
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: colorScheme.tertiaryContainer.withValues(alpha: 0.45),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: colorScheme.tertiary.withValues(alpha: 0.35),
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: BoxDecoration(
+                          color: colorScheme.tertiary,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.psychology_rounded,
+                          size: 16,
+                          color: colorScheme.onTertiary,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          isThai ? 'อย่าลืมทบทวนเพื่อล็อกความจำ!' : 'Lock it in with Review Mode!',
+                          style: textTheme.titleSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.onTertiaryContainer,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    isThai
+                        ? 'อายะห์ใหม่จะเลือนหายไปอย่างรวดเร็วหากไม่ทบทวนทันที ทบทวนช่วงนี้แบบ 2x/2x เพื่อบันทึกลงความจำระยะยาว'
+                        : 'New verses fade fast without immediate review. Review this range now with the 2x/2x cycle to solidify it.',
+                    style: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onTertiaryContainer.withValues(alpha: 0.85),
+                      height: 1.4,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  FilledButton.icon(
+                    onPressed: () => _startImmediateReviewOfCompletedRange(provider),
+                    icon: const Icon(Icons.replay_rounded, size: 18),
+                    label: Text(
+                      isThai
+                          ? 'เริ่มทบทวนช่วงนี้ทันที (สูเราะฮ์ ${provider.surahNumber}:$_selectedStartVerse-$_selectedEndVerse)'
+                          : 'Review This Range Now (${provider.surahNumber}:$_selectedStartVerse-$_selectedEndVerse)',
+                    ),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: colorScheme.tertiary,
+                      foregroundColor: colorScheme.onTertiary,
+                      minimumSize: const Size.fromHeight(44),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+
           const SizedBox(height: 10),
           // Action Buttons: Exit | Repeat | New Range
           Row(
@@ -4158,7 +4477,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
                           mushafId: _isTajweedMushaf ? 11 : 2, pageNumber: pageNumber),
                       builder: (context, snapshot) {
                         if (!snapshot.hasData) {
-                          return const Center(child: CircularProgressIndicator());
+                          return const MushafPageSkeleton();
                         }
                         final mushafPage = snapshot.data!;
                         final actualMushafId = _isTajweedMushaf ? 11 : 2;
@@ -4247,12 +4566,38 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
                                               provider.surahNumber.toString()) {
                                         final vNum = int.tryParse(parts[1]);
                                         if (vNum != null) {
-                                          return _isVerseHidden(vNum, currentTask);
+                                          return _isWordHidden(vNum, wordPosition, currentTask);
                                         }
                                       }
                                       return false;
                                     },
-                                    isPeekActive: false,
+                                    isWordHighlighted: (verseKey, wordPosition) {
+                                      if (currentTask == null) return false;
+                                      final parts = verseKey.split(':');
+                                      if (parts.length == 2 &&
+                                          parts[0] ==
+                                              provider.surahNumber.toString()) {
+                                        final vNum = int.tryParse(parts[1]);
+                                        if (vNum != null) {
+                                          return _isWordHighlighted(vNum, wordPosition, currentTask);
+                                        }
+                                      }
+                                      return false;
+                                    },
+                                    isWordDimmed: (verseKey, wordPosition) {
+                                      if (currentTask == null) return false;
+                                      final parts = verseKey.split(':');
+                                      if (parts.length == 2 &&
+                                          parts[0] ==
+                                              provider.surahNumber.toString()) {
+                                        final vNum = int.tryParse(parts[1]);
+                                        if (vNum != null) {
+                                          return _isWordDimmed(vNum, wordPosition, currentTask);
+                                        }
+                                      }
+                                      return false;
+                                    },
+                                    isPeekActive: provider.isPeekActive,
                                   ),
                                 ],
                                 if (surahFrameOnPageBottom[mushafPage.pageNumber] != null)
@@ -4408,6 +4753,41 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
                                   : colorScheme.primary.withValues(alpha: 0.8),
                             ),
                           ),
+                          if (isTarget && currentTask.isChunk) ...[
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: colorScheme.primaryContainer.withValues(alpha: 0.7),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: colorScheme.primary.withValues(alpha: 0.3)),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.auto_stories_rounded, size: 12, color: colorScheme.onPrimaryContainer),
+                                  const SizedBox(width: 3),
+                                  Text(
+                                    currentTask.type == TaskType.singleVerse
+                                        ? 'Part ${currentTask.chunkIndex}/${currentTask.totalChunks}'
+                                        : 'Link 1–${currentTask.chunkIndex}/${currentTask.totalChunks}',
+                                    style: textTheme.labelSmall?.copyWith(
+                                      color: colorScheme.onPrimaryContainer,
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 10,
+                                    ),
+                                  ),
+                                  if (currentTask.waqfSign != null) ...[
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      currentTask.waqfSign!,
+                                      style: const TextStyle(fontSize: 11, fontFamily: 'UthmanicHafs'),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ],
                           if (isWeak) ...[
                             const SizedBox(width: 8),
                             Container(
@@ -4714,6 +5094,42 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
                                   ),
                                 ];
                               }
+                            } else if (isTarget && currentTask.isChunk) {
+                              // Use the same tokenizer as WaqfChunkerService so
+                              // word positions match startWordPos/endWordPos.
+                              final words = WaqfChunkerService.tokenizeVerseWords(arabicText);
+                              final chunkSpans = <InlineSpan>[];
+                              final startWord = currentTask.startWordPosition ?? 1;
+                              final endWord = currentTask.endWordPosition ?? 999;
+                              for (int w = 0; w < words.length; w++) {
+                                final wordPos = w + 1;
+                                final isWordHidden = _isWordHidden(verseNum, wordPos, currentTask);
+                                final isChunkWord = wordPos >= startWord && wordPos <= endWord;
+                                final wordText = w == words.length - 1 ? words[w] : '${words[w]} ';
+                                chunkSpans.add(TextSpan(
+                                  text: wordText,
+                                  style: TextStyle(
+                                    color: isWordHidden
+                                        ? Colors.transparent
+                                        : (isChunkWord
+                                            ? textTheme.bodyLarge?.color
+                                            : textTheme.bodyLarge?.color?.withValues(alpha: 0.4)),
+                                    backgroundColor: (!isWordHidden && isChunkWord)
+                                        ? colorScheme.primary.withValues(alpha: 0.12)
+                                        : null,
+                                    fontWeight: isChunkWord ? FontWeight.w600 : FontWeight.normal,
+                                  ),
+                                ));
+                              }
+                              // Append the verse number indicator (not part of chunk word positions)
+                              final arabicVerseNum = toArabicDigits(verseNum.toString());
+                              chunkSpans.add(TextSpan(
+                                text: ' $arabicVerseNum',
+                                style: TextStyle(
+                                  color: textTheme.bodyLarge?.color?.withValues(alpha: 0.4),
+                                ),
+                              ));
+                              spans = chunkSpans;
                             } else {
                               spans = [
                                 TextSpan(

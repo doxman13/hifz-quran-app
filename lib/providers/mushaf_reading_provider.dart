@@ -32,6 +32,7 @@ class MushafReadingProvider extends ChangeNotifier with WidgetsBindingObserver {
 
   MushafReadingProvider() {
     WidgetsBinding.instance.addObserver(this);
+    _ensureDefaultProfile();
     load();
     _listenToAuthChanges();
     unawaited(_syncExistingSessionAfterLoad());
@@ -540,8 +541,9 @@ class MushafReadingProvider extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   void _ensureDefaultProfile() {
+    freeReadProfileForMushaf(2);
     freeReadProfileForMushaf(1);
-    _activeProfileId ??= 'mushaf-free-1';
+    _activeProfileId ??= 'mushaf-free-$_displayMushafId';
   }
 
   void _upsertRecentReading(MushafProfile profile) {

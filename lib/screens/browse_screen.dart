@@ -8,13 +8,18 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:qcf_quran/qcf_quran.dart' as qcf;
+import '../data/medina_mushaf_pages.dart';
 
 import '../data/offline_surah_names.dart';
 import '../data/quran_foundation_repository.dart';
 import '../data/quran_repository.dart';
 import '../providers/settings_provider.dart';
+import '../database/hifz_repository.dart';
+import '../models/hifz_session_config.dart';
 import 'hifz_new_verses_setup_screen.dart';
+import 'hifz_review_setup_screen.dart';
 import 'mushaf_reader_screen.dart';
+import '../widgets/voice_search_sheet.dart';
 
 class BrowseScreen extends StatefulWidget {
   final QuranRepository repository;
@@ -72,10 +77,22 @@ class _BrowseScreenState extends State<BrowseScreen>
     [78, 1, 582],
   ];
 
+  Map<int, SurahCompletionRecord> _surahRecords = {};
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
+    _loadHifzRecords();
+  }
+
+  Future<void> _loadHifzRecords() async {
+    final records = await HifzRepository().getAllCompletionRecords();
+    if (mounted) {
+      setState(() {
+        _surahRecords = {for (var r in records) r.surahNumber: r};
+      });
+    }
   }
 
   @override
@@ -103,25 +120,314 @@ class _BrowseScreenState extends State<BrowseScreen>
     }
   }
 
-  void _openHifzForSurah(int surahNumber) {
-    final startPage = qcf.getPageNumber(surahNumber, 1);
+  void _openHifzForSurah(int surahNumber) async {
+    final startPage = getMedinaMushafPageNumber(surahNumber, 1);
     final totalVerses = qcf.getVerseCount(surahNumber);
+    final endPage = getMedinaMushafPageNumber(surahNumber, totalVerses);
+    final isThai = context.read<SettingsProvider>().languageCode == 'th';
+    final enName = offlineSurahNamesEn[surahNumber.toString()] ??
+        widget.repository.getSurahName(surahNumber.toString());
+    final thName = offlineSurahNamesTh[surahNumber.toString()] ?? '';
+    final arName = offlineSurahNamesAr[surahNumber.toString()] ??
+        qcf.getSurahNameArabic(surahNumber);
+    final record = _surahRecords[surahNumber];
+    final isMastered = record?.newVersesCompleted == true;
 
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => HifzNewVersesSetupScreen(
-          quranRepository: widget.repository,
-          foundationRepository: widget.foundationRepository,
-          initialSurah: surahNumber,
-          initialStartVerse: 1,
-          initialEndVerse: totalVerses > 3 ? 3 : totalVerses,
-          initialRepeatStart: 1,
-          initialPage: startPage,
-          initialIsSurahMode: true,
-        ),
+    final selectedMode = await showModalBottomSheet<String>(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
+      builder: (ctx) {
+        final colorScheme = Theme.of(ctx).colorScheme;
+        final textTheme = Theme.of(ctx).textTheme;
+
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: colorScheme.outlineVariant,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Container(
+                      width: 44,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: isMastered
+                            ? colorScheme.primaryContainer
+                            : colorScheme.secondaryContainer,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      alignment: Alignment.center,
+                      child: Icon(
+                        isMastered
+                            ? Icons.check_circle_outline_rounded
+                            : Icons.auto_stories_rounded,
+                        color: isMastered
+                            ? colorScheme.onPrimaryContainer
+                            : colorScheme.onSecondaryContainer,
+                        size: 24,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                enName,
+                                style: textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                arName,
+                                style: GoogleFonts.amiri(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: colorScheme.primary,
+                                ),
+                                textDirection: TextDirection.rtl,
+                              ),
+                            ],
+                          ),
+                          Text(
+                            isThai && thName.isNotEmpty
+                                ? '$thName · $totalVerses อายะห์ · หน้า $startPage'
+                                : '$totalVerses verses · Page $startPage',
+                            style: textTheme.bodySmall?.copyWith(
+                              color: colorScheme.onSurfaceVariant,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                // Option 1: Takrar (New Verses)
+                Material(
+                  color: colorScheme.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(16),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () => Navigator.pop(ctx, 'new'),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: colorScheme.outlineVariant.withValues(alpha: 0.4),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: colorScheme.primaryContainer
+                                  .withValues(alpha: 0.5),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              Icons.psychology_rounded,
+                              color: colorScheme.primary,
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  isThai
+                                      ? 'ท่องจำอายะห์ใหม่ (Takrar)'
+                                      : 'New Verses (Takrar)',
+                                  style: textTheme.bodyLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    color: colorScheme.onSurface,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  isThai
+                                      ? 'ท่องจำอายะห์ใหม่ทีละชุด กำหนดจำนวนรอบและการซ้ำ'
+                                      : 'Memorize new verse sets with custom repetitions',
+                                  style: textTheme.bodySmall?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                // Option 2: Muraja'ah (Review Mode)
+                Material(
+                  color: colorScheme.surfaceContainerLow,
+                  borderRadius: BorderRadius.circular(16),
+                  child: InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () => Navigator.pop(ctx, 'review'),
+                    child: Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: isMastered
+                              ? colorScheme.primary.withValues(alpha: 0.5)
+                              : colorScheme.outlineVariant.withValues(alpha: 0.4),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: colorScheme.secondaryContainer
+                                  .withValues(alpha: 0.6),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              Icons.replay_rounded,
+                              color: colorScheme.secondary,
+                              size: 24,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      isThai
+                                          ? 'ทบทวนฮิฟซ์ (Muraja\'ah)'
+                                          : 'Review Mode (Muraja\'ah)',
+                                      style: textTheme.bodyLarge?.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        color: colorScheme.onSurface,
+                                      ),
+                                    ),
+                                    if (isMastered) ...[
+                                      const SizedBox(width: 6),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 6, vertical: 1),
+                                        decoration: BoxDecoration(
+                                          color: colorScheme.primaryContainer,
+                                          borderRadius:
+                                              BorderRadius.circular(4),
+                                        ),
+                                        child: Text(
+                                          isThai ? 'แนะนำ' : 'Recommended',
+                                          style: textTheme.labelSmall?.copyWith(
+                                            color: colorScheme.primary,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 9,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  isThai
+                                      ? 'ทบทวนซูเราะฮ์นี้ที่จำได้แล้ว (เห็น 2× / ซ่อน 2×)'
+                                      : 'Review memorized verses (2× Visible / 2× Hidden)',
+                                  style: textTheme.bodySmall?.copyWith(
+                                    color: colorScheme.onSurfaceVariant,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Icon(
+                            Icons.chevron_right_rounded,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
+
+    if (selectedMode == 'new' && mounted) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => HifzNewVersesSetupScreen(
+            quranRepository: widget.repository,
+            foundationRepository: widget.foundationRepository,
+            initialSurah: surahNumber,
+            initialStartVerse: 1,
+            initialEndVerse: totalVerses > 3 ? 3 : totalVerses,
+            initialRepeatStart: 1,
+            initialPage: startPage,
+            initialIsSurahMode: true,
+          ),
+        ),
+      );
+      if (mounted) {
+        _loadHifzRecords();
+      }
+    } else if (selectedMode == 'review' && mounted) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => HifzReviewSetupScreen(
+            quranRepository: widget.repository,
+            foundationRepository: widget.foundationRepository,
+            initialStartSurah: surahNumber,
+            initialEndSurah: surahNumber,
+            initialVersesSurah: surahNumber,
+            initialVersesStart: 1,
+            initialVersesEnd: totalVerses,
+            initialStartPage: startPage,
+            initialEndPage: endPage,
+            initialTabIndex: 0,
+          ),
+        ),
+      );
+      if (mounted) {
+        _loadHifzRecords();
+      }
+    }
   }
 
   @override
@@ -186,7 +492,21 @@ class _BrowseScreenState extends State<BrowseScreen>
                                 setState(() => _searchQuery = '');
                               },
                             )
-                          : null,
+                          : IconButton(
+                              icon: Icon(
+                                Icons.mic_rounded,
+                                color: colorScheme.primary,
+                                size: 20,
+                              ),
+                              tooltip: isThai ? 'ค้นหาด้วยเสียง (อัลกุรอานภาษาอาหรับ)' : 'Voice Search (Arabic Quran)',
+                              onPressed: () {
+                                VoiceSearchSheet.show(
+                                  context,
+                                  repository: widget.repository,
+                                  onOpenPage: _openPage,
+                                );
+                              },
+                            ),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: 16,
@@ -280,10 +600,12 @@ class _BrowseScreenState extends State<BrowseScreen>
         final surahNumber = surahIndices[index];
         final sKey = surahNumber.toString();
         final enName = offlineSurahNamesEn[sKey] ?? 'Surah $surahNumber';
-        final arName = offlineSurahNamesAr[sKey] ?? '';
         final thName = offlineSurahNamesTh[sKey] ?? '';
         final totalVerses = qcf.getVerseCount(surahNumber);
-        final startPage = qcf.getPageNumber(surahNumber, 1);
+        final startPage = getMedinaMushafPageNumber(surahNumber, 1);
+        final hifzRecord = _surahRecords[surahNumber];
+        final isMastered = hifzRecord?.newVersesCompleted == true;
+        final reviewCount = hifzRecord?.reviewCount ?? 0;
 
         return Material(
           color: colorScheme.surfaceContainerLow,
@@ -300,31 +622,84 @@ class _BrowseScreenState extends State<BrowseScreen>
                     width: 42,
                     height: 42,
                     decoration: BoxDecoration(
-                      color: colorScheme.primaryContainer,
+                      color: isMastered
+                          ? colorScheme.primary
+                          : colorScheme.primaryContainer,
                       borderRadius: BorderRadius.circular(12),
                     ),
                     alignment: Alignment.center,
-                    child: Text(
-                      '$surahNumber',
-                      style: textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.onPrimaryContainer,
-                      ),
-                    ),
+                    child: isMastered
+                        ? Icon(
+                            Icons.check_rounded,
+                            color: colorScheme.onPrimary,
+                            size: 22,
+                          )
+                        : Text(
+                            '$surahNumber',
+                            style: textTheme.titleMedium?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.onPrimaryContainer,
+                            ),
+                          ),
                   ),
                   const SizedBox(width: 16),
 
-                  // Surah English & Subtitle
+                  // Surah English, Badges & Subtitle
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          enName,
-                          style: textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: colorScheme.onSurface,
-                          ),
+                        Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                enName,
+                                style: textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: colorScheme.onSurface,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            if (isMastered) ...[
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.primaryContainer,
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  isThai ? 'ท่องจำแล้ว' : 'Mastered',
+                                  style: textTheme.labelSmall?.copyWith(
+                                    color: colorScheme.primary,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ),
+                            ] else if (reviewCount > 0) ...[
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.secondaryContainer
+                                      .withValues(alpha: 0.6),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  isThai ? 'ทบทวน $reviewCount×' : '$reviewCount× Rev',
+                                  style: textTheme.labelSmall?.copyWith(
+                                    color: colorScheme.onSecondaryContainer,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
                         const SizedBox(height: 2),
                         Text(
@@ -339,27 +714,36 @@ class _BrowseScreenState extends State<BrowseScreen>
                     ),
                   ),
 
-                  // Arabic Name
+                  // Calligraphic Surah Name (QcfSurahName)
                   Text(
-                    arName,
-                    style: GoogleFonts.amiri(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.primary,
+                    String.fromCharCode(0xe000 + surahNumber),
+                    style: TextStyle(
+                      fontFamily: 'QcfSurahName',
+                      fontSize: 28,
+                      color: isMastered ? colorScheme.primary : colorScheme.onSurface,
                     ),
-                    textDirection: TextDirection.rtl,
                   ),
                   const SizedBox(width: 8),
 
-                  // Memorize Shortcut Button
-                  IconButton(
-                    tooltip: isThai ? 'ท่องจำซูเราะฮ์นี้' : 'Memorize this Surah',
-                    icon: Icon(
-                      Icons.psychology_rounded,
-                      color: colorScheme.primary,
-                      size: 24,
+                  // Memorize / Review Shortcut Button
+                  Container(
+                    decoration: BoxDecoration(
+                      color: isMastered
+                          ? colorScheme.primaryContainer.withValues(alpha: 0.4)
+                          : colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    onPressed: () => _openHifzForSurah(surahNumber),
+                    child: IconButton(
+                      tooltip: isThai
+                          ? (isMastered ? 'ทบทวนซูเราะฮ์นี้' : 'ท่องจำซูเราะฮ์นี้')
+                          : (isMastered ? 'Review this Surah' : 'Memorize this Surah'),
+                      icon: Icon(
+                        isMastered ? Icons.replay_rounded : Icons.psychology_rounded,
+                        color: colorScheme.primary,
+                        size: 22,
+                      ),
+                      onPressed: () => _openHifzForSurah(surahNumber),
+                    ),
                   ),
                 ],
               ),

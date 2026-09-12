@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qcf_quran/qcf_quran.dart' as qcf;
+import '../data/medina_mushaf_pages.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/quran_foundation_repository.dart';
@@ -16,6 +17,7 @@ import '../database/hifz_repository.dart';
 import '../models/hifz_session_config.dart';
 import 'hifz_memorize_screen.dart';
 import 'hifz_mushaf_range_picker_screen.dart';
+import '../widgets/surah_picker_sheet.dart';
 
 /// Return type from the setup screen.
 class NewVersesSetupResult {
@@ -26,6 +28,7 @@ class NewVersesSetupResult {
   final int page;
   final bool isSurahMode;
   final ActiveSessionSnapshot? resumeSnapshot;
+  final bool chunkLongVerses;
 
   const NewVersesSetupResult({
     required this.surah,
@@ -35,6 +38,7 @@ class NewVersesSetupResult {
     required this.page,
     required this.isSurahMode,
     this.resumeSnapshot,
+    this.chunkLongVerses = true,
   });
 }
 
@@ -47,6 +51,7 @@ class HifzNewVersesSetupScreen extends StatefulWidget {
   final int initialRepeatStart;
   final int initialPage;
   final bool initialIsSurahMode;
+  final bool initialChunkLongVerses;
 
   const HifzNewVersesSetupScreen({
     super.key,
@@ -58,6 +63,7 @@ class HifzNewVersesSetupScreen extends StatefulWidget {
     this.initialRepeatStart = 1,
     this.initialPage = 1,
     this.initialIsSurahMode = true,
+    this.initialChunkLongVerses = true,
   });
 
   @override
@@ -81,6 +87,7 @@ class _HifzNewVersesSetupScreenState extends State<HifzNewVersesSetupScreen>
   int _pageStart = 1;
   int _pageEnd = 3;
   int _pageRepeatStart = 1;
+  bool _chunkLongVerses = true;
 
   @override
   void initState() {
@@ -96,12 +103,16 @@ class _HifzNewVersesSetupScreenState extends State<HifzNewVersesSetupScreen>
     _endVerse = widget.initialEndVerse;
     _repeatStart = widget.initialRepeatStart;
     _page = widget.initialPage;
+    _chunkLongVerses = widget.initialChunkLongVerses;
+
+    _loadChunkPreference();
 
     // Init page tab values
     if (!widget.initialIsSurahMode) {
       _initFromPage(_page);
     } else {
-      _initFromPage(1);
+      final pageForSurah = getMedinaMushafPageNumber(_surah, _startVerse);
+      _initFromPage(pageForSurah);
     }
     
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -109,6 +120,15 @@ class _HifzNewVersesSetupScreenState extends State<HifzNewVersesSetupScreen>
         _checkForResumableSession();
       }
     });
+  }
+
+  Future<void> _loadChunkPreference() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (mounted) {
+      setState(() {
+        _chunkLongVerses = prefs.getBool('hifz_chunk_long_verses') ?? true;
+      });
+    }
   }
 
   Future<void> _checkForResumableSession() async {
@@ -226,6 +246,7 @@ class _HifzNewVersesSetupScreenState extends State<HifzNewVersesSetupScreen>
           page: _page,
           isSurahMode: _tabController.index == 0,
           resumeSnapshot: snap,
+          chunkLongVerses: _chunkLongVerses,
         ),
       );
     } else if (resume == false) {
@@ -234,11 +255,11 @@ class _HifzNewVersesSetupScreenState extends State<HifzNewVersesSetupScreen>
   }
 
   void _initFromPage(int page) {
-    final pageItems = qcf.getPageData(page);
+    final pageItems = getMedinaMushafPageData(page);
     if (pageItems.isNotEmpty) {
-      _pageSurah = pageItems.first['surah'];
-      _pageStart = pageItems.first['start'];
-      _pageEnd = pageItems.last['end'];
+      _pageSurah = pageItems.first['surah']!;
+      _pageStart = pageItems.first['start']!;
+      _pageEnd = pageItems.last['end']!;
       _pageRepeatStart = _pageStart;
     }
   }
@@ -256,7 +277,7 @@ class _HifzNewVersesSetupScreenState extends State<HifzNewVersesSetupScreen>
     final selectedStartVerse = isSurah ? _startVerse : _pageStart;
     final selectedEndVerse = isSurah ? _endVerse : _pageEnd;
     final selectedPage = isSurah
-        ? qcf.getPageNumber(selectedSurah, selectedStartVerse)
+        ? getMedinaMushafPageNumber(selectedSurah, selectedStartVerse)
         : _page;
 
     final prefs = await SharedPreferences.getInstance();
@@ -266,6 +287,7 @@ class _HifzNewVersesSetupScreenState extends State<HifzNewVersesSetupScreen>
     await prefs.setInt('hifz_nv_repeat_start', selectedRepeatStart);
     await prefs.setInt('hifz_nv_page', selectedPage);
     await prefs.setBool('hifz_nv_is_surah_mode', isSurah);
+    await prefs.setBool('hifz_chunk_long_verses', _chunkLongVerses);
 
     if (widget.foundationRepository != null && mounted) {
       Navigator.pushReplacement(
@@ -281,6 +303,7 @@ class _HifzNewVersesSetupScreenState extends State<HifzNewVersesSetupScreen>
             repeatStart: selectedRepeatStart,
             initialPage: selectedPage,
             isSurahMode: isSurah,
+            chunkLongVerses: _chunkLongVerses,
           ),
         ),
       );
@@ -297,6 +320,7 @@ class _HifzNewVersesSetupScreenState extends State<HifzNewVersesSetupScreen>
           endVerse: selectedEndVerse,
           page: selectedPage,
           isSurahMode: isSurah,
+          chunkLongVerses: _chunkLongVerses,
         ),
       );
     }
@@ -340,6 +364,8 @@ class _HifzNewVersesSetupScreenState extends State<HifzNewVersesSetupScreen>
             startVerse: _startVerse,
             endVerse: _endVerse,
             repeatStart: _repeatStart,
+            chunkLongVerses: _chunkLongVerses,
+            onChunkToggle: (val) => setState(() => _chunkLongVerses = val),
             quranRepository: widget.quranRepository,
             foundationRepository: widget.foundationRepository,
             onChanged: (surah, start, end, repeat) => setState(() {
@@ -355,6 +381,8 @@ class _HifzNewVersesSetupScreenState extends State<HifzNewVersesSetupScreen>
             pageStart: _pageStart,
             pageEnd: _pageEnd,
             pageRepeatStart: _pageRepeatStart,
+            chunkLongVerses: _chunkLongVerses,
+            onChunkToggle: (val) => setState(() => _chunkLongVerses = val),
             quranRepository: widget.quranRepository,
             foundationRepository: widget.foundationRepository,
             onChanged: (page, surah, start, end, repeat) => setState(() {
@@ -395,6 +423,8 @@ class _BySurahTab extends StatefulWidget {
   final int startVerse;
   final int endVerse;
   final int repeatStart;
+  final bool chunkLongVerses;
+  final ValueChanged<bool> onChunkToggle;
   final QuranRepository quranRepository;
   final QuranFoundationRepository? foundationRepository;
   final void Function(int surah, int start, int end, int repeat) onChanged;
@@ -404,6 +434,8 @@ class _BySurahTab extends StatefulWidget {
     required this.startVerse,
     required this.endVerse,
     required this.repeatStart,
+    required this.chunkLongVerses,
+    required this.onChunkToggle,
     required this.quranRepository,
     this.foundationRepository,
     required this.onChanged,
@@ -426,6 +458,22 @@ class _BySurahTabState extends State<_BySurahTab> {
     _start = widget.startVerse;
     _end = widget.endVerse;
     _repeat = widget.repeatStart;
+  }
+
+  @override
+  void didUpdateWidget(_BySurahTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.surah != widget.surah ||
+        oldWidget.startVerse != widget.startVerse ||
+        oldWidget.endVerse != widget.endVerse ||
+        oldWidget.repeatStart != widget.repeatStart) {
+      setState(() {
+        _surah = widget.surah;
+        _start = widget.startVerse;
+        _end = widget.endVerse;
+        _repeat = widget.repeatStart;
+      });
+    }
   }
 
   int get _totalVerses => qcf.getVerseCount(_surah);
@@ -455,6 +503,73 @@ class _BySurahTabState extends State<_BySurahTab> {
       });
       _notify();
     }
+  }
+
+  void _applyRangePreset(int count) {
+    setState(() {
+      if (count == -1) {
+        _start = 1;
+        _end = _totalVerses;
+        _repeat = 1;
+      } else {
+        _end = (_start + count - 1).clamp(1, _totalVerses);
+      }
+    });
+    _notify();
+  }
+
+  Widget _buildQuickRangePresets(bool isThai, ColorScheme colorScheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          isThai ? 'ช่วงอายะห์แบบรวดเร็ว' : 'Quick Range Presets',
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSurfaceVariant,
+              ),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            ActionChip(
+              avatar: Icon(Icons.bolt_rounded, size: 16, color: colorScheme.primary),
+              label: Text(isThai ? '+3 อายะห์' : '+3 Verses'),
+              onPressed: () => _applyRangePreset(3),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              backgroundColor: colorScheme.surfaceContainerLow,
+            ),
+            ActionChip(
+              avatar: Icon(Icons.bolt_rounded, size: 16, color: colorScheme.primary),
+              label: Text(isThai ? '+5 อายะห์' : '+5 Verses'),
+              onPressed: () => _applyRangePreset(5),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              backgroundColor: colorScheme.surfaceContainerLow,
+            ),
+            ActionChip(
+              avatar: Icon(Icons.bolt_rounded, size: 16, color: colorScheme.primary),
+              label: Text(isThai ? '+10 อายะห์' : '+10 Verses'),
+              onPressed: () => _applyRangePreset(10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              backgroundColor: colorScheme.surfaceContainerLow,
+            ),
+            ActionChip(
+              avatar: Icon(Icons.menu_book_rounded, size: 16, color: colorScheme.primary),
+              label: Text(isThai ? 'ทั้งซูเราะฮ์' : 'Full Surah'),
+              onPressed: () => _applyRangePreset(-1),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              backgroundColor: colorScheme.surfaceContainerLow,
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   @override
@@ -492,20 +607,25 @@ class _BySurahTabState extends State<_BySurahTab> {
           ),
         ),
         const SizedBox(height: 20),
-        _LabeledDropdown<int>(
+        SurahSelectorTile(
+          surahNumber: _surah,
           label: isThai ? 'ซูเราะฮ์' : 'Surah',
-          value: _surah,
-          items: List.generate(114, (i) => i + 1),
-          itemLabel: (v) => widget.quranRepository.getSurahName(v.toString()),
-          onChanged: (v) {
-            setState(() {
-              _surah = v;
-              final total = qcf.getVerseCount(v);
-              _start = 1;
-              _repeat = 1;
-              _end = total > 3 ? 3 : total;
-            });
-            _notify();
+          onTap: () async {
+            final picked = await SurahPickerSheet.show(
+              context,
+              selectedSurah: _surah,
+              title: isThai ? 'เลือกซูเราะฮ์ที่ต้องการท่องจำ' : 'Select Surah to Memorize',
+            );
+            if (picked != null && mounted) {
+              setState(() {
+                _surah = picked;
+                final total = qcf.getVerseCount(picked);
+                _start = 1;
+                _repeat = 1;
+                _end = total > 3 ? 3 : total;
+              });
+              _notify();
+            }
           },
         ),
         const SizedBox(height: 16),
@@ -543,6 +663,8 @@ class _BySurahTabState extends State<_BySurahTab> {
             ),
           ],
         ),
+        const SizedBox(height: 12),
+        _buildQuickRangePresets(isThai, colorScheme),
         const SizedBox(height: 16),
         _LabeledDropdown<int>(
           label: isThai ? 'ลำดับเริ่มต้น (ทบทวนจาก)' : 'Sequence Linked From (Repeat Start)',
@@ -554,7 +676,25 @@ class _BySurahTabState extends State<_BySurahTab> {
             _notify();
           },
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 6),
+        Text(
+          isThai
+              ? '💡 เช่น หากท่องจำอายะห์ 11–20 ให้เลือกเริ่มจาก 1 เพื่อเชื่อมโยงเนื้อหาของเซสชันก่อนหน้า (1–10) เข้ากับรอบนี้'
+              : '💡 e.g. If memorizing verses 11–20, keep this at 1 to bridge yesterday\'s session (1–10) into today\'s flow.',
+          style: textTheme.bodySmall?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+        const SizedBox(height: 20),
+        _ChunkLongVersesCard(
+          value: widget.chunkLongVerses,
+          onChanged: widget.onChunkToggle,
+          colorScheme: colorScheme,
+          textTheme: textTheme,
+          isThai: isThai,
+        ),
+        const SizedBox(height: 20),
         _SummaryCard(
           colorScheme: colorScheme,
           textTheme: textTheme,
@@ -579,6 +719,8 @@ class _ByPageTab extends StatefulWidget {
   final int pageStart;
   final int pageEnd;
   final int pageRepeatStart;
+  final bool chunkLongVerses;
+  final ValueChanged<bool> onChunkToggle;
   final QuranRepository quranRepository;
   final QuranFoundationRepository? foundationRepository;
   final void Function(int page, int surah, int start, int end, int repeat)
@@ -590,6 +732,8 @@ class _ByPageTab extends StatefulWidget {
     required this.pageStart,
     required this.pageEnd,
     required this.pageRepeatStart,
+    required this.chunkLongVerses,
+    required this.onChunkToggle,
     required this.quranRepository,
     this.foundationRepository,
     required this.onChanged,
@@ -616,15 +760,33 @@ class _ByPageTabState extends State<_ByPageTab> {
     _repeat = widget.pageRepeatStart;
   }
 
+  @override
+  void didUpdateWidget(_ByPageTab oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.page != widget.page ||
+        oldWidget.pageSurah != widget.pageSurah ||
+        oldWidget.pageStart != widget.pageStart ||
+        oldWidget.pageEnd != widget.pageEnd ||
+        oldWidget.pageRepeatStart != widget.pageRepeatStart) {
+      setState(() {
+        _page = widget.page;
+        _pageSurah = widget.pageSurah;
+        _start = widget.pageStart;
+        _end = widget.pageEnd;
+        _repeat = widget.pageRepeatStart;
+      });
+    }
+  }
+
   void _notify() => widget.onChanged(_page, _pageSurah, _start, _end, _repeat);
 
   void _loadPage(int page) {
-    final items = qcf.getPageData(page);
+    final items = getMedinaMushafPageData(page);
     if (items.isNotEmpty) {
       _page = page;
-      _pageSurah = items.first['surah'];
-      _start = items.first['start'];
-      _end = items.last['end'];
+      _pageSurah = items.first['surah']!;
+      _start = items.first['start']!;
+      _end = items.last['end']!;
       _repeat = _start;
     }
   }
@@ -656,6 +818,68 @@ class _ByPageTabState extends State<_ByPageTab> {
       });
       _notify();
     }
+  }
+
+  void _applyRangePreset(int count) {
+    setState(() {
+      if (count == -1) {
+        final items = getMedinaMushafPageData(_page);
+        if (items.isNotEmpty) {
+          _start = items.first['start']!;
+          _end = items.last['end']!;
+          _repeat = _start;
+        }
+      } else {
+        _end = (_start + count - 1).clamp(1, _totalVerses);
+      }
+    });
+    _notify();
+  }
+
+  Widget _buildQuickRangePresets(bool isThai, ColorScheme colorScheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          isThai ? 'ช่วงอายะห์แบบรวดเร็ว' : 'Quick Range Presets',
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSurfaceVariant,
+              ),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            ActionChip(
+              avatar: Icon(Icons.bolt_rounded, size: 16, color: colorScheme.primary),
+              label: Text(isThai ? '+3 อายะห์' : '+3 Verses'),
+              onPressed: () => _applyRangePreset(3),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              backgroundColor: colorScheme.surfaceContainerLow,
+            ),
+            ActionChip(
+              avatar: Icon(Icons.bolt_rounded, size: 16, color: colorScheme.primary),
+              label: Text(isThai ? '+5 อายะห์' : '+5 Verses'),
+              onPressed: () => _applyRangePreset(5),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              backgroundColor: colorScheme.surfaceContainerLow,
+            ),
+            ActionChip(
+              avatar: Icon(Icons.auto_stories_rounded, size: 16, color: colorScheme.primary),
+              label: Text(isThai ? 'ทั้งหน้า' : 'Entire Page'),
+              onPressed: () => _applyRangePreset(-1),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              backgroundColor: colorScheme.surfaceContainerLow,
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   @override
@@ -738,6 +962,8 @@ class _ByPageTabState extends State<_ByPageTab> {
             ),
           ],
         ),
+        const SizedBox(height: 12),
+        _buildQuickRangePresets(isThai, colorScheme),
         const SizedBox(height: 16),
         _LabeledDropdown<int>(
           label: isThai ? 'ลำดับเริ่มต้น (ทบทวนจาก)' : 'Sequence Linked From (Repeat Start)',
@@ -749,7 +975,25 @@ class _ByPageTabState extends State<_ByPageTab> {
             _notify();
           },
         ),
-        const SizedBox(height: 24),
+        const SizedBox(height: 6),
+        Text(
+          isThai
+              ? '💡 เช่น หากท่องจำช่วงถัดไป ให้เลือกเริ่มจากอายะห์แรกของหน้า เพื่อเชื่อมโยงทั้งหน้าเข้าด้วยกัน'
+              : '💡 e.g. When moving to the next block, set this to the first verse of the page to connect the entire page.',
+          style: textTheme.bodySmall?.copyWith(
+            color: colorScheme.onSurfaceVariant,
+            fontStyle: FontStyle.italic,
+          ),
+        ),
+        const SizedBox(height: 20),
+        _ChunkLongVersesCard(
+          value: widget.chunkLongVerses,
+          onChanged: widget.onChunkToggle,
+          colorScheme: colorScheme,
+          textTheme: textTheme,
+          isThai: isThai,
+        ),
+        const SizedBox(height: 20),
         _SummaryCard(
           colorScheme: colorScheme,
           textTheme: textTheme,
@@ -910,3 +1154,80 @@ class _ResumeRow extends StatelessWidget {
     );
   }
 }
+
+class _ChunkLongVersesCard extends StatelessWidget {
+  final bool value;
+  final ValueChanged<bool> onChanged;
+  final ColorScheme colorScheme;
+  final TextTheme textTheme;
+  final bool isThai;
+
+  const _ChunkLongVersesCard({
+    required this.value,
+    required this.onChanged,
+    required this.colorScheme,
+    required this.textTheme,
+    required this.isThai,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerLow,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.4),
+        ),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: colorScheme.primary.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              Icons.auto_stories_rounded,
+              color: colorScheme.primary,
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  isThai
+                      ? 'แบ่งย่อยอายะฮ์ยาว (> 1.5 บรรทัด)'
+                      : 'Chunk Long Verses (> 1.5 lines)',
+                  style: textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  isThai
+                      ? 'ตัดตามเครื่องหมายวักฟ์และประโยค ช่วยให้ท่องจำง่ายขึ้น'
+                      : 'Split by Waqf signs for progressive memorization',
+                  style: textTheme.bodySmall?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Switch.adaptive(
+            value: value,
+            activeTrackColor: colorScheme.primary,
+            onChanged: onChanged,
+          ),
+        ],
+      ),
+    );
+  }
+}
+

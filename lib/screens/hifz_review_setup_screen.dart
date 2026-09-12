@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:qcf_quran/qcf_quran.dart' as qcf;
+import '../data/medina_mushaf_pages.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/quran_foundation_repository.dart';
@@ -19,15 +20,32 @@ import '../database/hifz_repository.dart';
 import '../providers/settings_provider.dart';
 import 'hifz_memorize_screen.dart';
 import 'hifz_mushaf_range_picker_screen.dart';
+import '../widgets/surah_picker_sheet.dart';
 
 class HifzReviewSetupScreen extends StatefulWidget {
   final QuranRepository quranRepository;
   final QuranFoundationRepository? foundationRepository;
+  final int? initialStartSurah;
+  final int? initialEndSurah;
+  final int? initialVersesSurah;
+  final int? initialVersesStart;
+  final int? initialVersesEnd;
+  final int? initialStartPage;
+  final int? initialEndPage;
+  final int? initialTabIndex;
 
   const HifzReviewSetupScreen({
     super.key,
     required this.quranRepository,
     this.foundationRepository,
+    this.initialStartSurah,
+    this.initialEndSurah,
+    this.initialVersesSurah,
+    this.initialVersesStart,
+    this.initialVersesEnd,
+    this.initialStartPage,
+    this.initialEndPage,
+    this.initialTabIndex,
   });
 
   @override
@@ -48,17 +66,38 @@ class _HifzReviewSetupScreenState extends State<HifzReviewSetupScreen>
   int _versesEnd = 10;
 
   // --- byPage ---
-  int _startPage = qcf.getPageNumber(67, 1);
-  int _endPage = qcf.getPageNumber(67, 1);
+  int _startPage = getMedinaMushafPageNumber(67, 1);
+  int _endPage = getMedinaMushafPageNumber(67, 1);
 
   static const _prefKey = 'hifz_review_last_setup';
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    final tab = (widget.initialTabIndex ??
+            (widget.initialStartPage != null
+                ? 2
+                : (widget.initialVersesSurah != null ? 1 : 0)))
+        .clamp(0, 2);
+    _tabController = TabController(length: 3, vsync: this, initialIndex: tab);
+
+    if (widget.initialStartSurah != null) {
+      _startSurah = widget.initialStartSurah!;
+      _endSurah = widget.initialEndSurah ?? widget.initialStartSurah!;
+    }
+    if (widget.initialVersesSurah != null) {
+      _versesSurah = widget.initialVersesSurah!;
+      _versesStart = widget.initialVersesStart ?? 1;
+      _versesEnd = widget.initialVersesEnd ??
+          (_versesStart + 9).clamp(1, qcf.getVerseCount(_versesSurah));
+    }
+    if (widget.initialStartPage != null) {
+      _startPage = widget.initialStartPage!;
+      _endPage = widget.initialEndPage ?? widget.initialStartPage!;
+    }
+
     _loadLastSetup();
-    
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
         _checkForResumableSession();
@@ -187,6 +226,12 @@ class _HifzReviewSetupScreenState extends State<HifzReviewSetupScreen>
   }
 
   Future<void> _loadLastSetup() async {
+    final hasExplicit = widget.initialStartSurah != null ||
+        widget.initialVersesSurah != null ||
+        widget.initialStartPage != null ||
+        widget.initialTabIndex != null;
+    if (hasExplicit) return;
+
     final prefs = await SharedPreferences.getInstance();
     final saved = prefs.getString(_prefKey);
     if (saved == null || !mounted) return;
@@ -441,29 +486,88 @@ class _BySurahTabState extends State<_BySurahTab> {
               : 'Review entire Surahs — 2× visible then 2× hidden, auto-advance.',
         ),
         const SizedBox(height: 24),
-        _LabeledDropdown<int>(
-          label: isThai ? 'ซูเราะฮ์เริ่ม' : 'Start Surah',
-          value: _start,
-          items: List.generate(114, (i) => i + 1),
-          itemLabel: (v) => widget.quranRepository.getSurahName(v.toString()),
-          onChanged: (v) {
-            setState(() {
-              _start = v;
-              if (_end < _start) _end = _start;
-            });
-            _notify();
+        SurahSelectorTile(
+          surahNumber: _start,
+          label: isThai ? 'ซูเราะฮ์เริ่มต้น' : 'Start Surah',
+          onTap: () async {
+            final picked = await SurahPickerSheet.show(
+              context,
+              selectedSurah: _start,
+              title: isThai ? 'เลือกซูเราะฮ์เริ่มต้น' : 'Select Start Surah',
+            );
+            if (picked != null && mounted) {
+              setState(() {
+                _start = picked;
+                if (_end < _start) _end = _start;
+              });
+              _notify();
+            }
           },
         ),
         const SizedBox(height: 16),
-        _LabeledDropdown<int>(
+        SurahSelectorTile(
+          surahNumber: _end,
           label: isThai ? 'ซูเราะฮ์สิ้นสุด' : 'End Surah',
-          value: _end,
-          items: List.generate(114 - _start + 1, (i) => _start + i),
-          itemLabel: (v) => widget.quranRepository.getSurahName(v.toString()),
-          onChanged: (v) {
-            setState(() => _end = v);
-            _notify();
+          onTap: () async {
+            final picked = await SurahPickerSheet.show(
+              context,
+              selectedSurah: _end,
+              title: isThai ? 'เลือกซูเราะฮ์สิ้นสุด' : 'Select End Surah',
+            );
+            if (picked != null && mounted) {
+              setState(() {
+                _end = picked;
+                if (_end < _start) _start = _end;
+              });
+              _notify();
+            }
           },
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            ActionChip(
+              avatar: Icon(Icons.bolt_rounded, size: 16, color: colorScheme.primary),
+              label: Text(isThai ? 'ซูเราะฮ์เดียว' : 'Single Surah'),
+              onPressed: () {
+                setState(() => _end = _start);
+                _notify();
+              },
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              backgroundColor: colorScheme.surfaceContainerLow,
+            ),
+            ActionChip(
+              avatar: Icon(Icons.menu_book_rounded, size: 16, color: colorScheme.primary),
+              label: Text(isThai ? 'ญุซอ์ 30 (78–114)' : 'Juz 30 (78–114)'),
+              onPressed: () {
+                setState(() {
+                  _start = 78;
+                  _end = 114;
+                });
+                _notify();
+              },
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              backgroundColor: colorScheme.surfaceContainerLow,
+            ),
+            ActionChip(
+              avatar: Icon(Icons.auto_stories_rounded, size: 16, color: colorScheme.primary),
+              label: Text(isThai ? 'อัลมุลก์–อันนาส (67–114)' : 'Al-Mulk–An-Nas (67–114)'),
+              onPressed: () {
+                setState(() {
+                  _start = 67;
+                  _end = 114;
+                });
+                _notify();
+              },
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              backgroundColor: colorScheme.surfaceContainerLow,
+            ),
+          ],
         ),
         const SizedBox(height: 24),
         _SummaryCard(
@@ -535,7 +639,7 @@ class _ByVersesTabState extends State<_ByVersesTab> {
   int get _totalVerses => qcf.getVerseCount(_surah);
 
   Future<void> _openVisualPicker() async {
-    final initialPage = qcf.getPageNumber(_surah, _start);
+    final initialPage = getMedinaMushafPageNumber(_surah, _start);
     final result = await Navigator.push<HifzMushafRangePickerResult>(
       context,
       MaterialPageRoute(
@@ -558,6 +662,64 @@ class _ByVersesTabState extends State<_ByVersesTab> {
       });
       _notify();
     }
+  }
+
+  void _applyRangePreset(int count) {
+    setState(() {
+      if (count == -1) {
+        _start = 1;
+        _end = _totalVerses;
+      } else {
+        _end = (_start + count - 1).clamp(1, _totalVerses);
+      }
+    });
+    _notify();
+  }
+
+  Widget _buildQuickRangePresets(bool isThai, ColorScheme colorScheme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          isThai ? 'ช่วงอายะห์แบบรวดเร็ว' : 'Quick Range Presets',
+          style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSurfaceVariant,
+              ),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            ActionChip(
+              avatar: Icon(Icons.bolt_rounded, size: 16, color: colorScheme.primary),
+              label: Text(isThai ? '+5 อายะห์' : '+5 Verses'),
+              onPressed: () => _applyRangePreset(5),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              backgroundColor: colorScheme.surfaceContainerLow,
+            ),
+            ActionChip(
+              avatar: Icon(Icons.bolt_rounded, size: 16, color: colorScheme.primary),
+              label: Text(isThai ? '+10 อายะห์' : '+10 Verses'),
+              onPressed: () => _applyRangePreset(10),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              backgroundColor: colorScheme.surfaceContainerLow,
+            ),
+            ActionChip(
+              avatar: Icon(Icons.menu_book_rounded, size: 16, color: colorScheme.primary),
+              label: Text(isThai ? 'ทั้งซูเราะฮ์' : 'Full Surah'),
+              onPressed: () => _applyRangePreset(-1),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              side: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              backgroundColor: colorScheme.surfaceContainerLow,
+            ),
+          ],
+        ),
+      ],
+    );
   }
 
   @override
@@ -595,19 +757,24 @@ class _ByVersesTabState extends State<_ByVersesTab> {
           ),
         ),
         const SizedBox(height: 20),
-        _LabeledDropdown<int>(
+        SurahSelectorTile(
+          surahNumber: _surah,
           label: isThai ? 'ซูเราะฮ์' : 'Surah',
-          value: _surah,
-          items: List.generate(114, (i) => i + 1),
-          itemLabel: (v) => widget.quranRepository.getSurahName(v.toString()),
-          onChanged: (v) {
-            setState(() {
-              _surah = v;
-              final total = qcf.getVerseCount(v);
-              _start = 1;
-              _end = total > 6 ? 6 : total;
-            });
-            _notify();
+          onTap: () async {
+            final picked = await SurahPickerSheet.show(
+              context,
+              selectedSurah: _surah,
+              title: isThai ? 'เลือกซูเราะฮ์สำหรับทบทวน' : 'Select Surah for Review',
+            );
+            if (picked != null && mounted) {
+              setState(() {
+                _surah = picked;
+                final total = qcf.getVerseCount(picked);
+                _start = 1;
+                _end = total > 6 ? 6 : total;
+              });
+              _notify();
+            }
           },
         ),
         const SizedBox(height: 16),
@@ -643,6 +810,8 @@ class _ByVersesTabState extends State<_ByVersesTab> {
             ),
           ],
         ),
+        const SizedBox(height: 12),
+        _buildQuickRangePresets(isThai, colorScheme),
         const SizedBox(height: 24),
         _SummaryCard(
           colorScheme: colorScheme,
@@ -717,7 +886,7 @@ class _ByPageTabState extends State<_ByPageTab> {
       ),
     );
     if (result != null && mounted) {
-      final endP = qcf.getPageNumber(result.surah, result.endVerse);
+      final endP = getMedinaMushafPageNumber(result.surah, result.endVerse);
       setState(() {
         _start = result.page;
         _end = endP >= _start ? endP : _start;

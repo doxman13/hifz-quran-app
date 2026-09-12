@@ -15,6 +15,7 @@ import 'package:flutter/foundation.dart';
 import 'package:qcf_quran/qcf_quran.dart' as qcf;
 
 import '../models/hifz_task.dart';
+import '../models/hifz_verse_chunk.dart';
 import '../models/hifz_session_config.dart';
 import '../database/hifz_repository.dart';
 
@@ -60,6 +61,11 @@ class HifzSessionProvider extends ChangeNotifier {
   String _sessionId;
   String get sessionId => _sessionId;
 
+  bool _chunkLongVerses = true;
+  bool get chunkLongVerses => _chunkLongVerses;
+  Map<int, List<HifzVerseChunk>> _verseChunksMap = {};
+  Map<int, List<HifzVerseChunk>> get verseChunksMap => Map.unmodifiable(_verseChunksMap);
+
   // ---------------------------------------------------------------------------
   // Constructor: New Verses mode (backward-compatible default)
   // ---------------------------------------------------------------------------
@@ -70,13 +76,25 @@ class HifzSessionProvider extends ChangeNotifier {
     int startVerse = 1,
     int endVerse = 3,
     String? sessionId,
+    this._chunkLongVerses = true,
+    Map<int, List<HifzVerseChunk>>? verseChunksMap,
   })  : _repo = repository ?? HifzRepository(),
         _sessionType = HifzSessionType.newVerses,
         _repeatStart = repeatStart,
         _startVerse = startVerse,
         _endVerse = endVerse,
         _sessionId = sessionId ?? DateTime.now().millisecondsSinceEpoch.toString() {
-    initRoutine(repeatStart, startVerse, endVerse);
+    if (verseChunksMap != null) {
+      _verseChunksMap = verseChunksMap;
+    }
+    initRoutine(
+      repeatStart,
+      startVerse,
+      endVerse,
+      surah: _surahNumber,
+      chunkLongVerses: _chunkLongVerses,
+      verseChunksMap: _verseChunksMap.isNotEmpty ? _verseChunksMap : null,
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -190,20 +208,72 @@ class HifzSessionProvider extends ChangeNotifier {
   // ---------------------------------------------------------------------------
   // New Verses init (backward-compatible)
   // ---------------------------------------------------------------------------
-  void initRoutine(int repeatStart, int startVerse, int endVerse, {int? surah}) {
+  void initRoutine(
+    int repeatStart,
+    int startVerse,
+    int endVerse, {
+    int? surah,
+    bool? chunkLongVerses,
+    Map<int, List<HifzVerseChunk>>? verseChunksMap,
+  }) {
     _sessionType = HifzSessionType.newVerses;
     if (surah != null) {
       _surahNumber = surah;
     }
+    if (chunkLongVerses != null) {
+      _chunkLongVerses = chunkLongVerses;
+    }
+    if (verseChunksMap != null) {
+      _verseChunksMap = verseChunksMap;
+    }
     _repeatStart = repeatStart;
     _startVerse = startVerse;
     _endVerse = endVerse;
-    _tasks = generateHifzRoutine(repeatStart, startVerse, endVerse);
+    _tasks = generateHifzRoutine(
+      repeatStart,
+      startVerse,
+      endVerse,
+      verseChunksMap: (_chunkLongVerses && _verseChunksMap.isNotEmpty) ? _verseChunksMap : null,
+    );
     _currentTaskIndex = 0;
     _isPeekActive = false;
     _verseTallyMap.clear();
     _startTime = DateTime.now();
     notifyListeners();
+  }
+
+  /// Sets chunk data for the active session and regenerates tasks if in New Verses mode.
+  void setVerseChunks(Map<int, List<HifzVerseChunk>> chunksMap, {bool enable = true}) {
+    _chunkLongVerses = enable;
+    _verseChunksMap = chunksMap;
+    if (_sessionType == HifzSessionType.newVerses) {
+      _tasks = generateHifzRoutine(
+        _repeatStart,
+        _startVerse,
+        _endVerse,
+        verseChunksMap: enable ? _verseChunksMap : null,
+      );
+      _currentTaskIndex = 0;
+      _isPeekActive = false;
+      notifyListeners();
+    }
+  }
+
+  /// Toggles chunking on or off for the active session.
+  void toggleChunkLongVerses(bool enable) {
+    if (_chunkLongVerses == enable) return;
+    _chunkLongVerses = enable;
+    if (_sessionType == HifzSessionType.newVerses) {
+      _tasks = generateHifzRoutine(
+        _repeatStart,
+        _startVerse,
+        _endVerse,
+        verseChunksMap: enable ? _verseChunksMap : null,
+      );
+      _currentTaskIndex = 0;
+      _isPeekActive = false;
+      notifyListeners();
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -534,7 +604,12 @@ class HifzSessionProvider extends ChangeNotifier {
       _repeatStart = snap.nvRepeatStart ?? _repeatStart;
       _startVerse = snap.nvStartVerse ?? _startVerse;
       _endVerse = snap.nvEndVerse ?? _endVerse;
-      _tasks = generateHifzRoutine(_repeatStart, _startVerse, _endVerse);
+      _tasks = generateHifzRoutine(
+        _repeatStart,
+        _startVerse,
+        _endVerse,
+        verseChunksMap: (_chunkLongVerses && _verseChunksMap.isNotEmpty) ? _verseChunksMap : null,
+      );
       _currentTaskIndex = snap.currentStepIndex.clamp(0, _tasks.length);
       // Restore partial tally on the active task
       if (_currentTaskIndex < _tasks.length) {

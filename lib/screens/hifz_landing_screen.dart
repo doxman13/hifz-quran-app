@@ -18,7 +18,8 @@ import 'hifz_history_screen.dart';
 import 'hifz_mastery_list_screen.dart';
 import 'hifz_settings_screen.dart';
 import 'hifz_memorize_screen.dart';
-import 'hifz_new_verses_setup_screen.dart';
+import 'hifz_guide_screen.dart';
+import 'hifz_wizard_setup_screen.dart';
 import 'hifz_review_setup_screen.dart';
 
 class HifzLandingScreen extends StatefulWidget {
@@ -84,18 +85,18 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
     final prefs = await SharedPreferences.getInstance();
     if (!mounted) return;
 
-    await Navigator.push<NewVersesSetupResult>(
+    await Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (_) => HifzNewVersesSetupScreen(
+        builder: (_) => HifzWizardSetupScreen(
           quranRepository: widget.quranRepository,
           foundationRepository: widget.foundationRepository,
-          initialSurah: prefs.getInt('hifz_nv_surah') ?? 1,
+          initialMode: HifzSessionType.newVerses,
+          initialSurah: prefs.getInt('hifz_nv_surah') ?? 67,
           initialStartVerse: prefs.getInt('hifz_nv_start_verse') ?? 1,
-          initialEndVerse: prefs.getInt('hifz_nv_end_verse') ?? 3,
+          initialEndVerse: prefs.getInt('hifz_nv_end_verse') ?? 5,
           initialRepeatStart: prefs.getInt('hifz_nv_repeat_start') ?? 1,
-          initialPage: prefs.getInt('hifz_nv_page') ?? 1,
-          initialIsSurahMode: prefs.getBool('hifz_nv_is_surah_mode') ?? true,
+          initialStep: 1,
         ),
       ),
     );
@@ -119,12 +120,44 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
     }
   }
 
+  Future<void> _openWizard() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => HifzWizardSetupScreen(
+          quranRepository: widget.quranRepository,
+          foundationRepository: widget.foundationRepository,
+          initialRepeatStart: prefs.getInt('hifz_nv_repeat_start') ?? 1,
+          initialStep: 0,
+        ),
+      ),
+    );
+    if (mounted) {
+      _loadStats();
+    }
+  }
+
   void _openMastery() {
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (_) =>
             HifzMasteryListScreen(quranRepository: widget.quranRepository),
+      ),
+    );
+  }
+
+  void _openGuide() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => HifzGuideScreen(
+          onStartNewVerses: _openNewVerses,
+          onStartReview: _openReview,
+        ),
       ),
     );
   }
@@ -163,7 +196,6 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
-    final screenHeight = MediaQuery.of(context).size.height;
     final settings = Provider.of<SettingsProvider>(context);
     final isThai = settings.languageCode == 'th';
 
@@ -172,9 +204,10 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
         slivers: [
           // ── Hero Header ─────────────────────────────────────────────────────
           SliverAppBar(
-            expandedHeight: screenHeight * 0.24,
+            expandedHeight: 150,
             pinned: true,
             foregroundColor: colorScheme.onSurface,
+            backgroundColor: colorScheme.surface,
             elevation: 0,
             flexibleSpace: FlexibleSpaceBar(
               background: _buildHeroHeader(colorScheme, textTheme, isThai),
@@ -187,8 +220,18 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
                   ),
             actions: [
               IconButton(
+                icon: const Icon(Icons.help_outline_rounded),
+                tooltip: isThai ? 'คู่มือการท่องจำ' : 'How to Hifz Guide',
+                onPressed: _openGuide,
+              ),
+              IconButton(
+                icon: const Icon(Icons.history_rounded),
+                tooltip: isThai ? 'ประวัติ' : 'History',
+                onPressed: _openHistory,
+              ),
+              IconButton(
                 icon: const Icon(Icons.settings_outlined),
-                tooltip: 'Settings',
+                tooltip: isThai ? 'ตั้งค่า' : 'Settings',
                 onPressed: () => Navigator.push(context,
                     MaterialPageRoute(builder: (_) => const HifzSettingsScreen())),
               ),
@@ -203,7 +246,7 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
             ),
           ),
 
-          // ── Resume Banner ───────────────────────────────────────────────────
+          // ── Resume Hero Banner ──────────────────────────────────────────────
           if (_hasActiveSession && !_loading)
             SliverToBoxAdapter(
               child: FadeTransition(
@@ -212,16 +255,36 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
               ),
             ),
 
+          // ── How-To Guide Teaser ─────────────────────────────────────────────
+          SliverToBoxAdapter(
+            child: FadeTransition(
+              opacity: _fadeAnim,
+              child: _buildGuideTeaserBanner(colorScheme, textTheme, isThai),
+            ),
+          ),
+
           // ── Mode Title ──────────────────────────────────────────────────────
           SliverToBoxAdapter(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 24, 24, 12),
-              child: Text(
-                isThai ? 'เลือกรูปแบบการฝึกฝน' : 'Choose Your Practice',
-                style: textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface,
-                ),
+              padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
+              child: Row(
+                children: [
+                  Text(
+                    isThai ? 'โหมดการฝึกฝน' : 'Practice Modes',
+                    style: textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                  const Spacer(),
+                  Text(
+                    isThai ? 'ท่องใหม่ 20% · ทบทวน 80%' : '20% New · 80% Review',
+                    style: textTheme.labelSmall?.copyWith(
+                      color: colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -231,17 +294,122 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
             padding: const EdgeInsets.symmetric(horizontal: 16),
             sliver: SliverList(
               delegate: SliverChildListDelegate([
+                // ── Guided 3-Step Wizard Entry Banner ──────────────────────────────
+                FadeTransition(
+                  opacity: _fadeAnim,
+                  child: InkWell(
+                    onTap: _openWizard,
+                    borderRadius: BorderRadius.circular(24),
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            colorScheme.primary,
+                            colorScheme.primary.withValues(alpha: 0.85),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(
+                            color: colorScheme.primary.withValues(alpha: 0.25),
+                            blurRadius: 16,
+                            offset: const Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            width: 52,
+                            height: 52,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: const Icon(
+                              Icons.auto_fix_high_rounded,
+                              size: 28,
+                              color: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      isThai
+                                          ? 'เริ่มต้นทีละขั้นตอน'
+                                          : 'Step-by-Step Setup',
+                                      style: GoogleFonts.notoSansThai(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w900,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 6, vertical: 2),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white.withValues(alpha: 0.25),
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      child: Text(
+                                        isThai ? '3 ขั้นตอน' : '3 Steps',
+                                        style: const TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  isThai
+                                      ? 'เลือกเป้าหมาย ──> กำหนดช่วง ──> เริ่มท่องทันที'
+                                      : 'Select goal ──> set range ──> start session',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.white70,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            size: 16,
+                            color: Colors.white70,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
                 FadeTransition(
                   opacity: _fadeAnim,
                   child: _HifzModeCard(
                     icon: Icons.menu_book_rounded,
                     accentColor: colorScheme.primary,
                     title: 'New Verses (Takrar)',
-                    titleThai: 'ท่องอายะห์ใหม่',
+                    titleThai: 'ท่องจำอายะห์ใหม่ (Takrar)',
                     subtitle: isThai
-                        ? 'ฝึกฝนอายะห์ใหม่ด้วยวิธี Gundal — อ่านแบบเปิดเผยและซ่อนอย่างละ 3 รอบ จากนั้นเชื่อมโยงลำดับอายะห์'
-                        : 'Practice new verses with the Gundal method — 3 rounds of visible & hidden recitation, then sequence linking.',
+                        ? 'ท่องจำอายะห์ใหม่ด้วยวิธีตัครอร (Takrar) — สลับเปิดเผย 10x และซ่อน 5x เพื่อสร้างภาพจำลงสมอง'
+                        : 'Memorize new verses with the Takrar repetition method — 10x visible & 5x hidden active recall.',
                     badge: null,
+                    tags: isThai
+                        ? ['วงจรตัครอร 10V + 5H', 'แบ่งย่อยอายะห์ตามวักฟ์', 'เชื่อมโยงลำดับ']
+                        : ['10V + 5H Takrar Cycle', 'Waqf Chunking', 'Sequence Linking'],
                     colorScheme: colorScheme,
                     textTheme: textTheme,
                     onTap: _openNewVerses,
@@ -253,16 +421,19 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
                   child: _HifzModeCard(
                     icon: Icons.replay_circle_filled_rounded,
                     accentColor: colorScheme.tertiary,
-                    title: 'Review Mode',
-                    titleThai: 'ทบทวนฮิฟซ์',
+                    title: 'Review Mode (Muraja\'ah)',
+                    titleThai: 'ทบทวนฮิฟซ์ (Muraja\'ah)',
                     subtitle: isThai
-                        ? 'เสริมสร้างความจำที่เคยท่องจำ ทบทวนรายสูเราะฮ์ ช่วงอายะห์ หรือหน้ามุสฮัฟ ด้วยวงจรเปิดเผย-ซ่อนแบบ 2x/2x'
-                        : 'Strengthen memorized content. Review by Surah, Verse range, or Mushaf page with 2×/2× visible-hidden cycle.',
+                        ? 'หัวใจของการฮิฟซ์! รักษาสิ่งที่เคยท่องจำไม่ให้เลือนหาย ด้วยวงจรเปิดเผย-ซ่อนแบบ 2x/2x'
+                        : 'The heart of Hifz! Protect memorized portions with the 2x/2x visible-hidden cycle.',
                     badge: _inProgressCount > 0
                         ? (isThai
-                            ? 'กำลังดำเนินการ $_inProgressCount เซสชัน'
-                            : '$_inProgressCount in progress')
+                            ? 'กำลังดำเนินการ $_inProgressCount'
+                            : '$_inProgressCount active')
                         : null,
+                    tags: isThai
+                        ? ['วงจร 2x/2x ล็อกความจำ', 'หัวใจสำคัญ 80%', 'ทบทวนสะบักกี & มันซิล']
+                        : ['2x/2x Retention Lock', 'Essential 80%', 'Sabqi & Manzil'],
                     colorScheme: colorScheme,
                     textTheme: textTheme,
                     onTap: _openReview,
@@ -307,46 +478,55 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            colorScheme.primaryContainer,
-            colorScheme.secondaryContainer,
+            colorScheme.primaryContainer.withValues(alpha: 0.6),
+            colorScheme.secondaryContainer.withValues(alpha: 0.4),
           ],
         ),
       ),
       child: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(24, 56, 24, 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.end,
+          padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Container(
-                width: 48,
-                height: 48,
+                width: 44,
+                height: 44,
                 decoration: BoxDecoration(
                   color: colorScheme.primary,
                   borderRadius: BorderRadius.circular(14),
-                  boxShadow: [
-                    BoxShadow(
-                      color: colorScheme.primary.withValues(alpha: 0.3),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.psychology_alt_rounded,
-                  size: 28,
-                  color: Colors.white,
+                  size: 26,
+                  color: colorScheme.onPrimary,
                 ),
               ),
-              const SizedBox(height: 12),
-              Text(
-                isThai ? 'โหมดท่องจำ' : 'Hifz Memorization',
-                style: GoogleFonts.notoSansThai(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w900,
-                  color: colorScheme.onPrimaryContainer,
-                  height: 1.2,
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(
+                      isThai ? 'ศูนย์รวมการท่องจำ' : 'Hifz Command Center',
+                      style: GoogleFonts.notoSansThai(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w900,
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                    Text(
+                      isThai
+                          ? 'ฝึกฝนอายะห์ใหม่ & รักษาการท่องจำด้วยการทบทวน'
+                          : 'Master new verses & protect retention with review',
+                      style: textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -358,12 +538,16 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
 
   // ── Stats Strip ─────────────────────────────────────────────────────────────
   Widget _buildStatsStrip(ColorScheme colorScheme, TextTheme textTheme, bool isThai) {
+    final progress = _masteredCount / 114;
     return Container(
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: colorScheme.surface,
+        color: colorScheme.surfaceContainerLow,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.4),
+        ),
       ),
       child: _loading
           ? const Center(
@@ -373,36 +557,112 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
                 child: CircularProgressIndicator(strokeWidth: 2),
               ),
             )
-          : Row(
+          : Column(
               children: [
-                _StatPill(
-                  icon: Icons.military_tech_rounded,
-                  label: isThai ? 'เชี่ยวชาญ' : 'Mastered',
-                  value: '$_masteredCount',
-                  color: colorScheme.primary,
-                  colorScheme: colorScheme,
-                  textTheme: textTheme,
+                Row(
+                  children: [
+                    _StatPill(
+                      icon: Icons.military_tech_rounded,
+                      label: isThai ? 'เชี่ยวชาญ' : 'Mastered',
+                      value: '$_masteredCount',
+                      color: colorScheme.primary,
+                      colorScheme: colorScheme,
+                      textTheme: textTheme,
+                    ),
+                    _VertDivider(colorScheme: colorScheme),
+                    _StatPill(
+                      icon: Icons.trending_up_rounded,
+                      label: isThai ? 'กำลังฝึก' : 'In Progress',
+                      value: '$_inProgressCount',
+                      color: colorScheme.tertiary,
+                      colorScheme: colorScheme,
+                      textTheme: textTheme,
+                    ),
+                    _VertDivider(colorScheme: colorScheme),
+                    _StatPill(
+                      icon: Icons.pie_chart_rounded,
+                      label: isThai ? 'ความสำเร็จ' : 'Quran Mastery',
+                      value: '${(progress * 100).toStringAsFixed(1)}%',
+                      color: colorScheme.secondary,
+                      colorScheme: colorScheme,
+                      textTheme: textTheme,
+                    ),
+                  ],
                 ),
-                _VertDivider(colorScheme: colorScheme),
-                _StatPill(
-                  icon: Icons.trending_up_rounded,
-                  label: isThai ? 'กำลังฝึก' : 'In Progress',
-                  value: '$_inProgressCount',
-                  color: colorScheme.tertiary,
-                  colorScheme: colorScheme,
-                  textTheme: textTheme,
-                ),
-                _VertDivider(colorScheme: colorScheme),
-                _StatPill(
-                  icon: Icons.import_contacts_rounded,
-                  label: isThai ? 'สูเราะฮ์' : 'Surahs',
-                  value: '114',
-                  color: colorScheme.secondary,
-                  colorScheme: colorScheme,
-                  textTheme: textTheme,
+                const SizedBox(height: 12),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(6),
+                  child: LinearProgressIndicator(
+                    value: progress,
+                    minHeight: 6,
+                    backgroundColor:
+                        colorScheme.outlineVariant.withValues(alpha: 0.3),
+                    color: colorScheme.primary,
+                  ),
                 ),
               ],
             ),
+    );
+  }
+
+  // ── Guide Teaser Banner ─────────────────────────────────────────────────────
+  Widget _buildGuideTeaserBanner(
+      ColorScheme colorScheme, TextTheme textTheme, bool isThai) {
+    return GestureDetector(
+      onTap: _openGuide,
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: colorScheme.surfaceContainerLow,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: colorScheme.tertiary.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: Icon(Icons.school_rounded,
+                  color: colorScheme.tertiary, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    isThai
+                        ? 'คู่มือการท่องจำ: ทำไมการทบทวนถึงสำคัญที่สุด?'
+                        : 'How to Hifz: Why Review is 80% of Retention',
+                    style: textTheme.labelLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onSurface,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    isThai
+                        ? 'เรียนรู้วงจรตัครอร (Takrar) และระบบทบทวน 2x/2x แตะเพื่ออ่านคู่มือ'
+                        : 'Learn the Takrar repetition cycle & 2x/2x review system. Tap to view.',
+                    style: textTheme.bodySmall?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
+                      fontSize: 11.5,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded,
+                size: 20, color: colorScheme.onSurfaceVariant),
+          ],
+        ),
+      ),
     );
   }
 
@@ -456,44 +716,79 @@ class _HifzLandingScreenState extends State<HifzLandingScreen>
         ? _getResumeSessionSubtitle(_activeSessionSnapshot!, isThai)
         : (isThai ? 'แตะเพื่ออ่านต่อจากที่คุณทำค้างไว้' : 'Tap to resume where you left off');
 
-    return GestureDetector(
-      onTap: _resumeSession,
-      child: Container(
-        margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-        decoration: BoxDecoration(
-          color: colorScheme.primaryContainer,
-          borderRadius: BorderRadius.circular(20),
+    final isNewVerses =
+        _activeSessionSnapshot?.sessionType == HifzSessionType.newVerses;
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.primaryContainer.withValues(alpha: 0.4),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: colorScheme.primary.withValues(alpha: 0.3),
         ),
-        child: Row(
-          children: [
-            Icon(Icons.history_rounded, color: colorScheme.primary, size: 22),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    isThai ? 'พบเซสชันที่ดำเนินการอยู่' : 'Active session found',
-                    style: textTheme.labelLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onPrimaryContainer,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: colorScheme.primary,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.play_circle_filled_rounded,
+                        size: 14, color: Colors.white),
+                    const SizedBox(width: 4),
+                    Text(
+                      isThai
+                          ? (isNewVerses ? 'เซสชันท่องจำค้างอยู่' : 'เซสชันทบทวนค้างอยู่')
+                          : (isNewVerses ? 'Active New Verses' : 'Active Review'),
+                      style: textTheme.labelSmall?.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle,
-                    style: textTheme.bodySmall?.copyWith(
-                      color: colorScheme.onPrimaryContainer.withValues(alpha: 0.8),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
+              ),
+              const Spacer(),
+              Text(
+                isThai ? 'ทำค้างไว้' : 'In Progress',
+                style: textTheme.labelSmall?.copyWith(
+                  color: colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            subtitle,
+            style: textTheme.titleMedium?.copyWith(
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,
+            ),
+          ),
+          const SizedBox(height: 12),
+          FilledButton.icon(
+            onPressed: _resumeSession,
+            icon: const Icon(Icons.play_arrow_rounded, size: 20),
+            label: Text(isThai ? 'ทำต่อจากจุดเดิม' : 'Resume Session Now'),
+            style: FilledButton.styleFrom(
+              minimumSize: const Size.fromHeight(44),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
-            Icon(Icons.arrow_forward_ios_rounded,
-                size: 16, color: colorScheme.primary),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -614,6 +909,7 @@ class _HifzModeCard extends StatefulWidget {
   final String titleThai;
   final String subtitle;
   final String? badge;
+  final List<String>? tags;
   final ColorScheme colorScheme;
   final TextTheme textTheme;
   final VoidCallback onTap;
@@ -625,6 +921,7 @@ class _HifzModeCard extends StatefulWidget {
     required this.titleThai,
     required this.subtitle,
     required this.badge,
+    this.tags,
     required this.colorScheme,
     required this.textTheme,
     required this.onTap,
@@ -649,16 +946,21 @@ class _HifzModeCardState extends State<_HifzModeCard> {
       onTapCancel: () => setState(() => _pressed = false),
       onTap: widget.onTap,
       child: AnimatedScale(
-        scale: _pressed ? 0.97 : 1.0,
+        scale: _pressed ? 0.98 : 1.0,
         duration: const Duration(milliseconds: 120),
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 120),
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
             color: _pressed
-                ? widget.accentColor.withValues(alpha: 0.06)
-                : cs.surface,
+                ? widget.accentColor.withValues(alpha: 0.08)
+                : cs.surfaceContainerLow,
             borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: _pressed
+                  ? widget.accentColor.withValues(alpha: 0.4)
+                  : cs.outlineVariant.withValues(alpha: 0.4),
+            ),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -667,7 +969,7 @@ class _HifzModeCardState extends State<_HifzModeCard> {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color: widget.accentColor.withValues(alpha: 0.12),
+                  color: widget.accentColor.withValues(alpha: 0.14),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Icon(widget.icon, color: widget.accentColor, size: 28),
@@ -695,7 +997,7 @@ class _HifzModeCardState extends State<_HifzModeCard> {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
-                              color: cs.tertiary.withValues(alpha: 0.12),
+                              color: cs.tertiary.withValues(alpha: 0.14),
                               borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
@@ -709,14 +1011,39 @@ class _HifzModeCardState extends State<_HifzModeCard> {
                         ],
                       ],
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     Text(
                       widget.subtitle,
                       style: tt.bodySmall?.copyWith(
                         color: cs.onSurfaceVariant,
-                        height: 1.5,
+                        height: 1.45,
                       ),
                     ),
+                    if (widget.tags != null && widget.tags!.isNotEmpty) ...[
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 4,
+                        children: widget.tags!.map((t) => Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: widget.accentColor.withValues(alpha: 0.09),
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: widget.accentColor.withValues(alpha: 0.22),
+                            ),
+                          ),
+                          child: Text(
+                            t,
+                            style: tt.labelSmall?.copyWith(
+                              color: widget.accentColor,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 10.5,
+                            ),
+                          ),
+                        )).toList(),
+                      ),
+                    ],
                   ],
                 ),
               ),

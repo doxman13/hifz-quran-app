@@ -24,8 +24,12 @@ class RecitationEngine {
   bool _isInitialized = false;
   bool _isListening = false;
   bool _isInferring = false;
+  bool _isSearchMode = false;
+  void Function(double audioLevel)? _onSearchAudioLevel;
+  void Function(List<VerseSearchResult> results, String recognizedText)? _onSearchResults;
 
   int _currentSurah = 1;
+  int _startAyah = 1;
   int _expectedAyah = 1;
   int _endAyah = 7;
   RecitationSensitivity _sensitivity = RecitationSensitivity.balanced;
@@ -172,6 +176,7 @@ class RecitationEngine {
     required int surah,
     required int startAyah,
     required int endAyah,
+    int? initialExpectedAyah,
     bool? adaptiveNoise,
     required void Function(RecitationEvent) onEvent,
   }) async {
@@ -197,7 +202,8 @@ class RecitationEngine {
     _calibrationFramesRemaining = 8;
 
     _currentSurah = surah;
-    _expectedAyah = startAyah;
+    _startAyah = startAyah;
+    _expectedAyah = initialExpectedAyah ?? startAyah;
     _endAyah = endAyah;
     _onEvent = onEvent;
 
@@ -251,9 +257,10 @@ class RecitationEngine {
   }
 
   /// Updates active range for progressive tracking.
-  void updateRange({int? surah, required int startAyah, required int endAyah}) {
+  void updateRange({int? surah, required int startAyah, required int endAyah, int? initialExpectedAyah}) {
     if (surah != null) _currentSurah = surah;
-    _expectedAyah = startAyah;
+    _startAyah = startAyah;
+    _expectedAyah = initialExpectedAyah ?? startAyah;
     _endAyah = endAyah;
     _accumulatedTokens.clear();
     _speechBuffer.clear();
@@ -264,10 +271,82 @@ class RecitationEngine {
     ));
   }
 
+  /// Searches for matching verses across the entire Quran using the loaded token database.
+  List<VerseSearchResult> searchVerses(List<int> candidateTokens, {int limit = 5, double minScore = 0.35}) {
+    if (_matcher == null) return const [];
+    return _matcher!.searchVerses(candidateTokens, limit: limit, minScore: minScore);
+  }
+
+  /// Starts listening for recitation search across the entire Quran.
+  Future<void> startVoiceSearch({
+    required void Function(double audioLevel) onAudioLevel,
+    required void Function(List<VerseSearchResult> results, String recognizedText) onResults,
+    required void Function(String error) onError,
+    bool? adaptiveNoise,
+  }) async {
+    if (_isListening) {
+      await stopListening();
+    }
+
+    if (!_isInitialized) {
+      await initialize();
+    }
+
+    final permitted = await hasPermission();
+    if (!permitted) {
+      const err = 'Microphone permission not granted';
+      onError(err);
+      throw Exception(err);
+    }
+
+    if (adaptiveNoise != null) {
+      _adaptiveNoise = adaptiveNoise;
+    }
+    _ambientNoiseFloor = 0.008;
+    _calibrationFramesRemaining = 8;
+    _isSearchMode = true;
+    _onSearchAudioLevel = onAudioLevel;
+    _onSearchResults = onResults;
+
+    _speechBuffer.clear();
+    _accumulatedTokens.clear();
+    _trailingSilenceCount = 0;
+    _speechActive = false;
+
+    _audioRecorder ??= AudioRecorder();
+
+    try {
+      final audioStream = await _audioRecorder!.startStream(
+        const RecordConfig(
+          encoder: AudioEncoder.pcm16bits,
+          sampleRate: _sampleRate,
+          numChannels: 1,
+        ),
+      );
+
+      _isListening = true;
+
+      _audioSubscription = audioStream.listen(
+        _processAudioChunk,
+        onError: (err) {
+          debugPrint('[RecitationEngine] Audio stream error: $err');
+          onError(err.toString());
+        },
+      );
+    } catch (e) {
+      debugPrint('[RecitationEngine] startVoiceSearch error: $e');
+      onError('Failed to start audio stream: $e');
+      rethrow;
+    }
+  }
+
   /// Stops listening and releases active audio stream.
   Future<void> stopListening() async {
     _isListening = false;
     _speechActive = false;
+    _isSearchMode = false;
+    _onSearchAudioLevel = null;
+    _onSearchResults = null;
     _trailingSilenceCount = 0;
 
     await _audioSubscription?.cancel();
@@ -343,11 +422,15 @@ class RecitationEngine {
       _trailingSilenceCount = 0;
       _speechBuffer.addAll(samples);
 
-      _onEvent?.call(RecitationStatusEvent(
-        status: RecitationStatus.listening,
-        audioLevel: level,
-        currentExpectedAyah: _expectedAyah,
-      ));
+      if (_isSearchMode) {
+        _onSearchAudioLevel?.call(level);
+      } else {
+        _onEvent?.call(RecitationStatusEvent(
+          status: RecitationStatus.listening,
+          audioLevel: level,
+          currentExpectedAyah: _expectedAyah,
+        ));
+      }
 
       // If speech buffer exceeds max threshold, trigger inference immediately
       if (_speechBuffer.length >= _maxSpeechSamples && !_isInferring) {
@@ -442,6 +525,12 @@ class RecitationEngine {
 
               debugPrint('[RecitationEngine] Active tokens: ${activeTokens.length}, text: "$activeText"');
 
+              if (_isSearchMode) {
+                final results = _matcher!.searchVerses(activeTokens, limit: 5);
+                _onSearchResults?.call(results, activeText);
+                return;
+              }
+
               // Cascading match loop: continuously match consecutive verses in the active window (Wasl / continuous recitation)
               while (_expectedAyah <= _endAyah && activeTokens.isNotEmpty) {
                 final match = _matcher!.matchSlidingWindow(
@@ -449,6 +538,9 @@ class RecitationEngine {
                   expectedAyah: _expectedAyah,
                   candidateTokens: activeTokens,
                   candidateText: activeText,
+                  windowAhead: 2,
+                  windowBehind: 1,
+                  minAyah: _startAyah,
                   maxAyah: _endAyah,
                   sensitivity: _sensitivity,
                 );
@@ -476,9 +568,9 @@ class RecitationEngine {
                   break;
                 }
 
-                // Matched expected verse!
+                // Matched expected verse or previous verse!
                 debugPrint('[RecitationEngine] REVEAL Matched Ayah ${match.detectedAyah} (conf: ${match.confidence.toStringAsFixed(2)})');
-                _expectedAyah = match.detectedAyah + 1;
+                _expectedAyah = math.max(_expectedAyah, match.detectedAyah + 1);
 
                 _onEvent?.call(RecitationMatchedEvent(
                   surah: match.surah,

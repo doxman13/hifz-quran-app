@@ -74,6 +74,7 @@ flutter:
     - assets/quran_offline.db
     - assets/footnotes/
     - assets/models/
+    - assets/fonts/
 
   fonts:
     - family: UthmanicHafs
@@ -82,3 +83,6 @@ flutter:
     - family: Tajweed
       fonts:
         - asset: assets/Tajweed/DigitalKhattQuranicV1.otf
+    - family: QcfSurahName
+      fonts:
+        - asset: assets/fonts/surah-name-v2.ttf

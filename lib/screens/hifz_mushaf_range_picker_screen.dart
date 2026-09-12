@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:qcf_quran/qcf_quran.dart' as qcf;
+import '../data/medina_mushaf_pages.dart';
 
 import '../data/quran_foundation_repository.dart';
 import '../data/quran_repository.dart';
@@ -15,6 +16,7 @@ import '../models/mushaf_models.dart';
 import '../providers/settings_provider.dart';
 import '../theme/app_theme.dart';
 import 'mushaf_reader_screen.dart';
+import '../widgets/mushaf_page_skeleton.dart';
 
 /// Result returned from the visual range picker.
 class HifzMushafRangePickerResult {
@@ -75,9 +77,9 @@ class _HifzMushafRangePickerScreenState
         widget.initialPage! <= 604) {
       _currentPage = widget.initialPage!;
     } else if (_startVerse != null) {
-      _currentPage = qcf.getPageNumber(_selectedSurah, _startVerse!);
+      _currentPage = getMedinaMushafPageNumber(_selectedSurah, _startVerse!);
     } else {
-      _currentPage = qcf.getPageNumber(_selectedSurah, 1);
+      _currentPage = getMedinaMushafPageNumber(_selectedSurah, 1);
     }
 
     _pageController =
@@ -175,7 +177,7 @@ class _HifzMushafRangePickerScreenState
     final e = _endVerse ?? _startVerse!;
     final minV = s < e ? s : e;
     final maxV = s < e ? e : s;
-    final page = qcf.getPageNumber(_selectedSurah, minV);
+    final page = getMedinaMushafPageNumber(_selectedSurah, minV);
 
     Navigator.pop(
       context,
@@ -266,7 +268,7 @@ class _HifzMushafRangePickerScreenState
                             final name = widget.quranRepository
                                 .getSurahName(surahNum.toString());
                             final totalVerses = qcf.getVerseCount(surahNum);
-                            final startPage = qcf.getPageNumber(surahNum, 1);
+                            final startPage = getMedinaMushafPageNumber(surahNum, 1);
                             final isCurrent = surahNum == _selectedSurah;
 
                             return ListTile(
@@ -399,7 +401,7 @@ class _HifzMushafRangePickerScreenState
                     .fetchPage(mushafId: 2, pageNumber: pageNumber),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const MushafPageSkeleton();
                   }
                   final mushafPage = snapshot.data!;
                   const actualMushafId = 2;
@@ -492,8 +494,8 @@ class _HifzMushafRangePickerScreenState
     final minV = s < e ? s : e;
     final maxV = s < e ? e : s;
     final verseCount = hasSelection ? (maxV - minV + 1) : 0;
-    final startPage = hasSelection ? qcf.getPageNumber(_selectedSurah, minV) : _currentPage;
-    final endPage = hasSelection ? qcf.getPageNumber(_selectedSurah, maxV) : _currentPage;
+    final startPage = hasSelection ? getMedinaMushafPageNumber(_selectedSurah, minV) : _currentPage;
+    final endPage = hasSelection ? getMedinaMushafPageNumber(_selectedSurah, maxV) : _currentPage;
 
     return Positioned(
       left: 16,

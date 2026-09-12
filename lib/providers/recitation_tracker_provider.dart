@@ -88,6 +88,7 @@ class RecitationTrackerProvider extends ChangeNotifier with WidgetsBindingObserv
     required int surah,
     required int startAyah,
     required int endAyah,
+    int? initialExpectedAyah,
     RecitationSensitivity? sensitivity,
     bool? adaptiveNoise,
     void Function(int ayah)? onVerseMatched,
@@ -103,7 +104,8 @@ class RecitationTrackerProvider extends ChangeNotifier with WidgetsBindingObserv
     }
     _onVerseMatchedCallback = onVerseMatched;
     _onVerseSkippedCallback = onVerseSkipped;
-    _currentExpectedAyah = startAyah;
+    final effectiveExpected = initialExpectedAyah ?? startAyah;
+    _currentExpectedAyah = effectiveExpected;
     _skippedFromAyah = null;
     _skippedToAyah = null;
     _errorMessage = null;
@@ -118,6 +120,7 @@ class RecitationTrackerProvider extends ChangeNotifier with WidgetsBindingObserv
         surah: surah,
         startAyah: startAyah,
         endAyah: endAyah,
+        initialExpectedAyah: effectiveExpected,
         adaptiveNoise: _adaptiveNoise,
         onEvent: _handleEngineEvent,
       );
@@ -167,9 +170,10 @@ class RecitationTrackerProvider extends ChangeNotifier with WidgetsBindingObserv
   }
 
   /// Updates active range for progressive tracking.
-  void updateActiveRange({int? surah, required int startAyah, required int endAyah}) {
-    _currentExpectedAyah = startAyah;
-    _engine.updateRange(surah: surah, startAyah: startAyah, endAyah: endAyah);
+  void updateActiveRange({int? surah, required int startAyah, required int endAyah, int? initialExpectedAyah}) {
+    final effectiveExpected = initialExpectedAyah ?? startAyah;
+    _currentExpectedAyah = effectiveExpected;
+    _engine.updateRange(surah: surah, startAyah: startAyah, endAyah: endAyah, initialExpectedAyah: effectiveExpected);
     if (isListening) _startInactivityTimer();
     notifyListeners();
   }
