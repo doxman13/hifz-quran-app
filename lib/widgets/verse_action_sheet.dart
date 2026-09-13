@@ -87,7 +87,8 @@ class VerseActionSheet extends StatelessWidget {
             },
           ),
           
-          if (verse.shortTafsir != null)
+          if ((verse.shortTafsir != null && verse.shortTafsir!.trim().isNotEmpty) ||
+              (verse.shortTafsirEn != null && verse.shortTafsirEn!.trim().isNotEmpty))
             ListTile(
               leading: Icon(Icons.menu_book_outlined, color: primaryColor),
               title: Text(

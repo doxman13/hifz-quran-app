@@ -161,7 +161,9 @@ class MushafReadingProvider extends ChangeNotifier with WidgetsBindingObserver {
     try {
       final decoded = jsonDecode(raw);
       if (decoded is Map<String, dynamic>) {
-        _profiles = _decodeList(decoded['profiles'], MushafProfile.fromJson);
+        _profiles = _deduplicateProfiles(
+          _decodeList(decoded['profiles'], MushafProfile.fromJson),
+        );
         _pageBookmarks = _decodeList(
           decoded['pageBookmarks'],
           MushafPageBookmark.fromJson,
@@ -176,9 +178,11 @@ class MushafReadingProvider extends ChangeNotifier with WidgetsBindingObserver {
         _deletedVerseBookmarkKeys
           ..clear()
           ..addAll(_decodeStringSet(decoded['deletedVerseBookmarkKeys']));
-        _recentReadings = _decodeList(
-          decoded['recentReadings'],
-          MushafRecentReading.fromJson,
+        _recentReadings = _deduplicateRecent(
+          _decodeList(
+            decoded['recentReadings'],
+            MushafRecentReading.fromJson,
+          ),
         );
         _activeProfileId = decoded['activeProfileId']?.toString();
         final displayMushafId =
@@ -546,14 +550,66 @@ class MushafReadingProvider extends ChangeNotifier with WidgetsBindingObserver {
     _activeProfileId ??= 'mushaf-free-$_displayMushafId';
   }
 
+  List<MushafProfile> _deduplicateProfiles(List<MushafProfile> profiles) {
+    final byKey = <String, MushafProfile>{};
+    for (final profile in profiles) {
+      if (profile.isFreeRead) {
+        final key = 'free_read_${profile.mushafId}';
+        final existing = byKey[key];
+        if (existing == null || profile.updatedAt.isAfter(existing.updatedAt)) {
+          byKey[key] = profile;
+        }
+        continue;
+      }
+      final key = 'custom_${profile.slug}_${profile.mushafId}';
+      final existing = byKey[key];
+      if (existing == null) {
+        byKey[key] = profile;
+      } else {
+        final isUuid = RegExp(
+          r'^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
+          caseSensitive: false,
+        );
+        final preferCurrent =
+            (isUuid.hasMatch(profile.id) && !isUuid.hasMatch(existing.id)) ||
+            profile.updatedAt.isAfter(existing.updatedAt);
+        if (preferCurrent) {
+          byKey[key] = profile;
+        }
+      }
+    }
+    return byKey.values.toList();
+  }
+
+  List<MushafRecentReading> _deduplicateRecent(
+    List<MushafRecentReading> items,
+  ) {
+    final seen = <String>{};
+    final result = <MushafRecentReading>[];
+    for (final item in items) {
+      final isFree =
+          item.profileId == null || item.profileId!.startsWith('mushaf-free');
+      final key = isFree
+          ? '${item.mushafId}-free-${item.pageNumber}'
+          : '${item.mushafId}-${item.profileId}';
+      if (seen.add(key)) {
+        result.add(item);
+      }
+    }
+    return result;
+  }
+
   void _upsertRecentReading(MushafProfile profile) {
     final page = profile.lastViewedPage;
     _recentReadings.removeWhere(
       (reading) =>
           reading.mushafId == profile.mushafId &&
           (profile.isFreeRead
-              ? reading.pageNumber == page
-              : reading.profileId == profile.id),
+              ? (reading.profileId == profile.id ||
+                  reading.profileId == null ||
+                  reading.profileId!.startsWith('mushaf-free') ||
+                  reading.pageNumber == page)
+              : (reading.profileId == profile.id || reading.pageNumber == page)),
     );
     final recent = MushafRecentReading(
       mushafId: profile.mushafId,
@@ -562,6 +618,7 @@ class MushafReadingProvider extends ChangeNotifier with WidgetsBindingObserver {
       updatedAt: DateTime.now(),
     );
     _recentReadings.insert(0, recent);
+    _recentReadings = _deduplicateRecent(_recentReadings);
     if (_recentReadings.length > 30) {
       _recentReadings = _recentReadings.take(30).toList();
     }
@@ -738,7 +795,7 @@ class MushafReadingProvider extends ChangeNotifier with WidgetsBindingObserver {
         );
       }
 
-      _profiles = reconciledProfiles;
+      _profiles = _deduplicateProfiles(reconciledProfiles);
       final active = profileById(_activeProfileId);
       if (active == null || active.isArchived) {
         _activeProfileId = freeReadProfileForMushaf(_displayMushafId).id;
@@ -871,11 +928,16 @@ class MushafReadingProvider extends ChangeNotifier with WidgetsBindingObserver {
           dbRecent,
           (item) =>
               item['mushaf_id'] == localR.mushafId &&
-              item['profile_id'] == localR.profileId,
+              (item['profile_id']?.toString() == localR.profileId ||
+                  (item['profile_id'] == null &&
+                      (localR.profileId == null ||
+                          localR.profileId!.startsWith('mushaf-free')))),
         );
 
         if (dbR != null) {
-          matchedRecentKeys.add('${localR.mushafId}-${localR.profileId}');
+          final matchedKey =
+              '${localR.mushafId}-${dbR['profile_id']?.toString()}';
+          matchedRecentKeys.add(matchedKey);
           final remoteDate =
               DateTime.tryParse(dbR['updated_at']?.toString() ?? '') ??
               DateTime.fromMillisecondsSinceEpoch(0);
@@ -895,7 +957,7 @@ class MushafReadingProvider extends ChangeNotifier with WidgetsBindingObserver {
               MushafRecentReading(
                 mushafId: dbR['mushaf_id'],
                 pageNumber: dbR['page_number'],
-                profileId: dbR['profile_id']?.toString(),
+                profileId: dbR['profile_id']?.toString() ?? localR.profileId,
                 updatedAt: remoteDate,
               ),
             );
@@ -913,7 +975,7 @@ class MushafReadingProvider extends ChangeNotifier with WidgetsBindingObserver {
       }
 
       for (final dbR in dbRecent) {
-        final key = '${dbR['mushaf_id']}-${dbR['profile_id']}';
+        final key = '${dbR['mushaf_id']}-${dbR['profile_id']?.toString()}';
         if (matchedRecentKeys.contains(key)) continue;
         reconciledRecent.add(
           MushafRecentReading(
@@ -926,7 +988,7 @@ class MushafReadingProvider extends ChangeNotifier with WidgetsBindingObserver {
           ),
         );
       }
-      _recentReadings = reconciledRecent;
+      _recentReadings = _deduplicateRecent(reconciledRecent);
 
       await _save();
       notifyListeners();

@@ -1,0 +1,767 @@
+﻿verse_key,position,arabic,transliteration,malay_base,english,old_thai,new_thai,category,correction_reason
+2:7,1,خَتَمَ,khatama,menutup/mengunci,Has set a seal,อัลลอฮฺได้ทรงประทับตรา,ได้ทรงประทับตรา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:10,4,فَزَادَهُمُ,fazādahumu,maka menambah,so has increased them,ดังนั้นอัลลอฮฺจึงทรงเพิ่ม,ดังนั้นจึงทรงเพิ่ม,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:17,10,ذَهَبَ,dhahaba,menghilangkan,took away,อัลลอฮฺก็ทรงเอา,ก็ทรงเอา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:23,5,مِّمَّا,mimmā,dari apa yang,about what,จากสิ่งที่เราได้ประทานลงมา,จากสิ่งที่,PHRASE_PACKING_UNPACKED,Unpacked following noun 'เราได้ประทานลงมา' from verb/phrase to establish strict 1-to-1 match
+2:26,12,فَأَمَّا,fa-ammā,maka adapun,Then as for,ส่วนบรรดาผู้ที่,ส่วนว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้ที่' from verb/phrase to establish strict 1-to-1 match
+2:26,20,وَأَمَّا,wa-ammā,dan adapun,And as for,และส่วนบรรดาผู้ที่,และส่วนว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้ที่' from verb/phrase to establish strict 1-to-1 match
+2:28,6,فَأَحْيَٰكُمْ ۖ,fa-aḥyākum,maka Dia menghidupkan kalian,then He gave you life,แล้วพระองค์ทรงให้พวกเจ้ามีชีวิต,พระองค์ทรงให้พวกเจ้ามีชีวิต,PHRASE_PACKING_UNPACKED,Unpacked following noun 'แล้ว' from verb/phrase to establish strict 1-to-1 match
+2:36,1,فَأَزَلَّهُمَا,fa-azallahumā,maka menggelincirkan keduanya,Then made [both of] them slip,แล้วชัยฏอนได้ทำให้ทั้งสองลื่นไถล,แล้วได้ทำให้ทั้งสองลื่นไถล,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ชัยฏอน' from verb/phrase to establish strict 1-to-1 match
+2:37,1,فَتَلَقَّىٰٓ,fatalaqqā,maka menerima,Then received,แล้วอาดัมได้รับ,แล้วได้รับ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'อาดัม' from verb/phrase to establish strict 1-to-1 match
+2:70,15,شَآءَ,shāa,menghendaki,wills,อัลลอฮฺทรง,ทรงประสงค์,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:80,3,تَمَسَّنَا,tamassanā,menyentuh kami,will touch us,ไฟนรกจะมาสัมผัสพวกเรา,จะมาสัมผัสพวกเรา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ไฟนรก' from verb/phrase to establish strict 1-to-1 match
+2:86,9,عَنْهُمُ,ʿanhumu,dari mereka,for them,การลงโทษแก่พวกเขา,แก่พวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'การลงโทษ' from verb/phrase to establish strict 1-to-1 match
+2:100,4,نَّبَذَهُۥ,nabadhahu,melemparkannya,threw it away,กลุ่มหนึ่งจากพวกเขาได้โยนมันทิ้ง,จากพวกเขาได้โยนมันทิ้ง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'กลุ่มหนึ่ง' from verb/phrase to establish strict 1-to-1 match
+2:118,6,يُكَلِّمُنَا,yukallimunā,berbicara pada kami,speaks to us,อัลลอฮฺไม่ทรงตรัสกับพวกเรา,ไม่ทรงตรัสกับพวกเรา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:121,2,ءَاتَيْنَٰهُمُ,ātaynāhumu,Kami telah berikan kepada mereka,We have given them,เราได้ประทานคัมภีร์แก่พวกเขา,เราได้ประทานแก่พวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'คัมภีร์' from verb/phrase to establish strict 1-to-1 match
+2:137,15,فَسَيَكْفِيكَهُمُ,fasayakfīkahumu,maka memelihara kamu terhadap mereka,So will suffice you against them,ดังนั้นอัลลอฮฺจะทรงคุ้มครองเจ้าให้พ้นจากพวกเขา,ดังนั้นจะทรงคุ้มครองเจ้าให้พ้นจากพวกเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:140,26,وَمَا,wamā,dan tidaklah,And not,และมิใช่อัลลอฮฺ,และหาใช่ไม่,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:144,30,وَمَا,wamā,dan tidak,And not,และมิใช่อัลลอฮฺ,และหาใช่ไม่,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:159,17,يَلْعَنُهُمُ,yalʿanuhumu,melaknati/mengutuk mereka,curses them,อัลลอฮฺทรงสาปแช่งพวกเขา,ทรงสาปแช่งพวกเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:159,19,وَيَلْعَنُهُمُ,wayalʿanuhumu,dan melaknati/mengutuk mereka,and curse them,และบรรดาผู้สาปแช่งก็จะสาปแช่งพวกเขา,และก็จะสาปแช่งพวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้สาปแช่ง' from verb/phrase to establish strict 1-to-1 match
+2:167,14,يُرِيهِمُ,yurīhimu,memperlihatkan kepada mereka,will show them,อัลลอฮฺจะทรงให้พวกเขาเห็น,จะทรงให้พวกเขาเห็น,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:170,6,أَنزَلَ,anzala,menurunkan,has revealed,อัลลอฮฺทรงประทานลงมา,ทรงประทานลงมา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:172,6,طَيِّبَٰتِ,ṭayyibāti,yang baik-baik,(the) good,สิ่งที่ดีทั้งหลาย,ดีทั้งหลาย,PHRASE_PACKING_UNPACKED,Unpacked following noun 'สิ่งที่' from verb/phrase to establish strict 1-to-1 match
+2:197,20,يَعْلَمْهُ,yaʿlamhu,niscaya mengetahuinya,knows it,อัลลอฮฺทรงรู้มัน,ทรงรู้มัน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:204,4,يُعْجِبُكَ,yuʿ'jibuka,menarik hatimu,pleases you,คำพูดของเขาทำให้ท่านพึงใจ,ทำให้ท่านพึงใจ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'คำพูดของเขา' from verb/phrase to establish strict 1-to-1 match
+2:210,1,هَلْ,hal,apakah/tidakkah,Are,(misaligned/shifted),หรือไม่ที่,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+2:210,2,يَنظُرُونَ,yanẓurūna,mereka menanti-nanti,they waiting,(misaligned/shifted),พวกเขารอคอย,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+2:210,3,إِلَّآ,illā,kecuali/melainkan,[except],(misaligned/shifted),เว้นแต่,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+2:210,4,أَن,an,bahwa,that,(misaligned/shifted),การที่,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+2:210,5,يَأْتِيَهُمُ,yatiyahumu,datang kepada mereka,comes to them,(misaligned/shifted),จะมายังพวกเขา,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+2:210,6,ٱللَّهُ,l-lahu,Allah,Allah,(misaligned/shifted),อัลลอฮฺ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+2:210,7,فِى,fī,dalam,in,(misaligned/shifted),ใน,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+2:210,8,ظُلَلٍۢ,ẓulalin,naungan,(the) shadows,(misaligned/shifted),ร่มเงา,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+2:210,9,مِّنَ,mina,dari,of,(misaligned/shifted),แห่ง,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+2:210,10,ٱلْغَمَامِ,l-ghamāmi,awan,[the] clouds,(misaligned/shifted),มวลเมฆ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+2:210,11,وَٱلْمَلَٰٓئِكَةُ,wal-malāikatu,dan Malaikat,and the Angels,(misaligned/shifted),และบรรดามะลาอิกะฮ์,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+2:210,12,وَقُضِىَ,waquḍiya,dan telah diputuskan,and is decreed,(misaligned/shifted),และได้ถูกตัดสินแล้ว,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+2:210,13,ٱلْأَمْرُ ۚ,l-amru,perkara,the matter,(misaligned/shifted),ซึ่งกิจการงาน,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+2:210,14,وَإِلَى,wa-ilā,dan kepada,And to,(misaligned/shifted),และยัง,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+2:210,15,ٱللَّهِ,l-lahi,Allah,Allah,(misaligned/shifted),อัลลอฮฺ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+2:210,16,تُرْجَعُ,tur'jaʿu,dikembalikan,return,(misaligned/shifted),จะถูกนำกลับไป,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+2:210,17,ٱلْأُمُورُ,l-umūru,perkara,(all) the matters,(misaligned/shifted),กิจการทั้งมวล,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+2:213,5,فَبَعَثَ,fabaʿatha,maka mengutus,then raised up,ดังนั้นอัลลอฮฺ,จึงได้ทรงแต่งตั้ง,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:213,33,فَهَدَى,fahadā,maka memberi petunjuk,And guided,ดังนั้นอัลลอฮฺ,จึงได้ทรงนำทาง,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:222,20,أَمَرَكُمُ,amarakumu,memerintahkan kamu,has ordered you,อัลลอฮฺทรงบัญชาใช้พวกท่าน,ทรงบัญชาใช้พวกท่าน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:243,12,فَقَالَ,faqāla,maka berfirman,Then said,(misaligned/shifted),แล้วพระองค์จึงตรัส,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+2:245,4,يُقْرِضُ,yuq'riḍu,(dia) memberi pinjaman,will lend,ให้อัลลอฮฺ,ให้กู้ยืม,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:251,4,وَقَتَلَ,waqatala,dan membunuh,and killed,และดาบูดได้สังหาร,และได้สังหาร,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ดาบูด' from verb/phrase to establish strict 1-to-1 match
+2:251,7,وَءَاتَٰهُ,waātāhu,dan memberikan kepadanya,and gave him,และอัลลอฮฺได้ทรงประทานแก่เขา,และได้ทรงประทานแก่เขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:253,9,كَلَّمَ,kallama,berkata-kata,spoke,อัลลอฮฺทรงตรัสด้วย,ทรงตรัสด้วย,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:259,17,فَأَمَاتَهُ,fa-amātahu,maka mematikannya,Then he was made to die,ดังนั้นอัลลอฮฺจึงให้เขาตาย,ดังนั้นจึงให้เขาตาย,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:260,29,مِّنْهُنَّ,min'hunna,daripadanya,of them,ส่วนหนึ่งจากพวกมัน,จากพวกมัน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ส่วนหนึ่ง' from verb/phrase to establish strict 1-to-1 match
+2:266,1,أَيَوَدُّ,ayawaddu,apakah ingin,Would like,คนใดในพวกท่านอยากจะ,อยากจะ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'คนใดในพวกท่าน' from verb/phrase to establish strict 1-to-1 match
+2:267,6,طَيِّبَٰتِ,ṭayyibāti,yang baik-baik,(the) good things,สิ่งที่ดีๆ,ดีๆ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'สิ่งที่' from verb/phrase to establish strict 1-to-1 match
+2:283,14,فَلْيُؤَدِّ,falyu-addi,maka hendaklah menunaikan,then let discharge,ก็ให้ผู้ที่,ก็ให้ปฏิบัติตาม,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ผู้ที่' from verb/phrase to establish strict 1-to-1 match
+3:8,3,تُزِغْ,tuzigh,Engkau condongkan pada kesesatan,deviate,ให้หัวใจของเราเอียงเอน,ให้เอียงเอน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'หัวใจของเรา' from verb/phrase to establish strict 1-to-1 match
+3:11,9,فَأَخَذَهُمُ,fa-akhadhahumu,maka menyiksa mereka,so seized them,แล้วอัลลอฮฺจึงทรงลงโทษพวกเขา,แล้วจึงทรงลงโทษพวกเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+3:27,1,تُولِجُ,tūliju,Engkau masukkan,You cause to enter,พระองค์ทรงให้กลางคืนแทรก,พระองค์ทรงให้แทรก,PHRASE_PACKING_UNPACKED,Unpacked following noun 'กลางคืน' from verb/phrase to establish strict 1-to-1 match
+3:27,5,وَتُولِجُ,watūliju,dan Engkau masukkan,and You cause to enter,และทรงให้กลางวันแทรก,และทรงให้แทรก,PHRASE_PACKING_UNPACKED,Unpacked following noun 'กลางวัน' from verb/phrase to establish strict 1-to-1 match
+3:28,22,وَيُحَذِّرُكُمُ,wayuḥadhirukumu,dan memperingatkan kamu,And warns you,และอัลลอฮฺทรงเตือนพวกท่าน,และทรงเตือนพวกท่าน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+3:29,9,يَعْلَمْهُ,yaʿlamhu,pasti mengetahuinya,knows it,อัลลอฮฺย่อมรู้มัน,ย่อมรู้มัน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+3:30,21,وَيُحَذِّرُكُمُ,wayuḥadhirukumu,dan memperingatkan kamu,And warns you,และอัลลอฮฺทรงเตือนพวกท่าน,และทรงเตือนพวกท่าน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+3:31,7,يُحْبِبْكُمُ,yuḥ'bib'kumu,mencintai kamu,will love you,อัลลอฮฺจะทรงรักพวกท่าน,จะทรงรักพวกท่าน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+3:37,1,فَتَقَبَّلَهَا,fataqabbalahā,maka menerimanya,So accepted her,ดังนั้นพระเจ้าของนางจึงทรงรับนาง,ดังนั้นจึงทรงรับนาง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พระเจ้าของนาง' from verb/phrase to establish strict 1-to-1 match
+3:37,8,وَكَفَّلَهَا,wakaffalahā,dan memeliharanya,and put her in (the) care,และทรงให้ซะกะรียาอุปการะนาง,และทรงให้อุปการะนาง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ซะกะรียา' from verb/phrase to establish strict 1-to-1 match
+3:39,1,فَنَادَتْهُ,fanādathu,maka memanggilnya,Then called him,แล้วเหล่ามะลาอิกะห์ได้เรียกเขา,แล้วได้เรียกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'เหล่ามะลาอิกะห์' from verb/phrase to establish strict 1-to-1 match
+3:40,8,بَلَغَنِىَ,balaghaniya,aku telah sampai,has reached me,ความชราได้มาถึงฉันแล้ว,ได้มาถึงฉันแล้ว,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ความชรา' from verb/phrase to establish strict 1-to-1 match
+3:54,2,وَمَكَرَ,wamakara,dan membuat tipu daya,and planned,และอัลลอฮฺทรงวางแผน,และทรงวางแผน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+3:72,1,وَقَالَت,waqālat,dan berkata,And said,และกลุ่มหนึ่งกล่าวว่า,และกล่าวว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'กลุ่มหนึ่ง' from verb/phrase to establish strict 1-to-1 match
+3:79,5,يُؤْتِيَهُ,yu'tiyahu,memberikannya,gives him,อัลลอฮฺจะทรงประทานแก่เขา,จะทรงประทานแก่เขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+3:93,1,۞ كُلُّ,kullu,semua,All,อาหารทั้งหมด,ทั้งหมด,PHRASE_PACKING_UNPACKED,Unpacked following noun 'อาหาร' from verb/phrase to establish strict 1-to-1 match
+3:140,14,وَلِيَعْلَمَ,waliyaʿlama,dan karena hendak mengetahui,[and] so that makes evident,และเพื่อให้อัลลอฮฺทรงรู้,และเพื่อให้กู้ยืมทรงรู้,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+3:141,1,وَلِيُمَحِّصَ,waliyumaḥḥiṣa,dan karena hendak membersihkan,And so that may purify,และเพื่อให้อัลลอฮฺทรงชำระให้บริสุทธิ์,และเพื่อให้กู้ยืมทรงชำระให้บริสุทธิ์,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+3:148,1,فَـَٔاتَٰهُمُ,faātāhumu,maka memberikan kepada mereka,So gave them,ดังนั้นอัลลอฮฺจึงประทาน,ดังนั้นจึงประทาน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+3:184,10,وَٱلزُّبُرِ,wal-zuburi,dan Zabur,and the Scriptures,และคัมภีร์ซะบูร,ซะบูร,PHRASE_PACKING_UNPACKED,Unpacked following noun 'และคัมภีร์' from verb/phrase to establish strict 1-to-1 match
+4:5,4,أَمْوَٰلَكُمُ,amwālakumu,harta kamu,your wealth,ซึ่งทรัพย์สมบัติของพวกท่าน,ทรัพย์สมบัติของพวกท่าน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ซึ่ง' from verb/phrase to establish strict 1-to-1 match
+4:11,39,وَوَرِثَهُۥٓ,wawarithahu,dan mewarisinya,and inherit[ed] him,และพ่อแม่ของเขาได้รับมรดกจากเขา,และได้รับมรดกจากเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พ่อแม่ของเขา' from verb/phrase to establish strict 1-to-1 match
+4:12,58,أَخٌ,akhun,saudara laki-laki,(is) a brother,พี่ชายหรือน้องชาย,พี่ชายน้องชาย,PHRASE_PACKING_UNPACKED,Unpacked following noun 'หรือ' from verb/phrase to establish strict 1-to-1 match
+4:15,16,يَتَوَفَّٰهُنَّ,yatawaffāhunna,mewafatkan mereka,comes to them,ความตายจะมาเยือนพวกนาง,จะมาเยือนพวกนาง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ความตาย' from verb/phrase to establish strict 1-to-1 match
+4:19,30,وَيَجْعَلَ,wayajʿala,dan/padahal menjadikan,and has placed,และอัลลอฮฺทรงบันดาลให้มี,และทรงบันดาลให้มี,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+4:52,3,لَعَنَهُمُ,laʿanahumu,mengutuk mereka,(who have been) cursed,อัลลอฮฺทรงสาปแช่งพวกเขา,ทรงสาปแช่งพวกเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+4:60,25,وَيُرِيدُ,wayurīdu,dan menghendaki,And wishes,และชัยฏอนต้องการ,และต้องการ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ชัยฏอน' from verb/phrase to establish strict 1-to-1 match
+4:61,7,أَنزَلَ,anzala,telah turunkan,(has) revealed,อัลลอฮฺได้ประทานลงมา,ได้ประทานลงมา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+4:78,1,أَيْنَمَا,aynamā,dimana saja,Wherever,(misaligned/shifted),ไม่ว่าที่ใด,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,2,تَكُونُوا۟,takūnū,kalian menjadi,you be,(misaligned/shifted),พวกท่านจะอยู่,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,3,يُدْرِككُّمُ,yud'rikkumu,akan mendapatkan kamu,will overtake you,(misaligned/shifted),ก็จะมาถึงพวกท่าน,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,4,ٱلْمَوْتُ,l-mawtu,kematian,[the] death,(misaligned/shifted),ซึ่งความตาย,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,5,وَلَوْ,walaw,kendatipun,even if,(misaligned/shifted),แม้ว่า,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,6,كُنتُمْ,kuntum,kalian adalah,you are,(misaligned/shifted),พวกท่านจะอยู่,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,7,فِى,fī,di dalam,in,(misaligned/shifted),ใน,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,8,بُرُوجٍۢ,burūjin,benteng,towers,(misaligned/shifted),ป้อมปราการ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,9,مُّشَيَّدَةٍۢ ۗ,mushayyadatin,yang kokoh,lofty,(misaligned/shifted),อันสูงตระหง่าน,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,10,وَإِن,wa-in,dan jika,And if,(misaligned/shifted),และหาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,11,تُصِبْهُمْ,tuṣib'hum,menimpa mereka,befalls them,(misaligned/shifted),มีสิ่งหนึ่งประสบแก่พวกเขา,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,12,حَسَنَةٌۭ,ḥasanatun,kebaikan,any good,(misaligned/shifted),ซึ่งความดี,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,13,يَقُولُوا۟,yaqūlū,mereka berkata,they say,(misaligned/shifted),พวกเขากล่าวว่า,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,14,هَٰذِهِۦ,hādhihi,ini,This,(misaligned/shifted),สิ่งนี้,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,15,مِنْ,min,dari,(is),(misaligned/shifted),มาจาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,16,عِندِ,ʿindi,sisi,from,(misaligned/shifted),ณ ที่,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,17,ٱللَّهِ ۖ,l-lahi,Allah,Allah,(misaligned/shifted),อัลลอฮฺ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,18,وَإِن,wa-in,dan jika,And if,(misaligned/shifted),และหาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,19,تُصِبْهُمْ,tuṣib'hum,menimpa mereka,befalls them,(misaligned/shifted),มีสิ่งหนึ่งประสบแก่พวกเขา,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,20,سَيِّئَةٌۭ,sayyi-atun,kejahatan/bencana,any evil,(misaligned/shifted),ซึ่งความชั่วร้าย,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,21,يَقُولُوا۟,yaqūlū,mereka berkata,they say,(misaligned/shifted),พวกเขากล่าวว่า,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,22,هَٰذِهِۦ,hādhihi,ini,This,(misaligned/shifted),สิ่งนี้,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,23,مِنْ,min,dari,(is),(misaligned/shifted),มาจาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,24,عِندِكَ ۚ,ʿindika,sisi kamu,(from) you,(misaligned/shifted),ตัวเจ้า,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,25,قُلْ,qul,katakan,Say,(misaligned/shifted),จงกล่าวเถิด,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,26,كُلٌّۭ,kullun,semuanya,All,(misaligned/shifted),ทั้งหมดนั้น,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,27,مِّنْ,min,dari,(is),(misaligned/shifted),มาจาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,28,عِندِ,ʿindi,sisi,from,(misaligned/shifted),ณ ที่,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,29,ٱللَّهِ ۖ,l-lahi,Allah,Allah,(misaligned/shifted),อัลลอฮฺ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,30,فَمَالِ,famāli,maka mengapa,So what (is wrong),(misaligned/shifted),เหตุใดเล่าที่,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,31,هَٰٓؤُلَآءِ,hāulāi,mereka itu,(with) these,(misaligned/shifted),เหล่านี้,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,32,ٱلْقَوْمِ,l-qawmi,kaum,[the] people,(misaligned/shifted),กลุ่มชน,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,33,لَا,lā,tidak,not,(misaligned/shifted),จึงไม่,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,34,يَكَادُونَ,yakādūna,mereka hampir,do they seem,(misaligned/shifted),เกือบจะ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,35,يَفْقَهُونَ,yafqahūna,mereka memahami,(to) understand,(misaligned/shifted),เข้าใจ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:78,36,حَدِيثًۭا,ḥadīthan,pembicaraan,any statement,(misaligned/shifted),ถ้อยคำใดๆ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+4:94,24,مَغَانِمُ,maghānimu,rampasan perang,(are) booties,คือผลประโยชน์อันมากมาย,คือผลประโยชน์,PHRASE_PACKING_UNPACKED,Unpacked following noun 'อันมากมาย' from verb/phrase to establish strict 1-to-1 match
+4:94,30,فَمَنَّ,famanna,maka menganugerahkan nikmat,then conferred favor,แล้วอัลลอฮฺก็ทรงประทานความโปรดปราน,แล้วก็ทรงประทานความโปรดปราน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+4:95,1,لَّا,lā,tidaklah,Not,ไม่เท่ากัน,ไม่,PHRASE_PACKING_UNPACKED,Unpacked following noun 'เท่ากัน' from verb/phrase to establish strict 1-to-1 match
+4:95,15,فَضَّلَ,faḍḍala,melebihkan,Preferred,อัลลอฮฺทรงให้เกียรติเหนือกว่า,ทรงให้เกียรติเหนือกว่า,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+4:95,24,وَعَدَ,waʿada,menjanjikan,promised,อัลลอฮฺทรงสัญญา,ทรงสัญญา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+4:95,27,وَفَضَّلَ,wafaḍḍala,dan melebihkan,preferred,และอัลลอฮฺทรงให้เกียรติเหนือกว่า,และทรงให้เกียรติเหนือกว่า,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+4:100,21,يُدْرِكْهُ,yud'rik'hu,menemuinya,overtakes him,ความตายก็มาทันเขา,ก็มาทันเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ความตาย' from verb/phrase to establish strict 1-to-1 match
+4:105,10,أَرَٰكَ,arāka,memperlihatkan/mewahyukan kepadamu,has shown you,ที่อัลลอฮฺทรงให้เจ้าเห็น,ที่ทรงให้เจ้าเห็น,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+4:109,17,عَلَيْهِمْ,ʿalayhim,atas mereka,[over them],ผู้คุ้มครองเหนือพวกเขา,เหนือพวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ผู้คุ้มครอง' from verb/phrase to establish strict 1-to-1 match
+4:113,19,وَأَنزَلَ,wa-anzala,dan telah menurunkan,And has sent down,และอัลลอฮฺได้ทรงประทานลงมา,และได้ทรงประทานลงมา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+4:125,14,وَٱتَّخَذَ,wa-ittakhadha,dan mengambil,And was taken,และอัลลอฮฺได้ทรงแต่งตั้ง,และได้ทรงแต่งตั้ง,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+4:137,14,يَكُنِ,yakuni,ada/akan,will,อัลลอฮฺทรง,ทรง,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+4:163,24,دَاوُۥدَ,dāwūda,Daud,(to) Dawood,ซึ่งคัมภีร์ซะบูร,ซึ่ง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'คัมภีร์ซะบูร' from verb/phrase to establish strict 1-to-1 match
+4:176,27,كَانَتَا,kānatā,adalah keduanya,there were,มีเป็นหญิงสองคน,มีเป็นหญิง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'สองคน' from verb/phrase to establish strict 1-to-1 match
+5:1,8,بَهِيمَةُ,bahīmatu,binatang,the quadruped,ซึ่งปศุสัตว์,ซึ่ง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ปศุสัตว์' from verb/phrase to establish strict 1-to-1 match
+5:3,15,وَٱلنَّطِيحَةُ,wal-naṭīḥatu,dan binatang yang ditanduk,and that which is gored by horns,และสัตว์ที่ถูกขวิดตาย,ถูกขวิดตาย,PHRASE_PACKING_UNPACKED,Unpacked following noun 'และสัตว์ที่' from verb/phrase to establish strict 1-to-1 match
+5:3,17,أَكَلَ,akala,memakan (menerkam),ate (it),สัตว์ป่ากิน,กิน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'สัตว์ป่า' from verb/phrase to establish strict 1-to-1 match
+5:17,38,وَٱللَّهُ,wal-lahu,dan Allah,and Allah,(misaligned/shifted),และอัลลอฮฺ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+5:17,39,عَلَىٰ,ʿalā,atas,(is) on,(misaligned/shifted),เหนือ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+5:17,40,كُلِّ,kulli,segala,every,(misaligned/shifted),ทุกๆ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+5:17,41,شَىْءٍۢ,shayin,sesuatu,thing,(misaligned/shifted),สิ่ง,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+5:17,42,قَدِيرٌۭ,qadīrun,Maha Kuasa,All-Powerful,(misaligned/shifted),ผู้ทรงเดชานุภาพ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+5:19,24,وَٱللَّهُ,wal-lahu,dan Allah,And Allah,(misaligned/shifted),และอัลลอฮฺ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+5:19,25,عَلَىٰ,ʿalā,atas,(is) on,(misaligned/shifted),เหนือ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+5:19,26,كُلِّ,kulli,segala,every,(misaligned/shifted),ทุกๆ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+5:19,27,شَىْءٍۢ,shayin,sesuatu,thing,(misaligned/shifted),สิ่ง,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+5:19,28,قَدِيرٌۭ,qadīrun,Maha Kuasa,All-Powerful,(misaligned/shifted),ผู้ทรงเดชานุภาพ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+5:21,6,كَتَبَ,kataba,tentukan,(has been) ordained,ที่อัลลอฮฺได้ทรงกำหนด,ที่ได้ทรงกำหนด,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+5:23,6,أَنْعَمَ,anʿama,telah memberi nikmat,(had) favored,ซึ่งอัลลอฮฺได้ทรงประทานความโปรดปราน,ซึ่งได้ทรงประทานความโปรดปราน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+5:64,6,غُلَّتْ,ghullat,terbelenggu,Are chained,มือของพวกเขาถูกพันธนาการ,ถูกพันธนาการ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'มือของพวกเขา' from verb/phrase to establish strict 1-to-1 match
+5:64,38,أَطْفَأَهَا,aṭfa-ahā,memadamkan,it (was) extinguished,อัลลอฮฺทรงดับมัน,ทรงดับมัน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+5:85,1,فَأَثَٰبَهُمُ,fa-athābahumu,maka memberi pahala kepada mereka,So rewarded them,ดังนั้นอัลลอฮฺจึงทรงตอบแทนพวกเขา,ดังนั้นจึงทรงตอบแทนพวกเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+5:87,6,طَيِّبَٰتِ,ṭayyibāti,yang baik-baik,(the) good things,สิ่งที่ดีทั้งหลาย,ดีทั้งหลาย,PHRASE_PACKING_UNPACKED,Unpacked following noun 'สิ่งที่' from verb/phrase to establish strict 1-to-1 match
+5:94,4,لَيَبْلُوَنَّكُمُ,layabluwannakumu,sungguh akan menguji kamu,Surely will test you,แน่นอนอัลลอฮฺจะทรงทดสอบพวกท่าน,แน่นอนจะทรงทดสอบพวกท่าน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+5:94,9,تَنَالُهُۥٓ,tanāluhu,kamu perolehnya,can reach it,ที่มือของพวกท่าน,ที่,PHRASE_PACKING_UNPACKED,Unpacked following noun 'มือของพวกท่าน' from verb/phrase to establish strict 1-to-1 match
+5:94,12,لِيَعْلَمَ,liyaʿlama,karena hendak mengetahui,that may make evident,เพื่ออัลลอฮฺจะทรงรู้,เพื่อจะทรงรู้,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+5:95,38,عَفَا,ʿafā,telah memaafkan,Pardoned,อัลลอฮฺทรงอภัยแล้ว,ทรงอภัยแล้ว,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+5:95,44,فَيَنتَقِمُ,fayantaqimu,maka akan menyiksa,then will take retribution,ดังนั้นอัลลอฮฺจะทรงแก้แค้น,ดังนั้นจะทรงแก้แค้น,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+5:101,20,عَفَا,ʿafā,memaafkan,has (been) pardoned,อัลลอฮฺทรงอภัยแล้ว,ทรงอภัยแล้ว,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+5:102,2,سَأَلَهَا,sa-alahā,telah menanyakannya,asked them,กลุ่มชนก่อนพวกท่าน,ก่อนพวกท่าน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'กลุ่มชน' from verb/phrase to establish strict 1-to-1 match
+5:115,1,قَالَ,qāla,berfirman,Said,อัลลอฮฺตรัส,ตรัส,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+6:19,20,لَتَشْهَدُونَ,latashhadūna,sungguh kamu mengakui,testify,(misaligned/shifted),พวกท่านยืนยันอย่างแน่นอนกระนั้นหรือ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+6:19,21,أَنَّ,anna,bahwa,that,(misaligned/shifted),ว่า,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+6:19,22,مَعَ,maʿa,bersama/disamping,with,(misaligned/shifted),ร่วมกับ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+6:19,23,ٱللَّهِ,l-lahi,Allah,Allah,(misaligned/shifted),อัลลอฮฺ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+6:19,24,ءَالِهَةً,ālihatan,Tuhan-Tuhan,(there are) gods,(misaligned/shifted),มีพระเจ้าหลายองค์,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+6:19,25,أُخْرَىٰ ۚ,ukh'rā,yang  lain,other,(misaligned/shifted),อื่นอีก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+6:19,26,قُل,qul,katakanlah,Say,(misaligned/shifted),จงกล่าวเถิด,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+6:19,27,لَّآ,lā,tidak,Not,(misaligned/shifted),ฉันไม่,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+6:19,28,أَشْهَدُ ۚ,ashhadu,aku mengakui,(do) I testify,(misaligned/shifted),ขอยืนยันเช่นนั้น,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+6:19,29,قُلْ,qul,katakanlah,Say,(misaligned/shifted),จงกล่าวเถิด,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+6:19,30,إِنَّمَا,innamā,sesungguhnya hanyalah,Only,(misaligned/shifted),แท้จริงแล้ว,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+6:19,31,هُوَ,huwa,Dia,He,(misaligned/shifted),พระองค์คือ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+6:19,32,إِلَٰهٌۭ,ilāhun,Tuhan,(is) God,(misaligned/shifted),พระผู้เป็นเจ้า,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+6:19,33,وَٰحِدٌۭ,wāḥidun,satu/esa,One,(misaligned/shifted),เพียงองค์เดียว,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+6:19,34,وَإِنَّنِى,wa-innanī,dan sesungguhnya aku,"and indeed, I am",(misaligned/shifted),และแท้จริงฉัน,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+6:19,35,بَرِىٓءٌۭ,barīon,berlepas diri,free,(misaligned/shifted),ขอตัดขาดและบริสุทธิ์,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+6:19,36,مِّمَّا,mimmā,dari apa yang,of what,(misaligned/shifted),จากสิ่งที่,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+6:19,37,تُشْرِكُونَ,tush'rikūna,kamu persekutukan,you associate (with Him),(misaligned/shifted),พวกท่านตั้งภาคี,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+6:29,7,وَمَا,wamā,dan tidaklah,and not,และพวกเรามิใช่,และมิใช่,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พวกเรา' from verb/phrase to establish strict 1-to-1 match
+6:31,9,جَآءَتْهُمُ,jāathumu,datang kepada mereka,came to them,ยามอัจซาลได้มาหาพวกเขา,ได้มาหาพวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ยามอัจซาล' from verb/phrase to establish strict 1-to-1 match
+6:36,6,يَبْعَثُهُمُ,yabʿathuhumu,akan membangkitkan mereka,will resurrect them,อัลลอฮฺจะทรงให้พวกเขาฟื้นคืนชีพ,จะทรงให้พวกเขาฟื้นคืนชีพ,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+6:49,4,يَمَسُّهُمُ,yamassuhumu,akan menimpa mereka,will touch them,การลงโทษจะประสบแก่พวกเขา,จะประสบแก่พวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'การลงโทษ' from verb/phrase to establish strict 1-to-1 match
+6:61,13,تَوَفَّتْهُ,tawaffathu,mewafatkannya,take him,บรรดาทูตของเราได้ปลิดชีพเขา,บรรดาได้ปลิดชีพเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ทูตของเรา' from verb/phrase to establish strict 1-to-1 match
+6:80,1,وَحَآجَّهُۥ,waḥājjahu,dan membantah kepadanya,And argued with him,และกลุ่มชนของเขาได้โต้แย้งกับเขา,และได้โต้แย้งกับเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'กลุ่มชนของเขา' from verb/phrase to establish strict 1-to-1 match
+6:112,9,يُوحِى,yūḥī,membisikkan,inspiring,โดยที่บางส่วนของพวกเขา,โดยที่,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บางส่วนของพวกเขา' from verb/phrase to establish strict 1-to-1 match
+6:128,10,وَقَالَ,waqāla,dan berkata,And will say,และบรรดาผู้คุ้มครองของพวกเขา,และ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้คุ้มครองของพวกเขา' from verb/phrase to establish strict 1-to-1 match
+6:140,11,رَزَقَهُمُ,razaqahumu,rezkikan kepada mereka,(bas been) provided (to) them,อัลลอฮฺทรงประทานปัจจัยยังชีพแก่พวกเขา,ทรงประทานปัจจัยยังชีพแก่พวกเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+6:142,7,رَزَقَكُمُ,razaqakumu,memberikan rezki kepadamu,(has been) provided (to) you,อัลลอฮฺประทานปัจจัยชีพแก่พวกท่าน,ประทานปัจจัยชีพแก่พวกท่าน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+6:143,19,نَبِّـُٔونِى,nabbiūnī,terangkanlah kepadaku,Inform me,จงแจ้งแก่ฉันด้วยความรู้,จงแจ้งแก่ฉัน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ด้วยความรู้' from verb/phrase to establish strict 1-to-1 match
+6:164,18,وَازِرَةٌۭ,wāziratun,orang yang berdosa,any bearer of burden,ผู้แบกภาระบาป,ผู้แบก,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ภาระบาป' from verb/phrase to establish strict 1-to-1 match
+7:4,5,فَجَآءَهَا,fajāahā,maka datang kepadanya,and came to it,แล้วการลงโทษของเราได้มายังมัน,แล้วได้มายังมัน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'การลงโทษของเรา' from verb/phrase to establish strict 1-to-1 match
+7:5,5,جَآءَهُم,jāahum,datang kepada mereka,came to them,การลงโทษของเราได้มายังพวกเขา,ได้มายังพวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'การลงโทษของเรา' from verb/phrase to establish strict 1-to-1 match
+7:16,6,صِرَٰطَكَ,ṣirāṭaka,jalan Engkau,(on) Your path,ซึ่งเส้นทางอันเที่ยงตรงของพระองค์,ซึ่งเส้นทางของพระองค์,PHRASE_PACKING_UNPACKED,Unpacked following noun 'อันเที่ยงตรง' from verb/phrase to establish strict 1-to-1 match
+7:20,13,نَهَٰكُمَا,nahākumā,melarang kamu berdua,forbid you both,พระเจ้าของพวกท่านทั้งสองได้ทรงห้ามพวกท่านทั้งสอง,ได้ทรงห้ามพวกท่านทั้งสอง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พระเจ้าของพวกท่านทั้งสอง' from verb/phrase to establish strict 1-to-1 match
+7:27,4,يَفْتِنَنَّكُمُ,yaftinannakumu,dapat menipu kamu,tempt you,ให้ชัยฏอนหลอกลวงพวกเจ้า,ให้หลอกลวงพวกเจ้า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ชัยฏอน' from verb/phrase to establish strict 1-to-1 match
+7:38,24,قَالَتْ,qālat,berkatalah,(will) say,กลุ่มสุดท้ายของพวกเขากล่าวว่า,กล่าวว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'กลุ่มสุดท้ายของพวกเขา' from verb/phrase to establish strict 1-to-1 match
+7:39,1,وَقَالَتْ,waqālat,dan berkatalah,And (will) say,และกลุ่มแรกของพวกเขากล่าวว่า,และกล่าวว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'กลุ่มแรกของพวกเขา' from verb/phrase to establish strict 1-to-1 match
+7:44,10,وَعَدَنَا,waʿadanā,menjanjikan kepada kami,(had) promised us,พระเจ้าของเราทรงสัญญาแก่เรา,ทรงสัญญาแก่เรา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พระเจ้าของเรา' from verb/phrase to establish strict 1-to-1 match
+7:44,13,فَهَلْ,fahal,maka apakah,So have,ดังนั้นพวกท่านได้พบ,ดังนั้น,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พวกท่านได้พบ' from verb/phrase to establish strict 1-to-1 match
+7:44,21,فَأَذَّنَ,fa-adhana,maka menyeru,Then will announce,แล้วผู้ประกาศคนหนึ่งจะประกาศ,แล้วจะประกาศ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ผู้ประกาศคนหนึ่ง' from verb/phrase to establish strict 1-to-1 match
+7:89,12,نَجَّٰنَا,najjānā,menyelamatkan/melepaskan kami,saved us,ที่อัลลอฮฺได้ทรงช่วยให้พวกเราพ้น,ที่ได้ทรงช่วยให้พวกเราพ้น,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+7:127,1,وَقَالَ,waqāla,dan berkata,And said,และบรรดาหัวหน้า,และบรรดา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'หัวหน้า' from verb/phrase to establish strict 1-to-1 match
+7:175,9,فَأَتْبَعَهُ,fa-atbaʿahu,maka/lalu mengikutinya,so followed him,แล้วชัยฏอนก็ตามเขาไป,แล้วก็ตามเขาไป,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ชัยฏอน' from verb/phrase to establish strict 1-to-1 match
+7:185,19,فَبِأَىِّ,fabi-ayyi,maka yang mana,So in what,ดังนั้นในคำพูดไหน,ดังนั้นในไหน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'คำพูด' from verb/phrase to establish strict 1-to-1 match
+7:186,2,يُضْلِلِ,yuḍ'lili,menyesatkan,(is) let go astray,ที่อัลลอฮฺทรงปล่อยให้หลงทาง,ที่ทรงปล่อยให้หลงทาง,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+8:2,7,وَجِلَتْ,wajilat,gemetarlah,feel fear,หัวใจของพวกเขาก็หวั่นไหว,ก็หวั่นไหว,PHRASE_PACKING_UNPACKED,Unpacked following noun 'หัวใจของพวกเขา' from verb/phrase to establish strict 1-to-1 match
+8:17,3,وَلَٰكِنَّ,walākinna,akan tetapi,but,แต่อัลลอฮฺต่างหาก,แต่ทว่า,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+8:17,10,وَلَٰكِنَّ,walākinna,akan tetapi,but,แต่อัลลอฮฺต่างหาก,แต่ทว่า,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+8:30,11,وَيَمْكُرُونَ,wayamkurūna,dan mereka membuat tipu daya,And they were planning,(misaligned/shifted),และพวกเขาก็วางแผน,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+8:30,12,وَيَمْكُرُ,wayamkuru,dan membuat tipu daya,and (also) was planning,(misaligned/shifted),และทรงวางแผน,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+8:30,13,ٱللَّهُ ۖ,l-lahu,Allah,Allah,(misaligned/shifted),อัลลอฮฺ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+8:30,14,وَٱللَّهُ,wal-lahu,dan Allah,And Allah,(misaligned/shifted),และอัลลอฮฺ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+8:30,15,خَيْرُ,khayru,sebaik-baik,is (the) Best,(misaligned/shifted),ทรงเป็นผู้ประเสริฐที่สุด,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+8:30,16,ٱلْمَٰكِرِينَ,l-mākirīna,pengatur tipu daya,(of) the Planners,(misaligned/shifted),ในหมู่ผู้วางแผน,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+8:48,17,تَرَآءَتِ,tarāati,saling melihat,came in sight,สองกองทัพเห็นกันและกัน,เห็นกันและกัน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'สองกองทัพ' from verb/phrase to establish strict 1-to-1 match
+8:52,10,فَأَخَذَهُمُ,fa-akhadhahumu,maka mengambil/menyiksa mereka,so seized them,ดังนั้นอัลลอฮฺจึงทรงลงโทษพวกเขา,ดังนั้นจึงทรงลงโทษพวกเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+8:66,2,خَفَّفَ,khaffafa,telah meringankan,has (been) lightened,อัลลอฮฺทรงผ่อนปรน,ทรงผ่อนปรน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+8:74,4,وَجَٰهَدُوا۟,wajāhadū,dan mereka berjihad,and strove hard,(misaligned/shifted),และต่อสู้เสียสละ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+9:30,20,قَٰتَلَهُمُ,qātalahumu,membunuh/membinasakan mereka,(May) Allah destroy them,ขออัลลอฮฺทรงประณามพวกเขาเถิด,ขอทรงประณามพวกเขาเถิด,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+9:33,8,لِيُظْهِرَهُۥ,liyuẓ'hirahu,untuk memenangkannya,to manifest it,เพื่อให้ออกมาเหนือ,เพื่อให้ออกมา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'เหนือ' from verb/phrase to establish strict 1-to-1 match
+9:40,24,فَأَنزَلَ,fa-anzala,maka menurunkan,Then Allah sent down,ดังนั้นอัลลอฮฺจึงทรงลง,ดังนั้นจึงทรงลง,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+9:59,11,سَيُؤْتِينَا,sayu'tīnā,akan memberi kepada kami,Allah will give us,อัลลอฮฺจะทรงประทานให้แก่พวกเรา,จะทรงประทานให้แก่พวกเรา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+9:63,3,أَنَّهُۥ,annahu,bahwasanya,that he,แท้จริงผู้ใด,แท้จริง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ผู้ใด' from verb/phrase to establish strict 1-to-1 match
+9:71,19,سَيَرْحَمُهُمُ,sayarḥamuhumu,mereka diberi rahmat,Allah will have mercy on them,อัลลอฮฺจะทรงเมตตาพวกเขา,จะทรงเมตตาพวกเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+9:74,20,أَغْنَٰهُمُ,aghnāhumu,mencukupkan mereka,Allah had enriched them,อัลลอฮฺทรงให้พวกเขาพึงพอ,ทรงให้พวกเขาพึงพอ,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+9:74,32,يُعَذِّبْهُمُ,yuʿadhib'humu,niscaya mengazab mereka,Allah will punish them,อัลลอฮฺจะทรงลงโทษพวกเขา,จะทรงลงโทษพวกเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+9:79,13,فَيَسْخَرُونَ,fayaskharūna,maka mereka menghina,so they ridicule,แล้วพวกเขา (มุนาฟิกีน) ก็เยาะเย้ย,แล้ว(มุนาฟิกีน) ก็เยาะเย้ย,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พวกเขา' from verb/phrase to establish strict 1-to-1 match
+9:79,15,سَخِرَ,sakhira,menghina,Allah will ridicule,อัลลอฮฺจะทรงเยาะเย้ย,จะทรงเยาะเย้ย,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+9:81,3,بِمَقْعَدِهِمْ,bimaqʿadihim,dengan tinggal/duduk mereka,in their staying,ด้วยการนั่งอยู่เบื้องหลังของพวกเขา,ด้วยการนั่งอยู่ของพวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'เบื้องหลัง' from verb/phrase to establish strict 1-to-1 match
+9:81,9,يُجَٰهِدُوا۟,yujāhidū,mereka berjihad,strive,(misaligned/shifted),พวกเขาจะต่อสู้เสียสละ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+9:83,2,رَّجَعَكَ,rajaʿaka,mengembalikan kamu,Allah returns you,อัลลอฮฺทรงให้เจ้ากลับคืนสู่,ทรงให้เจ้ากลับคืนสู่,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+9:86,7,وَجَٰهِدُوا۟,wajāhidū,dan berjihadlah kamu,and strive,(misaligned/shifted),และจงต่อสู้เสียสละ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+9:93,13,وَطَبَعَ,waṭabaʿa,dan telah mencap/kunci mati,and Allah sealed,และอัลลอฮฺได้ทรงประทับตรา,และได้ทรงประทับตรา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+9:105,3,فَسَيَرَى,fasayarā,maka akan melihat,then Allah will see,แล้วอัลลอฮฺจะทรงเห็น,แล้วจะทรงเห็น,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+9:121,15,أَحْسَنَ,aḥsana,lebih baik,the best,ด้วยสิ่งที่ดีกว่า,ด้วยดีกว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'สิ่งที่' from verb/phrase to establish strict 1-to-1 match
+9:125,6,فَزَادَتْهُمْ,fazādathum,maka menambah mereka,(it) increases them,มันจึงเพิ่มความโสมมให้แก่พวกเขา,มันจึงเพิ่มให้แก่พวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ความโสมม' from verb/phrase to establish strict 1-to-1 match
+10:9,6,يَهْدِيهِمْ,yahdīhim,memberi petunjuk mereka,(will) guide them,พระเจ้าของพวกเขาจะทรงนำทางพวกเขา,จะทรงนำทางพวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พระเจ้าของพวกเขา' from verb/phrase to establish strict 1-to-1 match
+10:22,21,وَجَآءَهُمُ,wajāahumu,dan datang/menimpa mereka,and comes to them,และคลื่นซัดมาหาพวกเขา,และซัดมาหาพวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'คลื่น' from verb/phrase to establish strict 1-to-1 match
+10:30,2,تَبْلُوا۟,tablū,merasakan,will be put to trial,ทุกๆ ชีวิตจะได้รับรู้,ชีวิตจะได้รับรู้,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ทุกๆ' from verb/phrase to establish strict 1-to-1 match
+10:41,7,عَمَلُكُمْ ۖ,ʿamalukum,pekerjaanmu,(are) your deeds,การงานของพวกท่าน,การงานของ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พวกท่าน' from verb/phrase to establish strict 1-to-1 match
+10:46,8,فَإِلَيْنَا,fa-ilaynā,maka kepada Kami,then to Us,(misaligned/shifted),ดังนั้นยังเราเถิด,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+10:52,8,هَلْ,hal,apakah,Are you (being) recompensed,(misaligned/shifted),หรือไม่ที่,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+10:52,9,تُجْزَوْنَ,tuj'zawna,kamu diberi balasan,Are you (being) recompensed,(misaligned/shifted),พวกท่านจะได้รับการตอบแทน,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+10:60,12,لَذُو,ladhū,benar-benar mempunyai,(is) surely Full (of) Bounty,ทรงเป็นผู้มีความโปรดปรานอย่างล้นเหลือ,ทรงเป็นผู้มีอย่างล้นเหลือ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ความโปรดปราน' from verb/phrase to establish strict 1-to-1 match
+10:68,2,ٱتَّخَذَ,ittakhadha,mengambil/mempunyai,Allah has taken,อัลลอฮฺทรงตั้ง,ทรงตั้ง,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+10:90,5,فَأَتْبَعَهُمْ,fa-atbaʿahum,maka/lalu mereka diikuti,and followed them,แล้วฟิรเอาน์ได้ติดตามพวกเขา,แล้วได้ติดตามพวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ฟิรเอาน์' from verb/phrase to establish strict 1-to-1 match
+10:95,9,مِنَ,mina,dari,among,(misaligned/shifted),จาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+10:98,5,فَنَفَعَهَآ,fanafaʿahā,maka/lalu memberi manfaat padanya,and benefited it,แล้วการศรัทธาของมันให้ประโยชน์แก่ตัวมัน,แล้วให้ประโยชน์แก่ตัวมัน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'การศรัทธาของมัน' from verb/phrase to establish strict 1-to-1 match
+10:107,17,بِهِۦ,bihi,dengannya,He causes it to reach,แก่ผู้ที่,แก่,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ผู้ที่' from verb/phrase to establish strict 1-to-1 match
+11:3,7,يُمَتِّعْكُم,yumattiʿ'kum,Dia akan memberi kenikmatan kepadamu,He will let you,พระองค์จะทรงให้พวกเจ้าได้รับความสุข,พระองค์จะทรงให้พวกเจ้าได้รับ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ความสุข' from verb/phrase to establish strict 1-to-1 match
+11:18,12,وَيَقُولُ,wayaqūlu,dan berkata,and will say,และบรรดาพยานจะกล่าวว่า,และจะกล่าวว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาพยาน' from verb/phrase to establish strict 1-to-1 match
+11:31,20,يُؤْتِيَهُمُ,yu'tiyahumu,mendatangkan kepada mereka,will Allah give them,ที่อัลลอฮฺจะประทานแก่พวกเขา,ที่จะประทานแก่พวกเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+11:53,6,وَمَا,wamā,dan tidak,and not,และพวกเราก็มิได้,และก็มิได้,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พวกเรา' from verb/phrase to establish strict 1-to-1 match
+11:53,12,وَمَا,wamā,dan tidak,and not,และพวกเราก็มิได้,และก็มิได้,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พวกเรา' from verb/phrase to establish strict 1-to-1 match
+11:74,6,وَجَآءَتْهُ,wajāathu,dan datang kepadanya,and had reached him,และข่าวดีได้มาหาเขา,และได้มาหาเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ข่าวดี' from verb/phrase to establish strict 1-to-1 match
+11:78,1,وَجَآءَهُۥ,wajāahu,dan datang kepadanya,And came (to) him,และกลุ่มชนของเขาได้มาหาเขา,และได้มาหาเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'กลุ่มชนของเขา' from verb/phrase to establish strict 1-to-1 match
+11:113,6,فَتَمَسَّكُمُ,fatamassakumu,maka akan menyentuh kamu,lest touches you,มิฉะนั้นไฟนรกจะประสบแก่พวกเจ้า,มิฉะนั้นจะประสบแก่พวกเจ้า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ไฟนรก' from verb/phrase to establish strict 1-to-1 match
+12:21,25,غَالِبٌ,ghālibun,mengalahkan/berkuasa,(is) Predominant,เป็นผู้ทรงมีชัยเหนือ,เป็นผู้ทรงมีชัย,PHRASE_PACKING_UNPACKED,Unpacked following noun 'เหนือ' from verb/phrase to establish strict 1-to-1 match
+12:26,6,وَشَهِدَ,washahida,dan memberikan kesaksian,And testified,และพยานคนหนึ่งได้เป็นพยาน,และได้เป็นพยาน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พยานคนหนึ่ง' from verb/phrase to establish strict 1-to-1 match
+12:40,7,سَمَّيْتُمُوهَآ,sammaytumūhā,menamakannya/membuatnya,which you have named them,ที่พวกท่านได้ตั้งชื่อกันขึ้นมา,ที่ได้ตั้งชื่อกันขึ้นมา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พวกท่าน' from verb/phrase to establish strict 1-to-1 match
+12:76,23,يَشَآءَ,yashāa,menghendaki,Allah willed,อัลลอฮฺทรงประสงค์,ทรงประสงค์,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+12:77,10,فَأَسَرَّهَا,fa-asarrahā,maka menyembunyikannya,But Yusuf kept it secret,ดังนั้นยูนุสจึงเก็บงำมันไว้,ดังนั้นจึงเก็บงำมันไว้,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ยูนุส' from verb/phrase to establish strict 1-to-1 match
+12:78,14,مِنَ,mina,dari,of,(misaligned/shifted),จาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+12:80,6,قَالَ,qāla,berkata,Said,ผู้ที่อาวุโสที่สุดในหมู่พวกเขา  กล่าวว่า,กล่าวว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ผู้ที่อาวุโสที่สุดในหมู่พวกเขา' from verb/phrase to establish strict 1-to-1 match
+12:80,32,يَحْكُمَ,yaḥkuma,memberi putusan,Allah decides,อัลลอฮฺทรงตัดสิน,ทรงตัดสิน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+12:92,6,يَغْفِرُ,yaghfiru,mengampuni,Allah will forgive,อัลลอฮฺจะทรงอภัย,จะทรงอภัย,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+13:16,25,هَلْ,hal,apakah,is,เท่ากันไหม,ไหม,PHRASE_PACKING_UNPACKED,Unpacked following noun 'เท่ากัน' from verb/phrase to establish strict 1-to-1 match
+13:16,35,فَتَشَٰبَهَ,fatashābaha,maka/lalu serupa,so that seemed alike,แล้วการสร้างจึงคล้ายกัน,แล้วจึงคล้ายกัน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'การสร้าง' from verb/phrase to establish strict 1-to-1 match
+13:17,8,فَٱحْتَمَلَ,fa-iḥ'tamala,maka membawa,and carries,แล้วกระแสน้ำได้หอบเอา,แล้วได้หอบเอา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'กระแสน้ำ' from verb/phrase to establish strict 1-to-1 match
+13:36,2,ءَاتَيْنَٰهُمُ,ātaynāhumu,Kami berikan kepada mereka,We have given them,ที่เราได้ประทานคัมภีร์แก่พวกเขา,ที่เราได้ประทานแก่พวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'คัมภีร์' from verb/phrase to establish strict 1-to-1 match
+14:4,10,فَيُضِلُّ,fayuḍillu,maka/lalu menyesatkan,Then Allah lets go astray,แล้วอัลลอฮฺก็จะปล่อยให้หลงทาง,แล้วก็จะปล่อยให้หลงทาง,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+15:65,9,يَلْتَفِتْ,yaltafit,berpaling/menoleh,let look back,ผู้ใดในหมู่พวกเจ้า,ผู้ใด,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ในหมู่พวกเจ้า' from verb/phrase to establish strict 1-to-1 match
+15:73,1,فَأَخَذَتْهُمُ,fa-akhadhathumu,maka menimpa/membinasakan mereka,"So, seized them",ดังนั้นเสียงกัมปนาทได้คร่าพวกเขา,ดังนั้นได้คร่าพวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'เสียงกัมปนาท' from verb/phrase to establish strict 1-to-1 match
+16:26,6,فَأَتَى,fa-atā,maka mendatangkan/menghancurkan,but Allah came,ดังนั้นอัลลอฮฺได้ทรงมา,ดังนั้นได้ทรงมา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+16:32,2,تَتَوَفَّٰهُمُ,tatawaffāhumu,mewafatkan mereka,take them in death,มะลาอิกะฮฺปลิดชีวิตพวกเขา,ปลิดชีวิตพวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'มะลาอิกะฮฺ' from verb/phrase to establish strict 1-to-1 match
+16:36,14,هَدَى,hadā,mendapat petunjuk,Allah guided,ผู้ที่,ได้ทรงนำทาง,ALIGNMENT_SHIFT,Re-aligned word meaning of هَدَى from Malay mendapat petunjuk
+16:36,16,وَمِنْهُم,wamin'hum,dan diantara mereka,and among them,ทรงนำทาง,และในหมู่พวกเขา,ALIGNMENT_SHIFT,Re-aligned word meaning of وَمِنۡهُم from Malay dan diantara mereka
+16:39,6,وَلِيَعْلَمَ,waliyaʿlama,dan agar mengetahui,and that may know,และเพื่อบรรดาผู้ที่,และเพื่อ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้ที่' from verb/phrase to establish strict 1-to-1 match
+16:48,1,أَوَلَمْ,awalam,dan apakah,Have not,(misaligned/shifted),และพวกเขาไม่ได้มองดูดอกหรือ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+16:48,2,يَرَوْا۟,yaraw,mereka memperhatikan,they seen,ยัง,พวกเขามองดู,ALIGNMENT_SHIFT,Corrected meaning of يَرَوۡاْ from Malay mereka memperhatikan
+16:48,3,إِلَىٰ,ilā,kepada,[towards],(misaligned/shifted),ยัง,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+16:48,4,مَا,mā,apa,what,(misaligned/shifted),สิ่งที่,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+16:48,5,خَلَقَ,khalaqa,telah menciptakan,Allah has created,(misaligned/shifted),ทรงสร้าง,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+16:48,6,ٱللَّهُ,l-lahu,Allah,Allah has created,(misaligned/shifted),อัลลอฮฺ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+16:48,7,مِن,min,dari,from,(misaligned/shifted),จาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+16:48,8,شَىْءٍۢ,shayin,sesuatu,a thing,(misaligned/shifted),สิ่งใดๆ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+16:48,9,يَتَفَيَّؤُا۟,yatafayya-u,condong/berteduh,Incline,(misaligned/shifted),ที่ทอดเงาเอนเอียง,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+16:48,10,ظِلَٰلُهُۥ,ẓilāluhu,bayangannya/naungannya,their shadows,(misaligned/shifted),เงาของมัน,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+16:48,11,عَنِ,ʿani,dari,to,(misaligned/shifted),ทาง,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+16:48,12,ٱلْيَمِينِ,l-yamīni,kanan,the right,(misaligned/shifted),ขวา,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+16:48,13,وَٱلشَّمَآئِلِ,wal-shamāili,dan kiri,and to the left,(misaligned/shifted),และทางซ้าย,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+16:48,14,سُجَّدًۭا,sujjadan,bersujud/tunduk,prostrating,(misaligned/shifted),ในสภาพก้มกราบสุญูด,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+16:48,15,لِّلَّهِ,lillahi,kepada Allah,to Allah,(misaligned/shifted),แด่อัลลอฮฺ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+16:48,16,وَهُمْ,wahum,dan/sedang mereka,while they,(misaligned/shifted),โดยที่พวกมัน,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+16:48,17,دَٰخِرُونَ,dākhirūna,orang-orang yang berrendah diri,(are) humble,(misaligned/shifted),นอบน้อมถ่อมตน,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+16:53,9,مَسَّكُمُ,massakumu,menimpa kamu,touches you,ความทุกข์ยากประสบแก่พวกเจ้า,ประสบแก่พวกเจ้า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ความทุกข์ยาก' from verb/phrase to establish strict 1-to-1 match
+16:58,5,ظَلَّ,ẓalla,jadilah,turns,ใบหน้าของเขาก็จะ,ก็จะ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ใบหน้าของเขา' from verb/phrase to establish strict 1-to-1 match
+16:76,1,وَضَرَبَ,waḍaraba,dan membuat,And Allah sets forth,และอัลลอฮฺได้ทรงยก,และได้ทรงยก,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+16:76,20,هَلْ,hal,apakah,Is,จะเท่าเทียมกันไหม,จะไหม,PHRASE_PACKING_UNPACKED,Unpacked following noun 'เท่าเทียมกัน' from verb/phrase to establish strict 1-to-1 match
+16:96,12,بِأَحْسَنِ,bi-aḥsani,dengan yang lebih baik,to (the) best,ด้วยสิ่งที่ดีกว่า,ด้วยดีกว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'สิ่งที่' from verb/phrase to establish strict 1-to-1 match
+16:97,15,بِأَحْسَنِ,bi-aḥsani,dengan yang lebih baik,to (the) best,ด้วยสิ่งที่ดีกว่า,ด้วยดีกว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'สิ่งที่' from verb/phrase to establish strict 1-to-1 match
+16:104,8,يَهْدِيهِمُ,yahdīhimu,memberi petunjuk mereka,Allah will guide them,อัลลอฮฺจะทรงแนะนำพวกเขา,จะทรงแนะนำพวกเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+17:11,1,وَيَدْعُ,wayadʿu,dan mendo'a,And prays,และมนุษย์มักจะวิงวอน,และมักจะวิงวอน,PHRASE_PACKING_UNPACKED,Unpacked subject noun 인간 from verb
+17:39,12,إِلَٰهًا,ilāhan,tuhan,god,พระเจ้าองค์อื่น,พระเจ้าองค์,PHRASE_PACKING_UNPACKED,Unpacked following noun 'อื่น' from verb/phrase to establish strict 1-to-1 match
+17:67,16,وَكَانَ,wakāna,dan adalah,And is,และมนุษย์นั้น,และนั้น,PHRASE_PACKING_UNPACKED,Unpacked following noun 'มนุษย์' from verb/phrase to establish strict 1-to-1 match
+17:94,12,أَبَعَثَ,abaʿatha,adakah mengutus,Has Allah sent,อัลลอฮฺทรงแต่งตั้งแล้วหรือ,ทรงแต่งตั้งแล้วหรือ,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+17:97,2,يَهْدِ,yahdi,memberi petunjuk,Allah guides,ที่อัลลอฮฺทรงนำทาง,ที่ทรงนำทาง,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+18:17,24,يَهْدِ,yahdi,memberi petunjuk,Allah guides,อัลลอฮฺทรงให้ทางนำ,ทรงให้ทางนำ,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+18:53,1,وَرَءَا,waraā,dan melihat,And will see,และบรรดาผู้กระทำผิดจะเห็น,และจะเห็น,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้กระทำผิด' from verb/phrase to establish strict 1-to-1 match
+18:69,4,شَآءَ,shāa,menghendaki,Allah wills,(misaligned/shifted),ทรงประสงค์,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+18:69,5,ٱللَّهُ,l-lahu,Allah,Allah wills,(misaligned/shifted),อัลลอฮฺ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+18:82,15,فَأَرَادَ,fa-arāda,maka menghendaki,So intended,ดังนั้นพระเจ้าของเจ้าจึงปรารถนา,ดังนั้นจึงปรารถนา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พระเจ้าของเจ้า' from verb/phrase to establish strict 1-to-1 match
+18:105,7,فَحَبِطَتْ,faḥabiṭat,maka/hapus/gugurlah,So (are) vain,ดังนั้นการงานของพวกเขาจึงไร้ผล,ดังนั้นจึงไร้ผล,PHRASE_PACKING_UNPACKED,Unpacked following noun 'การงานของพวกเขา' from verb/phrase to establish strict 1-to-1 match
+18:109,8,لَنَفِدَ,lanafida,tentu habis,surely (would be) exhausted,แน่นอนท้องทะเลคงจะหมดสิ้น,แน่นอนคงจะหมดสิ้น,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ท้องทะเล' from verb/phrase to establish strict 1-to-1 match
+19:5,6,وَكَانَتِ,wakānati,dan adalah,and is,และภรรยาของฉันนั้น,และนั้น,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ภรรยาของฉัน' from verb/phrase to establish strict 1-to-1 match
+19:8,7,وَكَانَتِ,wakānati,dan adalah,while is,และภรรยาของฉัน,และ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ภรรยาของฉัน' from verb/phrase to establish strict 1-to-1 match
+19:80,1,وَنَرِثُهُۥ,wanarithuhu,dan Kami akan mewarisinya,And We will inherit (from) him,และเราจะสืบทอดสิ่งที่,และเราจะสืบทอด,PHRASE_PACKING_UNPACKED,Unpacked following noun 'สิ่งที่' from verb/phrase to establish strict 1-to-1 match
+20:60,1,فَتَوَلَّىٰ,fatawallā,maka berpaling meninggalkan,Then went away,แล้วฟิรเอาน์ก็ผินหลังกลับ,แล้วก็ผินหลังกลับ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ฟิรเอาน์' from verb/phrase to establish strict 1-to-1 match
+20:78,1,فَأَتْبَعَهُمْ,fa-atbaʿahum,maka mengikuti mereka,Then followed them,แล้วฟิรเอาต์ได้ติดตามพวกเขา,แล้วได้ติดตามพวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ฟิรเอาต์' from verb/phrase to establish strict 1-to-1 match
+20:104,7,أَمْثَلُهُمْ,amthaluhum,semisal mereka/seorang diantara mereka,(the) best of them,ผู้ที่มีแนวทางดีที่สุดในหมู่พวกเขา,ผู้ที่มีดีที่สุดในหมู่พวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'แนวทาง' from verb/phrase to establish strict 1-to-1 match
+20:105,5,يَنسِفُهَا,yansifuhā,menghancurkan,Will blast them,พระเจ้าของข้าพเจ้าจะทำลายมัน,จะทำลายมัน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พระเจ้าของข้าพเจ้า' from verb/phrase to establish strict 1-to-1 match
+20:121,12,وَعَصَىٰٓ,waʿaṣā,dan durhaka,And Adam disobeyed,และอาดัมได้ฝ่าฝืน,และได้ฝ่าฝืน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'อาดัม' from verb/phrase to establish strict 1-to-1 match
+21:9,2,صَدَقْنَٰهُمُ,ṣadaqnāhumu,Kami benarkan/tepati mereka,We fulfilled (for) them,เราทำความจริงให้ปรากฏแก่พวกเขาตามสัญญา,เราทำความจริงให้ปรากฏแก่พวกเขาตาม,PHRASE_PACKING_UNPACKED,Unpacked following noun 'สัญญา' from verb/phrase to establish strict 1-to-1 match
+21:54,3,كُنتُمْ,kuntum,kalian adalah,you are,พวกเจ้าเคยเป็น,เคยเป็น,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พวกเจ้า' from verb/phrase to establish strict 1-to-1 match
+21:55,6,مِنَ,mina,dari/termasuk,(are) of,(misaligned/shifted),จาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+21:56,3,رَّبُّكُمْ,rabbukum,Tuhan kalian,your Lord,พระเจ้าของพวกเจ้า,ของพวกเจ้า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พระเจ้า' from verb/phrase to establish strict 1-to-1 match
+21:56,12,مِّنَ,mina,dari/termasuk,of,(misaligned/shifted),จาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+21:63,3,فَعَلَهُۥ,faʿalahu,melakukannya,(some doer) did it,ตัวใหญ่ที่สุดของพวกมันได้กระทำมัน,ได้กระทำมัน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ตัวใหญ่ที่สุดของพวกมัน' from verb/phrase to establish strict 1-to-1 match
+21:64,5,إِنَّكُمْ,innakum,sesungguhnya kalian,"Indeed, you",แท้จริงพวกท่าน,แท้จริง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พวกท่าน' from verb/phrase to establish strict 1-to-1 match
+21:75,5,مِنَ,mina,dari/termasuk,(was) of,(misaligned/shifted),จาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+21:83,6,مَسَّنِىَ,massaniya,menimpaku,has touched me,ความทุกข์ยากได้ประสบแก่ฉัน,ได้ประสบแก่ฉัน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ความทุกข์ยาก' from verb/phrase to establish strict 1-to-1 match
+21:85,6,مِّنَ,mina,dari/termasuk,(were) of,(misaligned/shifted),จาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+21:92,3,أُمَّتُكُمْ,ummatukum,umatmu/agamamu,(is) your religion ,ประชาชาติของพวกเจ้า,ของพวกเจ้า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ประชาชาติ' from verb/phrase to establish strict 1-to-1 match
+21:108,9,فَهَلْ,fahal,maka apakah,so will,ดังนั้นพวกเจ้า,ดังนั้น,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พวกเจ้า' from verb/phrase to establish strict 1-to-1 match
+22:40,28,وَلَيَنصُرَنَّ,walayanṣuranna,dan sungguh akan menolong,And surely Allah will help,และแน่นอนอัลลอฮฺจะทรงช่วยเหลือ,และแน่นอนจะทรงช่วยเหลือ,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+22:52,12,أَلْقَى,alqā,melemparkan/memasukkan,threw,ชัยฏอนได้ใส่,ได้ใส่,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ชัยฏอน' from verb/phrase to establish strict 1-to-1 match
+22:52,16,فَيَنسَخُ,fayansakhu,maka menghapus/menghilangkan,But Allah abolishes,ดังนั้นอัลลอฮฺจะทรงลบล้าง,ดังนั้นจะทรงลบล้าง,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+22:52,19,يُلْقِى,yul'qī,dimasukkan,throws,ชัยฏอนใส่,ใส่,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ชัยฏอน' from verb/phrase to establish strict 1-to-1 match
+22:52,22,يُحْكِمُ,yuḥ'kimu,menghukumkan/menguatkan,Allah will establish,อัลลอฮฺจะทรงทำให้มั่นคง,จะทรงทำให้มั่นคง,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+22:53,3,يُلْقِى,yul'qī,dimasukkan,the Shaitaan throws,ชัยฏอนใส่เข้าไป,ใส่เข้าไป,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ชัยฏอน' from verb/phrase to establish strict 1-to-1 match
+22:58,10,لَيَرْزُقَنَّهُمُ,layarzuqannahumu,pasti akan memberi rezeki kepada mereka,"surely, Allah will provide them",อัลลอฮฺจะทรงประทานปัจจัยยังชีพแก่พวกเขา,จะทรงประทานปัจจัยยังชีพแก่พวกเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+22:60,4,بِمِثْلِ,bimith'li,dengan serupa/seimbang,with the like,ด้วยสิ่งที่เท่าเทียม,ด้วยเท่าเทียม,PHRASE_PACKING_UNPACKED,Unpacked following noun 'สิ่งที่' from verb/phrase to establish strict 1-to-1 match
+22:60,11,لَيَنصُرَنَّهُ,layanṣurannahu,sungguh akan menolongnya,Allah will surely help him,อัลลอฮฺจะทรงช่วยเหลือเขา,จะทรงช่วยเหลือเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+22:73,20,يَسْلُبْهُمُ,yaslub'humu,merampas mereka,snatched away from them,แมลงวันแย่งชิงพวกเขาไป,แย่งชิงพวกเขาไป,PHRASE_PACKING_UNPACKED,Unpacked following noun 'แมลงวัน' from verb/phrase to establish strict 1-to-1 match
+22:78,5,جِهَادِهِۦ ۚ,jihādihi,jihadnya,(with the) striving due (to) Him,ในการต่อสู้เพื่อพระองค์,ในการต่อสู้เพื่อ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พระองค์' from verb/phrase to establish strict 1-to-1 match
+22:78,41,فَنِعْمَ,faniʿ'ma,maka sebaik-baik,so an Excellent,ช่างเป็นผู้คุ้มครองที่ดี,ช่างเป็นที่ดี,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ผู้คุ้มครอง' from verb/phrase to establish strict 1-to-1 match
+22:78,43,وَنِعْمَ,waniʿ'ma,dan sebaik-baik,and an Excellent,และช่างเป็นผู้ช่วยเหลือที่ดี,และช่างเป็นที่ดี,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ผู้ช่วยเหลือ' from verb/phrase to establish strict 1-to-1 match
+23:22,1,وَعَلَيْهَا,waʿalayhā,dan diatasnya,And on them,และบนมัน,มัน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'และบน' from verb/phrase to establish strict 1-to-1 match
+23:28,2,ٱسْتَوَيْتَ,is'tawayta,kami telah berada,you (have) boarded,ท่านขึ้นไปแล้ว,ขึ้นไปแล้ว,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ท่าน' from verb/phrase to establish strict 1-to-1 match
+23:33,1,وَقَالَ,waqāla,dan berkata,And said,และบรรดาหัวหน้า,และ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาหัวหน้า' from verb/phrase to establish strict 1-to-1 match
+24:17,1,يَعِظُكُمُ,yaʿiẓukumu,menasehati/memperingatkan kamu,Allah warns you,อัลลอฮฺทรงตักเตือนพวกเจ้า,ทรงตักเตือนพวกเจ้า,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+24:32,11,يُغْنِهِمُ,yugh'nihimu,memberi kekayaan/kemampuan pada mereka,Allah will enrich them,อัลลอฮฺจะทรงให้พวกเขาพอ ฐานะ,จะทรงให้พวกเขาพอ ฐานะ,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+24:33,7,يُغْنِيَهُمُ,yugh'niyahumu,memberi kekayaan/kemampuan kepada mereka,Allah enriches them,อัลลอฮฺจะทรงให้พวกเขาพอฐานะ,จะทรงให้พวกเขาพอฐานะ,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+24:36,3,أَذِنَ,adhina,mengizinkan,(which) Allah ordered,ที่อัลลอฮฺทรงอนุญาต,ที่ทรงอนุญาต,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+24:38,1,لِيَجْزِيَهُمُ,liyajziyahumu,karena hendak memberi balasan mereka,That Allah may reward them,เพื่อที่อัลลอฮฺจะทรงตอบแทนพวกเขา,เพื่อที่จะทรงตอบแทนพวกเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+24:38,3,أَحْسَنَ,aḥsana,lebih baik,(with the) best,ด้วยสิ่งที่ดีที่สุด,ด้วยดีที่สุด,PHRASE_PACKING_UNPACKED,Unpacked following noun 'สิ่งที่' from verb/phrase to establish strict 1-to-1 match
+24:43,27,بِهِۦ,bihi,dengannya,with it,แก่ผู้ที่,แก่,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ผู้ที่' from verb/phrase to establish strict 1-to-1 match
+24:47,14,أُو۟لَٰٓئِكَ,ulāika,mereka,those,เป็นผู้ศรัทธา,เป็น,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ผู้ศรัทธา' from verb/phrase to establish strict 1-to-1 match
+25:38,2,وَثَمُودَا۟,wathamūdā,dan Tsamud,and Thamud,และชาวษะมูด,ษะมูด,PHRASE_PACKING_UNPACKED,Unpacked following noun 'และชาว' from verb/phrase to establish strict 1-to-1 match
+25:54,9,وَصِهْرًۭا ۗ,waṣih'ran,dan hubungan perkawinan,and marriage relationship,และเป็นเครือญาติ,เครือญาติ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'และเป็น' from verb/phrase to establish strict 1-to-1 match
+25:63,9,خَاطَبَهُمُ,khāṭabahumu,mengajak omong-omong mereka,address them,คนโง่เขลามาทักทายพวกเขา,มาทักทายพวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'คนโง่เขลา' from verb/phrase to establish strict 1-to-1 match
+26:79,1,وَٱلَّذِى,wa-alladhī,dan yang,And the One Who,และพระองค์ผู้ทรง,และผู้ทรง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พระองค์' from verb/phrase to establish strict 1-to-1 match
+26:124,7,تَتَّقُونَ,tattaqūna,kamu bertakwa,you fear (Allah),(misaligned/shifted),ยำเกรงดอกหรือ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+26:154,10,مِنَ,mina,dari/termasuk,(are) of,(misaligned/shifted),จาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+27:36,8,ءَاتَٰنِۦَ,ātāniya,memberikan kepadaku,Allah has given me,อัลลอฮฺทรงประทานแก่ฉัน,ทรงประทานแก่ฉัน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+27:65,3,يَعْلَمُ,yaʿlamu,mengetahui,knows,ผู้ใดรู้,รู้,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ผู้ใด' from verb/phrase to establish strict 1-to-1 match
+27:67,1,وَقَالَ,waqāla,dan berkata,And say,และบรรดาผู้ที่,และ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้ที่' from verb/phrase to establish strict 1-to-1 match
+28:27,28,مِنَ,mina,dari/termasuk,of,(misaligned/shifted),จาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+28:31,18,مِنَ,mina,dari/termasuk,(are) of,(misaligned/shifted),จาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+28:37,1,وَقَالَ,waqāla,dan berkata,And Musa said,และมูซากล่าว,และกล่าว,PHRASE_PACKING_UNPACKED,Unpacked following noun 'มูซา' from verb/phrase to establish strict 1-to-1 match
+28:79,6,قَالَ,qāla,berkata,Said,บรรดาผู้ที่กล่าวว่า,กล่าวว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้ที่' from verb/phrase to establish strict 1-to-1 match
+29:2,1,أَحَسِبَ,aḥasiba,apakah mengira,Do think,มนุษย์คิดแล้วหรือว่า,คิดแล้วหรือว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'มนุษย์' from verb/phrase to establish strict 1-to-1 match
+29:7,9,أَحْسَنَ,aḥsana,lebih baik,(the) best,ด้วยสิ่งที่ดีกว่า,ด้วยดีกว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'สิ่งที่' from verb/phrase to establish strict 1-to-1 match
+29:24,11,فَأَنجَٰهُ,fa-anjāhu,lalu menyelamatkannya,But Allah saved him,แล้วอัลลอฮฺได้ทรงช่วยเขาให้รอดพ้น,แล้วได้ทรงช่วยเขาให้รอดพ้น,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+29:25,16,يَكْفُرُ,yakfuru,mengingkari,you will deny,บางคนในพวกเจ้าจะปฏิเสธ,ในพวกเจ้าจะปฏิเสธ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บางคน' from verb/phrase to establish strict 1-to-1 match
+29:26,1,۞ فَـَٔامَنَ,faāmana,maka beriman,And believed,(misaligned/shifted),ดังนั้นจึงได้ศรัทธา,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+29:26,2,لَهُۥ,lahu,kepadanya,[in] him,(misaligned/shifted),ต่อเขา,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+29:26,3,لُوطٌۭ ۘ,lūṭun,Lut,Lut,(misaligned/shifted),ลูฏ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+29:26,4,وَقَالَ,waqāla,dan dia berkata,and he said,(misaligned/shifted),และเขาได้กล่าวว่า,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+29:26,5,إِنِّى,innī,sesungguhnya aku,Indeed I (am),(misaligned/shifted),แท้จริงฉัน,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+29:26,6,مُهَاجِرٌ,muhājirun,berpindah,emigrating,(misaligned/shifted),เป็นผู้อพยพ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+29:26,7,إِلَىٰ,ilā,kepada,to,(misaligned/shifted),ไปยัง,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+29:26,8,رَبِّىٓ ۖ,rabbī,Tuhanku,my Lord,(misaligned/shifted),พระเจ้าของฉัน,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+29:26,9,إِنَّهُۥ,innahu,sesungguhnya Dia,"Indeed, He",(misaligned/shifted),แท้จริงพระองค์,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+29:26,10,هُوَ,huwa,Dia,[He] (is),(misaligned/shifted),พระองค์,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+29:26,11,ٱلْعَزِيزُ,l-ʿazīzu,Maha Perkasa,the All-Mighty,(misaligned/shifted),ผู้ทรงอำนาจยิ่ง,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+29:26,12,ٱلْحَكِيمُ,l-ḥakīmu,Maha Bijaksana,the All-Wise,(misaligned/shifted),ผู้ทรงปรีชาญาณ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+29:31,10,هَٰذِهِ,hādhihi,ini,(of) this,เมืองนี้,นี้,PHRASE_PACKING_UNPACKED,Unpacked following noun 'เมือง' from verb/phrase to establish strict 1-to-1 match
+29:34,5,هَٰذِهِ,hādhihi,ini,(of) this,เมืองนี้,นี้,PHRASE_PACKING_UNPACKED,Unpacked following noun 'เมือง' from verb/phrase to establish strict 1-to-1 match
+29:67,7,وَيُتَخَطَّفُ,wayutakhaṭṭafu,dan rampok-merampok,while are being taken away,ในขณะที่ผู้คนถูกฉุดคร่าไป,ในขณะที่ถูกฉุดคร่าไป,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ผู้คน' from verb/phrase to establish strict 1-to-1 match
+30:33,9,ثُمَّ,thumma,kemudian,Then,ครั้นเมื่อ,ครั้น,PHRASE_PACKING_UNPACKED,Unpacked following noun 'เมื่อ' from verb/phrase to establish strict 1-to-1 match
+31:14,4,حَمَلَتْهُ,ḥamalathu,mengandungnya,carried him,มารดาของเขาอุ้มท้องเขา,อุ้มท้องเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'มารดาของเขา' from verb/phrase to establish strict 1-to-1 match
+31:34,21,بِأَىِّ,bi-ayyi,di mana,in what,ณ แผ่นดินใด,ณ ใด,PHRASE_PACKING_UNPACKED,Unpacked following noun 'แผ่นดิน' from verb/phrase to establish strict 1-to-1 match
+33:9,9,جَآءَتْكُمْ,jāatkum,datang kepadamu,came to you,กองทัพได้มาหาพวกเจ้า,ได้มาหาพวกเจ้า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'กองทัพ' from verb/phrase to establish strict 1-to-1 match
+33:32,12,فَيَطْمَعَ,fayaṭmaʿa,maka (sehingga) berkeinginan,lest should be moved with desire,เพื่อที่ผู้ซึ่ง,เพื่อที่,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ผู้ซึ่ง' from verb/phrase to establish strict 1-to-1 match
+33:57,6,لَعَنَهُمُ,laʿanahumu,mengutuk mereka,Allah has cursed them,อัลลอฮฺทรงสาปแช่งพวกเขา,ทรงสาปแช่งพวกเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+33:69,9,فَبَرَّأَهُ,fabarra-ahu,maka membebaskannya,then Allah cleared him,แล้วอัลลอฮฺได้ทรงให้พ้นจากข้อกล่าวหา,แล้วได้ทรงให้พ้นจากข้อกล่าวหา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+33:72,13,وَحَمَلَهَا,waḥamalahā,dan memikulnya,but bore it,และมนุษย์ได้แบกรับมัน,และได้แบกรับมัน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'มนุษย์' from verb/phrase to establish strict 1-to-1 match
+33:73,1,لِّيُعَذِّبَ,liyuʿadhiba,karena akan menyiksa,So that Allah may punish,เพื่อที่อัลลอฮฺจะทรงลงทัณฑ์,เพื่อที่จะทรงลงทัณฑ์,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+34:49,5,يُبْدِئُ,yub'di-u,memulai,(can) originate,ความเท็จจะไม่เริ่มต้น,จะไม่เริ่มต้น,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ความเท็จ' from verb/phrase to establish strict 1-to-1 match
+35:2,2,يَفْتَحِ,yaftaḥi,yang bukakan/anugerahkan,Allah grants,ที่อัลลอฮฺทรงเปิด,ที่ทรงเปิด,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+35:4,3,فَقَدْ,faqad,maka sesungguhnya,then certainly,(misaligned/shifted),แน่นอนว่า,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+35:4,4,كُذِّبَتْ,kudhibat,telah didustakan,were denied,(misaligned/shifted),ได้เคยถูกปฏิเสธมาแล้ว,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+35:4,5,رُسُلٌۭ,rusulun,rasul-rasul,Messengers,(misaligned/shifted),บรรดาร่อซูล,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+35:4,6,مِّن,min,dari,before you,(misaligned/shifted),จาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+35:4,7,قَبْلِكَ ۚ,qablika,sebelum kamu,before you,(misaligned/shifted),ก่อนหน้าเจ้า,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+35:4,8,وَإِلَى,wa-ilā,dan kepada,And to,(misaligned/shifted),และยัง,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+35:4,9,ٱللَّهِ,l-lahi,Allah,Allah,(misaligned/shifted),อัลลอฮฺ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+35:4,10,تُرْجَعُ,tur'jaʿu,dikembalikan,return,(misaligned/shifted),จะถูกนำกลับไป,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+35:4,11,ٱلْأُمُورُ,l-umūru,segala urusan,the matters,(misaligned/shifted),กิจการทั้งมวล,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+35:8,17,تَذْهَبْ,tadhhab,kamu menghilangkan/membinasakan,go out,ให้ตัวของเจ้าต้องสูญสิ้นไป,ให้ต้องสูญสิ้นไป,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ตัวของเจ้า' from verb/phrase to establish strict 1-to-1 match
+35:18,3,وَازِرَةٌۭ,wāziratun,orang yang memikul beban (berdosa),bearer of burdens,ผู้แบกภาระบาป,ผู้แบก,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ภาระบาป' from verb/phrase to establish strict 1-to-1 match
+35:22,8,يُسْمِعُ,yus'miʿu,menjadikan mendengar,causes to hear,ทรงทำให้ผู้ที่,ทรงทำให้,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ผู้ที่' from verb/phrase to establish strict 1-to-1 match
+35:22,11,وَمَآ,wamā,dan tidaklah,and not,ไม่สามารถ,และหาใช่ไม่ที่,ALIGNMENT_SHIFT,Re-aligned negation from Malay dan tidaklah
+35:22,12,أَنتَ,anta,kamu,you,ทำให้ผู้ที่,เจ้า,ALIGNMENT_SHIFT,Re-aligned subject kamu from Malay kamu
+35:22,13,بِمُسْمِعٍۢ,bimus'miʿin,dengan menjadikan mendengar,can make hear,อยู่ใน,จะเป็นผู้ทำให้ได้ยิน,ALIGNMENT_SHIFT,Re-aligned participle from Malay dengan menjadikan mendengar
+35:22,14,مَّن,man,orang/siapa,(those) who,หลุมฝังศพได้ยิน,แก่ผู้ที่,ALIGNMENT_SHIFT,Re-aligned relative pronoun from Malay orang/siapa
+35:22,15,فِى,fī,dalam,(are) in,หลุมฝังศพ,อยู่ใน,ALIGNMENT_SHIFT,Re-aligned preposition from Malay dalam
+35:22,16,ٱلْقُبُورِ,l-qubūri,kubur,the graves,หลุมศพ,หลุมฝังศพ,ALIGNMENT_SHIFT,Re-aligned noun from Malay kubur
+35:25,11,وَبِٱلزُّبُرِ,wabil-zuburi,dan dengan zubur,and with Scriptures,และด้วยคัมภีร์ต่างๆ,ต่างๆ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'และด้วยคัมภีร์' from verb/phrase to establish strict 1-to-1 match
+35:27,21,وَغَرَابِيبُ,wagharābību,dan pekat,and intensely black,และสีดำสนิท,และสนิท,PHRASE_PACKING_UNPACKED,Unpacked following noun 'สีดำ' from verb/phrase to establish strict 1-to-1 match
+36:42,4,مِّثْلِهِۦ,mith'lihi,seperti/serupa itu,(the) likes of it,สิ่งที่คล้ายคลึงกันกับมัน,คล้ายคลึงกันกับมัน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'สิ่งที่' from verb/phrase to establish strict 1-to-1 match
+36:47,13,أَنُطْعِمُ,anuṭ'ʿimu,apakah kami memberi makan,Should we feed,เราจะให้อาหารแก่ผู้ที่,เราจะให้อาหารแก่,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ผู้ที่' from verb/phrase to establish strict 1-to-1 match
+37:59,2,مَوْتَتَنَا,mawtatanā,kematian kita/kami,our death,ความตายครั้งแรกของเรา,ความตายของเรา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ครั้งแรก' from verb/phrase to establish strict 1-to-1 match
+37:102,23,شَآءَ,shāa,menghendaki,Allah wills,อัลลอฮฺทรงประสงค์,ทรงประสงค์,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+37:105,2,صَدَّقْتَ,ṣaddaqta,kamu telah membenarkan,you have fulfilled,เจ้าได้ทำให้ความฝันเป็นจริงแล้ว,เจ้าได้ทำให้เป็นจริงแล้ว,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ความฝัน' from verb/phrase to establish strict 1-to-1 match
+37:132,2,مِنْ,min,dari/termasuk,of,(misaligned/shifted),จาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+37:180,2,رَبِّكَ,rabbika,Tuhanmu,(be to) your Lord,พระเจ้าของเจ้า,ของเจ้า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พระเจ้า' from verb/phrase to establish strict 1-to-1 match
+38:17,11,أَوَّابٌ,awwābun,seorang yang kembali,repeatedly turning,(misaligned/shifted),ผู้หวนกลับไปหาพระองค์เสมอ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+38:19,5,أَوَّابٌۭ,awwābun,kembali/bertaubat,repeatedly turning,(misaligned/shifted),หวนกลับไปหาพระองค์เสมอ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+38:29,2,أَنزَلْنَٰهُ,anzalnāhu,Kami turunkannya,We have revealed it,เราประทานลงมาให้แก่เจ้า,เราประทานลงมาให้,PHRASE_PACKING_UNPACKED,Unpacked following noun 'แก่เจ้า' from verb/phrase to establish strict 1-to-1 match
+38:44,14,أَوَّابٌۭ,awwābun,orang yang kembali/bertaubat,repeatedly turned,(misaligned/shifted),เป็นผู้หวนกลับไปหาพระองค์เสมอ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+39:8,32,مِنْ,min,dari/termasuk,(are) of,(misaligned/shifted),จาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+39:16,11,يُخَوِّفُ,yukhawwifu,mempertakuti,threatens,อัลลอฮฺทรงทำให้หวาดกลัว,ทรงทำให้หวาดกลัว,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+39:18,8,هَدَٰهُمُ,hadāhumu,memberi petunjuk pada mereka,Allah has guided them,อัลลอฮฺทรงแนะนำพวกเขา,ทรงแนะนำพวกเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+39:20,18,يُخْلِفُ,yukh'lifu,menyalahi,Allah fails,อัลลอฮฺทรงผิดสัญญา,ทรงผิดสัญญา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+39:22,2,شَرَحَ,sharaḥa,melapangkan,Allah has expanded,ที่อัลลอฮฺทรงเปิด,ที่ทรงเปิด,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+39:25,5,فَأَتَٰهُمُ,fa-atāhumu,maka datang kepada mereka,so came upon them,ดังนั้น การลงโทษจึงได้มาหาพวกเขา,ดังนั้นจึงได้มาหาพวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'การลงโทษ' from verb/phrase to establish strict 1-to-1 match
+39:26,1,فَأَذَاقَهُمُ,fa-adhāqahumu,maka merasakan kepada mereka,So Allah made them,ดังนั้น อัลลอฮฺจึงทรงทำให้พวกเขาลิ้มรส,ดังนั้นจึงทรงทำให้พวกเขาลิ้มรส,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+39:35,1,لِيُكَفِّرَ,liyukaffira,karena akan menutup,That Allah will remove,เพื่ออัลลอฮฺจะทรงลบ,เพื่อจะทรงลบ,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+39:38,23,ضُرِّهِۦٓ,ḍurrihi,bahaya-Nya,(of) harm (from) Him,ความทุกข์ของพระองค์ได้หรือ,ความทุกข์ของพระองค์ได้,PHRASE_PACKING_UNPACKED,Unpacked following noun 'หรือ' from verb/phrase to establish strict 1-to-1 match
+39:40,2,يَأْتِيهِ,yatīhi,akan datang padanya,will come,การลงโทษจะมาถึงเขา,จะมาถึงเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'การลงโทษ' from verb/phrase to establish strict 1-to-1 match
+39:47,1,وَلَوْ,walaw,dan jika,And if,และหากว่า,และ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'หากว่า' from verb/phrase to establish strict 1-to-1 match
+39:49,8,خَوَّلْنَٰهُ,khawwalnāhu,Kami berikan kepadanya,We bestow (on) him,เราได้ประทานความโปรดปรานแก่เขา,เราได้ประทานแก่เขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ความโปรดปราน' from verb/phrase to establish strict 1-to-1 match
+39:52,5,يَبْسُطُ,yabsuṭu,Dia melapangkan,extends,ทรงประทานปัจจัยยังชีพ,ทรงประทาน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ปัจจัยยังชีพ' from verb/phrase to establish strict 1-to-1 match
+39:54,9,يَأْتِيَكُمُ,yatiyakumu,akan datang kepadamu,comes to you,การลงโทษจะมาหาพวกเจ้า,จะมาหาพวกเจ้า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'การลงโทษ' from verb/phrase to establish strict 1-to-1 match
+39:61,1,وَيُنَجِّى,wayunajjī,dan menyelamatkan,And Allah will deliver,และอัลลอฮฺ,และ,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+39:64,4,تَأْمُرُوٓنِّىٓ,tamurūnnī,kamu menyuruh aku,you order me,(misaligned/shifted),พวกท่านสั่งฉัน,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+39:68,13,شَآءَ,shāa,menghendaki,Allah wills,อัลลอฮฺทรงประสงค์,ทรงประสงค์,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+40:21,21,فَأَخَذَهُمُ,fa-akhadhahumu,maka mengambil/mengazab mereka,but Allah seized them,แล้วอัลลอฮฺได้ทรงลงโทษพวกเขา,แล้วได้ทรงลงโทษพวกเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+40:22,8,فَأَخَذَهُمُ,fa-akhadhahumu,lalu mengazab mereka,So Allah seized them,แล้วอัลลอฮฺได้ทรงลงโทษพวกเขา,แล้วได้ทรงลงโทษพวกเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+40:28,28,يُصِبْكُم,yuṣib'kum,akan menimpamu,(there) will strike you,บางส่วนของสิ่งที่เขาขู่พวกเจ้าไว้,ของสิ่งที่เขาขู่พวกเจ้าไว้,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บางส่วน' from verb/phrase to establish strict 1-to-1 match
+40:35,17,يَطْبَعُ,yaṭbaʿu,menutup,Allah sets a seal,อัลลอฮฺทรงประทับตรา,ทรงประทับตรา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+40:45,1,فَوَقَٰهُ,fawaqāhu,maka melindungi/memeliharanya,So Allah protected him,ดังนั้นอัลลอฮฺจึงทรงปกป้องเขา,ดังนั้นจึงทรงปกป้องเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+40:45,9,سُوٓءُ,sūu,seburuk-buruk,(the) worst,ด้วยการลงโทษที่ชั่วช้าที่สุด,ด้วยที่ชั่วช้าที่สุด,PHRASE_PACKING_UNPACKED,Unpacked following noun 'การลงโทษ' from verb/phrase to establish strict 1-to-1 match
+40:46,12,أَشَدَّ,ashadda,sangat keras,(in the) severest,สู่การลงโทษที่รุนแรงที่สุด,สู่ที่รุนแรงที่สุด,PHRASE_PACKING_UNPACKED,Unpacked following noun 'การลงโทษ' from verb/phrase to establish strict 1-to-1 match
+40:47,13,فَهَلْ,fahal,maka apakah,so can,ดังนั้นพวกท่าน,ดังนั้น,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พวกท่าน' from verb/phrase to establish strict 1-to-1 match
+40:49,1,وَقَالَ,waqāla,dan berkata,And will say,และบรรดาผู้ที่,และ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้ที่' from verb/phrase to establish strict 1-to-1 match
+40:58,1,وَمَا,wamā,dan tidaklah,And not,และไม่เท่ากัน,และไม่,PHRASE_PACKING_UNPACKED,Unpacked following noun 'เท่ากัน' from verb/phrase to establish strict 1-to-1 match
+40:61,12,لَذُو,ladhū,benar-benar mempunyai,(is) Full (of) Bounty,ทรงเป็นผู้มีความโปรดปรานอย่างแท้จริง,ทรงเป็นผู้มีอย่างแท้จริง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ความโปรดปราน' from verb/phrase to establish strict 1-to-1 match
+40:74,15,يُضِلُّ,yuḍillu,menyesatkan,Allah lets go astray,ที่อัลลอฮฺทรงปล่อยให้,ที่ทรงปล่อยให้,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+40:76,6,فَبِئْسَ,fabi'sa,maka amat buruk,and wretched is,ช่างเป็นที่พำนักที่ชั่วช้าเสียจริง,ช่างเป็นที่ชั่วช้าเสียจริง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ที่พำนัก' from verb/phrase to establish strict 1-to-1 match
+40:80,9,وَعَلَيْهَا,waʿalayhā,dan diatasnya,and upon them,และบนมัน,มัน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'และบน' from verb/phrase to establish strict 1-to-1 match
+40:83,2,جَآءَتْهُمْ,jāathum,datang kepada mereka,came to them,บรรดารอซูลของพวกเขาได้มาหาพวกเขา,ได้มาหาพวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดารอซูลของพวกเขา' from verb/phrase to establish strict 1-to-1 match
+41:14,2,جَآءَتْهُمُ,jāathumu,datang kepada mereka,came to them,บรรดารอซูลได้มาหาพวกเขา,ได้มาหาพวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดารอซูล' from verb/phrase to establish strict 1-to-1 match
+41:15,13,أَوَلَمْ,awalam,ataukah tidak,Do not,พวกเขาไม่เห็นหรือว่า,หรือว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พวกเขาไม่เห็น' from verb/phrase to establish strict 1-to-1 match
+41:26,1,وَقَالَ,waqāla,dan berkata,And said,และบรรดาผู้ที่,และ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้ที่' from verb/phrase to establish strict 1-to-1 match
+41:26,6,لِهَٰذَا,lihādhā,kepada ini,to this,อัลกุรอานนี้,นี้,PHRASE_PACKING_UNPACKED,Unpacked following noun 'อัลกุรอาน' from verb/phrase to establish strict 1-to-1 match
+41:27,1,فَلَنُذِيقَنَّ,falanudhīqanna,maka sungguh Kami akan merasakan,But surely We will cause to taste,ดังนั้นเราจะให้บรรดาผู้ที่,ดังนั้นเราจะให้,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้ที่' from verb/phrase to establish strict 1-to-1 match
+41:29,1,وَقَالَ,waqāla,dan berkata,And (will) say,และบรรดาผู้ที่,และ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้ที่' from verb/phrase to establish strict 1-to-1 match
+41:34,3,ٱلْحَسَنَةُ,l-ḥasanatu,kebaikan,the good (deed),และไม่เท่ากัน,เท่ากัน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'และไม่' from verb/phrase to establish strict 1-to-1 match
+42:24,13,وَيَمْحُ,wayamḥu,dan menghapuskan,And Allah eliminates,และอัลลอฮฺจะทรงลบล้าง,และจะทรงลบล้าง,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+42:37,8,غَضِبُوا۟,ghaḍibū,marah,they are angry,พวกเขาโกรธ,โกรธ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พวกเขา' from verb/phrase to establish strict 1-to-1 match
+42:44,2,يُضْلِلِ,yuḍ'lili,menyesatkan,Allah lets go astray,ที่อัลลอฮฺทรงให้หลงทาง,ที่ทรงให้หลงทาง,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+42:45,11,وَقَالَ,waqāla,dan berkata,And will say,และบรรดาผู้ที่กล่าวว่า,และกล่าวว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้ที่' from verb/phrase to establish strict 1-to-1 match
+42:46,11,يُضْلِلِ,yuḍ'lili,menyesatkan,Allah lets go astray,ที่อัลลอฮฺทรงให้หลงทาง,ที่ทรงให้หลงทาง,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+42:48,11,وَإِنَّآ,wa-innā,dan sesungguhnya Kami,And indeed,และแท้จริงเมื่อ,และแท้จริง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'เมื่อ' from verb/phrase to establish strict 1-to-1 match
+43:17,8,ظَلَّ,ẓalla,jadilah,becomes,ใบหน้าของเขาก็จะ,ก็จะ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ใบหน้าของเขา' from verb/phrase to establish strict 1-to-1 match
+43:32,17,لِّيَتَّخِذَ,liyattakhidha,agar mengambil,so that may take,เพื่อที่บางคนในหมู่พวกเขาจะถือเอา,เพื่อที่จะถือเอา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บางคนในหมู่พวกเขา' from verb/phrase to establish strict 1-to-1 match
+45:16,11,وَفَضَّلْنَٰهُمْ,wafaḍḍalnāhum,dan Kami lebihkan mereka,and We preferred them,และเราได้ทรงโปรดปรานพวกเขาเหนือ,และเราได้ทรงโปรดปรานพวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'เหนือ' from verb/phrase to establish strict 1-to-1 match
+45:22,1,وَخَلَقَ,wakhalaqa,dan menciptakan,And Allah created,และอัลลอฮฺทรงสร้าง,และทรงสร้าง,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+45:23,6,وَأَضَلَّهُ,wa-aḍallahu,dan membiarkan sesat padanya,and Allah lets him go astray,และอัลลอฮฺทรงปล่อยให้เขาหลงทาง,และทรงปล่อยให้เขาหลงทาง,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+45:30,6,فَيُدْخِلُهُمْ,fayud'khiluhum,maka memasukkan mereka,will admit them,ดังนั้นพระเจ้าของพวกเขาจะให้พวกเขาเข้า,ดังนั้นจะให้พวกเขาเข้า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พระเจ้าของพวกเขา' from verb/phrase to establish strict 1-to-1 match
+46:15,5,حَمَلَتْهُ,ḥamalathu,mengandungnya,Carried him,แม่ของเขาอุ้มท้องเขา,อุ้มท้องเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'แม่ของเขา' from verb/phrase to establish strict 1-to-1 match
+46:16,5,أَحْسَنَ,aḥsana,lebih baik,(the) best,สิ่งที่ดียิ่ง,ดียิ่ง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'สิ่งที่' from verb/phrase to establish strict 1-to-1 match
+47:3,15,يَضْرِبُ,yaḍribu,menjadikan,Allah presents,อัลลอฮฺทรงยก,ทรงยก,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+47:10,12,دَمَّرَ,dammara,membinasakan,Allah destroyed,อัลลอฮฺทรงทำลาย,ทรงทำลาย,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+47:20,1,وَيَقُولُ,wayaqūlu,dan berkata,And say,และบรรดาผู้ที่,และ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้ที่' from verb/phrase to establish strict 1-to-1 match
+48:1,2,فَتَحْنَا,fataḥnā,Kami bukakan/beri kemenangan,We have given victory,ได้ทรงเปิดให้แก่เจ้า,ได้ทรงเปิดให้,PHRASE_PACKING_UNPACKED,Unpacked following noun 'แก่เจ้า' from verb/phrase to establish strict 1-to-1 match
+48:3,1,وَيَنصُرَكَ,wayanṣuraka,dan akan menolong kamu,And Allah may help you,และอัลลอฮฺจะทรงช่วยเหลือเจ้า,และจะทรงช่วยเหลือเจ้า,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+48:6,13,وَغَضِبَ,waghaḍiba,dan murka,and Allah's wrath (is),และอัลลอฮฺทรงกริ้ว,และทรงกริ้ว,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+48:21,3,تَقْدِرُوا۟,taqdirū,kamu dapat menguasai,you had power,สามารถมีอำนาจเหนือมัน,สามารถมีอำนาจ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'เหนือมัน' from verb/phrase to establish strict 1-to-1 match
+48:26,10,فَأَنزَلَ,fa-anzala,maka menurunkan,Then Allah sent down,ดังนั้นอัลลอฮฺจึงทรงประทาน,ดังนั้นจึงทรงประทาน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+48:27,11,شَآءَ,shāa,menghendaki,Allah wills,อัลลอฮฺทรง,ทรงประสงค์,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+49:1,6,بَيْنَ,bayna,antara,before Allah,(misaligned/shifted),ระหว่าง,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+49:1,7,يَدَىِ,yadayi,hadapan,before Allah,(misaligned/shifted),เบื้องหน้า,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+49:3,10,ٱمْتَحَنَ,im'taḥana,menguji,Allah has tested,อัลลอฮฺได้ทรงทดสอบ,ได้ทรงทดสอบ,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+50:41,3,يُنَادِ,yunādi,menyeru,will call,ผู้เรียกจะเรียก,จะเรียก,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ผู้เรียก' from verb/phrase to establish strict 1-to-1 match
+52:18,3,ءَاتَٰهُمْ,ātāhum,memberikan kepada mereka,has given them,พระเจ้าของพวกเขาได้ประทานให้แก่พวกเขา,ได้ประทานให้แก่พวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พระเจ้าของพวกเขา' from verb/phrase to establish strict 1-to-1 match
+52:21,3,وَٱتَّبَعَتْهُمْ,wa-ittabaʿathum,dan mengikuti mereka,and followed them,และลูกหลานของพวกเขาได้ติดตามพวกเขา,และได้ติดตามพวกเขา,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ลูกหลานของพวกเขา' from verb/phrase to establish strict 1-to-1 match
+52:27,1,فَمَنَّ,famanna,maka memberi karunia,But Allah conferred favor,ดังนั้นอัลลอฮฺได้ทรงประทานความโปรดปราน,ดังนั้นได้ทรงประทานความโปรดปราน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+53:43,1,وَأَنَّهُۥ,wa-annahu,dan bahwasanya,And that He,และแท้จริงพระองค์,และแท้จริง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พระองค์' from verb/phrase to establish strict 1-to-1 match
+53:44,1,وَأَنَّهُۥ,wa-annahu,dan bahwasanya,And that He,และแท้จริงพระองค์,และแท้จริง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พระองค์' from verb/phrase to establish strict 1-to-1 match
+53:48,1,وَأَنَّهُۥ,wa-annahu,dan bahwasanya,And that He,และแท้จริงพระองค์,และแท้จริง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พระองค์' from verb/phrase to establish strict 1-to-1 match
+53:49,1,وَأَنَّهُۥ,wa-annahu,dan bahwasanya,And that He,และแท้จริงพระองค์,และแท้จริง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พระองค์' from verb/phrase to establish strict 1-to-1 match
+54:6,4,يَدْعُ,yadʿu,seorang penyeru,will call,ผู้เรียกร้องจะเรียกร้อง,จะเรียกร้อง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ผู้เรียกร้อง' from verb/phrase to establish strict 1-to-1 match
+54:8,4,يَقُولُ,yaqūlu,berkata,Will say,บรรดาผู้ปฏิเสธศรัทธาจะกล่าวว่า,ศรัทธาจะกล่าวว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้ปฏิเสธ' from verb/phrase to establish strict 1-to-1 match
+55:9,5,تُخْسِرُوا۟,tukh'sirū,kamu mengurangi,make deficient,ทำให้ตาชั่งบกพร่อง,ทำให้บกพร่อง,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ตาชั่ง' from verb/phrase to establish strict 1-to-1 match
+57:18,4,وَأَقْرَضُوا۟,wa-aqraḍū,dan mereka memberi pinjaman,and who lend,และพวกเขาได้ให้อัลลอฮฺกู้ยืม,และพวกเขาได้ให้กู้ยืมกู้ยืม,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+57:25,19,وَلِيَعْلَمَ,waliyaʿlama,dan hendak mengetahui,and so that Allah may make evident,และเพื่ออัลลอฮฺจะได้ทรงรู้,และเพื่อจะได้ทรงรู้,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+58:6,8,أَحْصَٰهُ,aḥṣāhu,menghitungnya,Allah has recorded it,อัลลอฮฺทรงบันทึกมันไว้,ทรงบันทึกมันไว้,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+58:8,30,يُعَذِّبُنَا,yuʿadhibunā,menyiksa kita,Allah punish us,ทำไมอัลลอฮฺจึงไม่ลงโทษเรา,จึงไม่ทรงลงโทษเรา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+58:11,11,يَفْسَحِ,yafsaḥi,melapangkan,Allah will make room,อัลลอฮฺจะทรงขยายให้กว้างขวาง,จะทรงขยายให้กว้างขวาง,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+58:11,18,يَرْفَعِ,yarfaʿi,meninggikan,Allah will raise,อัลลอฮฺจะทรงยกย่อง,จะทรงยกย่อง,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+58:12,8,بَيْنَ,bayna,diantara,before,(misaligned/shifted),ระหว่าง,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+58:12,9,يَدَىْ,yaday,hadapan (sebelum),before,(misaligned/shifted),เบื้องหน้า,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+58:13,4,بَيْنَ,bayna,diantara,before,(misaligned/shifted),ระหว่าง,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+58:13,5,يَدَىْ,yaday,hadapan (sebelum),before,(misaligned/shifted),เบื้องหน้า,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+58:13,11,وَتَابَ,watāba,dan menerima taubat,and Allah has forgiven,และอัลลอฮฺทรงอภัยโทษ,และทรงอภัยโทษ,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+58:21,1,كَتَبَ,kataba,menulis/menetapkan,Allah has decreed,อัลลอฮฺทรงกำหนดไว้แล้ว,ทรงกำหนดไว้แล้ว,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+58:22,38,رَضِىَ,raḍiya,meridai,Allah is pleased,อัลลอฮฺทรง,ทรงยินดี,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+59:2,13,مَا,mā,tidak,Not,(misaligned/shifted),พวกท่านไม่,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+59:2,14,ظَنَنتُمْ,ẓanantum,menyangka,you think,(misaligned/shifted),เคยคาดคิดว่า,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+59:2,15,أَن,an,bahwa,that,(misaligned/shifted),ว่า,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+59:2,16,يَخْرُجُوا۟ ۖ,yakhrujū,mereka akan keluar,they would leave,(misaligned/shifted),พวกเขาจะออกไป,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+59:2,17,وَظَنُّوٓا۟,waẓannū,dan menyangka,and they thought,(misaligned/shifted),และพวกเขาคิดว่า,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+59:2,18,أَنَّهُم,annahum,sesungguhnya mereka,that [they],(misaligned/shifted),แท้จริงพวกเขา,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+59:2,19,مَّانِعَتُهُمْ,māniʿatuhum,mencegah/mempertahankan mereka,would defend them,(misaligned/shifted),จะได้รับการปกป้อง,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+59:2,20,حُصُونُهُم,ḥuṣūnuhum,benteng-benteng mereka,their fortresses,(misaligned/shifted),ด้วยป้อมปราการของพวกเขา,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+59:2,21,مِّنَ,mina,dari,against,(misaligned/shifted),ให้พ้นจาก,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+59:2,22,ٱللَّهِ,l-lahi,Allah,Allah,(misaligned/shifted),อัลลอฮฺได้,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+59:2,23,فَأَتَٰهُمُ,fa-atāhumu,maka mendatangkan pada mereka,But came to them,(misaligned/shifted),แต่แล้วได้มายังพวกเขา,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+59:2,24,ٱللَّهُ,l-lahu,Allah,Allah,(misaligned/shifted),ซึ่งการลงทัณฑ์ของอัลลอฮฺ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+59:3,1,وَلَوْلَآ,walawlā,dan jika tidak,And if not,และหากว่า,และ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'หากว่า' from verb/phrase to establish strict 1-to-1 match
+59:7,25,ءَاتَٰكُمُ,ātākumu,yang diberikan kepadamu,gives you,ที่ศาสนทูตมอบให้แก่พวกท่าน,ที่มอบให้แก่พวกท่าน,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ศาสนทูต' from verb/phrase to establish strict 1-to-1 match
+61:9,8,لِيُظْهِرَهُۥ,liyuẓ'hirahu,untuk memenangkan,to make it prevail,เพื่อให้มันมีชัยเหนือ,เพื่อให้มันมีชัย,PHRASE_PACKING_UNPACKED,Unpacked following noun 'เหนือ' from verb/phrase to establish strict 1-to-1 match
+63:4,19,قَٰتَلَهُمُ,qātalahumu,membunuh/membinasakan mereka,May destroy them,ขออัลลอฮฺทรงประณาม,ขอทรงประณามพวกเขาเถิด,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+64:13,6,وَعَلَى,waʿalā,dan atas/kepada,And upon,(misaligned/shifted),และยัง,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+64:13,7,ٱللَّهِ,l-lahi,Allah,Allah,(misaligned/shifted),อัลลอฮฺ,ALIGNMENT_SHIFT,Re-aligned word-by-word with Malay Kata demi kata standard
+64:13,8,فَلْيَتَوَكَّلِ,falyatawakkali,maka hendaklah bertawakkal,let put (their) trust,ดังนั้นบรรดาผู้ศรัทธาจงมอบหมายเถิด,ดังนั้นจงมอบหมายเถิด,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้ศรัทธา' from verb/phrase to establish strict 1-to-1 match
+66:3,11,وَأَظْهَرَهُ,wa-aẓharahu,dan menyatakannya,and made it apparent,และอัลลอฮฺทรงเปิดเผยมัน,และทรงเปิดเผยมัน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+67:8,9,سَأَلَهُمْ,sa-alahum,bertanya kepada mereka,(will) ask them,บรรดาผู้ดูแลมันจะถามพวกเขาว่า,จะถามพวกเขาว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้ดูแลมัน' from verb/phrase to establish strict 1-to-1 match
+67:28,4,أَهْلَكَنِىَ,ahlakaniya,membinasakan aku,destroys me,อัลลอฮฺทรงทำลายฉัน,ทรงทำลายฉัน,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+69:14,5,دَكَّةًۭ,dakkatan,kehancuran,(with) a crushing,เป็นการบดขยี้ครั้งเดียว,เป็นการบดขยี้,PHRASE_PACKING_UNPACKED,Unpacked following noun 'ครั้งเดียว' from verb/phrase to establish strict 1-to-1 match
+72:12,5,نُّعْجِزَ,nuʿ'jiza,kami dapat melemahkan/melepaskan diri,we will cause failure,ที่เราจะทำให้ (อัลลอฮฺ) อ่อนแอได้,ว่าเราจะหนีรอดพ้น,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+74:31,14,لِيَسْتَيْقِنَ,liyastayqina,supaya meyakini,that may be certain,เพื่อที่บรรดาผู้ที่,เพื่อที่,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้ที่' from verb/phrase to establish strict 1-to-1 match
+74:31,28,وَلِيَقُولَ,waliyaqūla,dan supaya mengatakan,and that may say,และเพื่อที่บรรดาผู้ที่,และเพื่อที่,PHRASE_PACKING_UNPACKED,Unpacked following noun 'บรรดาผู้ที่' from verb/phrase to establish strict 1-to-1 match
+75:3,1,أَيَحْسَبُ,ayaḥsabu,apakah mengira,Does think,มนุษย์คิดหรือว่า,คิดหรือว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'มนุษย์' from verb/phrase to establish strict 1-to-1 match
+75:36,1,أَيَحْسَبُ,ayaḥsabu,apakah mengira,Does think,มนุษย์คิดหรือว่า,คิดหรือว่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'มนุษย์' from verb/phrase to establish strict 1-to-1 match
+76:8,1,وَيُطْعِمُونَ,wayuṭ'ʿimūna,dan mereka memberi makan,And they feed,และพวกเขาให้อาหาร,และพวกเขาให้,PHRASE_PACKING_UNPACKED,Unpacked following noun 'อาหาร' from verb/phrase to establish strict 1-to-1 match
+76:11,1,فَوَقَٰهُمُ,fawaqāhumu,maka memelihara mereka,But will protect them,ดังนั้นอัลลอฮฺจึงทรงคุ้มครองพวกเขา,ดังนั้นจึงทรงคุ้มครองพวกเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+76:11,4,ذَٰلِكَ,dhālika,demikian/itu,(of) that,ของวันนั้น,ของ,PHRASE_PACKING_UNPACKED,Unpacked following noun 'วันนั้น' from verb/phrase to establish strict 1-to-1 match
+77:50,1,فَبِأَىِّ,fabi-ayyi,maka yang manakah,Then in what,ดังนั้น ด้วยคำพูดบทใดเล่า,ดังนั้นด้วยบทใดเล่า,PHRASE_PACKING_UNPACKED,Unpacked following noun 'คำพูด' from verb/phrase to establish strict 1-to-1 match
+79:25,1,فَأَخَذَهُ,fa-akhadhahu,maka mengambil/menyiksanya,So seized him,ดังนั้นอัลลอฮฺจึงทรงลงโทษเขา,ดังนั้นจึงทรงลงโทษเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+83:32,2,رَأَوْهُمْ,ra-awhum,mereka melihat,they saw them,พวกเขาเห็นพวกเขากล่าวว่า,พวกเขาเห็น,PHRASE_PACKING_UNPACKED,Unpacked following noun 'พวกเขากล่าวว่า' from verb/phrase to establish strict 1-to-1 match
+88:24,1,فَيُعَذِّبُهُ,fayuʿadhibuhu,maka akan menyiksanya,Then will punish him,ดังนั้นอัลลอฮฺจะทรงลงโทษเขา,ดังนั้นจะทรงลงโทษเขา,DOUBLE_SUBJECT_PACKING,Removed redundant subject name from verb to align with Malay Kata demi kata
+2:57,11,مَا,mā,apa,that,ที่,สิ่งที่,PARTICLE_INVERSION_FIX,Restored proper lexical fidelity from phantom particle 'ที่' to 'สิ่งที่' (Malay: apa)
+2:90,11,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+2:134,3,قَدْ,qad,sungguh,(which),ที่,ได้,PARTICLE_INVERSION_FIX,Restored proper lexical fidelity from phantom particle 'ที่' to 'ได้' (Malay: sungguh)
+2:198,4,أَن,an,untuk,that,ที่,เพื่อ,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เพื่อ' (Malay: untuk)
+2:211,15,مَا,mā,apa,[what],ที่,สิ่งที่,PARTICLE_INVERSION_FIX,Restored proper lexical fidelity from phantom particle 'ที่' to 'สิ่งที่' (Malay: apa)
+2:228,9,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+2:229,11,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+2:230,17,أَن,an,bahwa,if,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+2:237,5,أَن,an,jika,[that],ที่,หาก,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'หาก' (Malay: jika)
+2:271,15,مِّن,min,dari,[of],ซึ่ง,จาก,PARTICLE_INVERSION_FIX,Restored proper lexical fidelity from phantom particle 'ซึ่ง' to 'จาก' (Malay: dari)
+2:282,80,أَن,an,bahwa/untuk,that,ที่,เพื่อ,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เพื่อ' (Malay: bahwa/untuk)
+3:79,4,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+3:93,15,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+3:112,5,مَا,mā,apa/saja,that,ที่,ก็ตามที่,PARTICLE_INVERSION_FIX,Restored proper lexical fidelity from phantom particle 'ที่' to 'ก็ตามที่' (Malay: apa/saja)
+3:143,7,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+3:145,4,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+3:161,4,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+3:188,8,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+4:27,3,أَن,an,supaya,to,ที่,เพื่อที่,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เพื่อที่' (Malay: supaya)
+4:27,10,أَن,an,supaya,that,ที่,เพื่อที่,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เพื่อที่' (Malay: supaya)
+4:91,9,مَا,mā,apa/kali,that,ที่,ครั้งที่,PARTICLE_INVERSION_FIX,Restored proper lexical fidelity from phantom particle 'ที่' to 'ครั้งที่' (Malay: apa/kali)
+4:92,21,أَن,an,akan,that,ที่,ที่จะ,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ที่จะ' (Malay: akan)
+4:101,8,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+4:102,52,أَن,an,akan,that,ที่,ที่จะ,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ที่จะ' (Malay: akan)
+4:128,12,أَن,an,akan,that,ที่,ที่จะ,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ที่จะ' (Malay: akan)
+4:164,2,قَدْ,qad,sungguh,surely,ที่,ได้,PARTICLE_INVERSION_FIX,Restored proper lexical fidelity from phantom particle 'ที่' to 'ได้' (Malay: sungguh)
+4:171,40,أَن,an,bahwa,That,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+5:1,8,بَهِيمَةُ,bahīmatu,binatang,the quadruped,ซึ่ง,สัตว์,CORRECT_NOUN_FIDELITY,Corrected phantom particle 'ซึ่ง' to noun 'สัตว์' (bahimatu / binatang / beast of cattle)
+5:29,3,أَن,an,agar,that,ที่,เพื่อว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เพื่อว่า' (Malay: agar)
+5:31,15,أَنْ,an,agar,that,ที่,เพื่อว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เพื่อว่า' (Malay: agar)
+5:34,6,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+5:41,56,أَن,an,agar,that,ที่,เพื่อว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เพื่อว่า' (Malay: agar)
+5:67,12,فَمَا,famā,maka tidak,then not,ดังนั้น,ดังนั้นก็มิได้,BOUNDARY_NEGATION_DECOUPLING,Decoupled compound negation and word-boundary leak (Malay: maka tidak)
+5:67,13,بَلَّغْتَ,ballaghta,kamu menyampaikan,you (have) conveyed,เจ้าก็ไม่ได้เผยแผ่,เจ้าได้เผยแผ่,WBW_ALIGNMENT_IMPROVEMENT,Refined WBW translation fidelity to match Malay headword: 'kamu menyampaikan'
+5:74,1,أَفَلَا,afalā,maka mengapa tidak,So will not,แล้วทำไม,พวกเขาจะไม่...หรือ,BOUNDARY_NEGATION_DECOUPLING,Decoupled compound negation and word-boundary leak (Malay: maka mengapa tidak)
+5:74,2,يَتُوبُونَ,yatūbūna,mereka bertaubat,they turn in repentance,พวกเขาจึงไม่สำนึกผิด,กลับเนื้อกลับตัว,WBW_ALIGNMENT_IMPROVEMENT,Refined WBW translation fidelity to match Malay headword: 'mereka bertaubat'
+5:108,3,أَن,an,agar,that,ที่,เพื่อว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เพื่อว่า' (Malay: agar)
+6:32,12,أَفَلَا,afalā,apakah tidak,Then not,แล้วทำไม,พวกเจ้าจะไม่...หรือ,BOUNDARY_NEGATION_DECOUPLING,Decoupled compound negation and word-boundary leak (Malay: apakah tidak)
+6:32,13,تَعْقِلُونَ,taʿqilūna,kalian menggunakan akal,(will) you reason,พวกเจ้าจึงไม่ใช้สติปัญญา,ใช้สติปัญญา,WBW_ALIGNMENT_IMPROVEMENT,Refined WBW translation fidelity to match Malay headword: 'kalian menggunakan akal'
+6:80,15,أَن,an,jika,[that],ที่,หาก,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'หาก' (Malay: jika)
+6:116,4,مَن,man,orang,of,ของ,ผู้ที่,PARTICLE_INVERSION_FIX,Restored proper lexical fidelity from phantom particle 'ของ' to 'ผู้ที่' (Malay: orang)
+6:125,4,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+6:125,11,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+6:141,6,وَغَيْرَ,waghayra,dan tidak,and other than,และที่,และที่ไม่,BOUNDARY_NEGATION_DECOUPLING,Decoupled compound negation and word-boundary leak (Malay: dan tidak)
+6:141,7,مَعْرُوشَـٰتٍۢ,maʿrūshātin,yang berjunjung,trellised,ไม่มีค้างคาน,มีค้างคาน,WBW_ALIGNMENT_IMPROVEMENT,Refined WBW translation fidelity to match Malay headword: 'yang berjunjung'
+6:141,15,وَغَيْرَ,waghayra,dan tidak,and other than,และที่,และที่ไม่,BOUNDARY_NEGATION_DECOUPLING,Decoupled compound negation and word-boundary leak (Malay: dan tidak)
+6:141,16,مُتَشَـٰبِهٍۢ ۚ,mutashābihin,serupa,similar,ไม่คล้ายกัน,คล้ายกัน,WBW_ALIGNMENT_IMPROVEMENT,Refined WBW translation fidelity to match Malay headword: 'serupa'
+7:13,7,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+7:20,19,أَن,an,bahwa/supaya,that,ที่,เพื่อว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เพื่อว่า' (Malay: bahwa/supaya)
+7:38,5,قَدْ,qad,sungguh,(who),ที่,ได้,PARTICLE_INVERSION_FIX,Restored proper lexical fidelity from phantom particle 'ที่' to 'ได้' (Malay: sungguh)
+7:63,2,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+7:69,2,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+7:82,6,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+7:89,18,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+7:89,22,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+7:97,4,أَن,an,jika,that,ที่,หาก,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'หาก' (Malay: jika)
+7:98,4,أَن,an,jika,that,ที่,หาก,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'หาก' (Malay: jika)
+7:105,3,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+7:129,5,أَن,an,akan,[that],ที่,ที่จะ,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ที่จะ' (Malay: akan)
+7:129,9,مَا,mā,apa,[what],ที่,สิ่งที่,PARTICLE_INVERSION_FIX,Restored proper lexical fidelity from phantom particle 'ที่' to 'สิ่งที่' (Malay: apa)
+7:185,14,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+8:67,4,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+9:13,16,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+9:18,20,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+9:52,11,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+9:62,8,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+9:108,13,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+9:108,19,أَن,an,bahwa,to,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+9:110,10,أَن,an,telah,that,ที่,ได้,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ได้' (Malay: telah)
+9:113,6,أَن,an,untuk,that,ที่,เพื่อ,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เพื่อ' (Malay: untuk)
+9:117,15,مَا,mā,apa,[what],ที่,สิ่งที่,PARTICLE_INVERSION_FIX,Restored proper lexical fidelity from phantom particle 'ที่' to 'สิ่งที่' (Malay: apa)
+10:15,21,أَنْ,an,untuk,that,ที่,เพื่อ,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เพื่อ' (Malay: untuk)
+10:35,18,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+10:100,4,أَن,an,untuk,to,ที่,เพื่อ,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เพื่อ' (Malay: untuk)
+11:47,6,أَنْ,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+12:37,10,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+12:38,10,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+12:76,22,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+12:79,4,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+12:80,20,مَا,mā,apa,that,ที่,สิ่งที่,PARTICLE_INVERSION_FIX,Restored proper lexical fidelity from phantom particle 'ที่' to 'สิ่งที่' (Malay: apa)
+12:94,11,أَن,an,telah,that,ที่,ได้,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ได้' (Malay: telah)
+12:96,2,أَن,an,telah,[that],ที่,ได้,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ได้' (Malay: telah)
+12:100,32,أَن,an,akan,[that],ที่,ที่จะ,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ที่จะ' (Malay: akan)
+14:11,20,أَن,an,akan,that,ที่,ที่จะ,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ที่จะ' (Malay: akan)
+14:22,20,أَن,an,akan,that,ที่,ที่จะ,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ที่จะ' (Malay: akan)
+17:51,23,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+17:79,8,أَن,an,akan,that,ที่,ที่จะ,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ที่จะ' (Malay: akan)
+17:88,7,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+17:94,4,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+17:94,10,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+18:55,4,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+18:66,7,أَن,an,supaya,that,ที่,เพื่อที่,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เพื่อที่' (Malay: supaya)
+18:94,15,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+19:35,4,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+19:92,4,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+20:63,6,أَن,an,keduanya akan,that,ที่,เขาทั้งสองจะ,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เขาทั้งสองจะ' (Malay: keduanya akan)
+20:81,4,مَا,mā,apa,which,ที่,สิ่งที่,PARTICLE_INVERSION_FIX,Restored proper lexical fidelity from phantom particle 'ที่' to 'สิ่งที่' (Malay: apa)
+20:114,10,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+20:134,17,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+21:57,5,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+24:29,4,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+24:60,11,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+24:61,16,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+24:61,53,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+25:18,7,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+26:12,5,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+26:22,5,أَنْ,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+26:49,5,أَنْ,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+26:100,1,فَمَا,famā,maka/karena itu tidak ada,So (now) not,ดังนั้น,ดังนั้นจึงไม่มี,BOUNDARY_NEGATION_DECOUPLING,Decoupled compound negation and word-boundary leak (Malay: maka/karena itu tidak ada)
+27:38,8,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+27:39,9,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+27:40,11,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+27:60,18,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+27:72,3,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+28:47,2,أَن,an,bahwa/ketika,[that],ที่,เมื่อ,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เมื่อ' (Malay: bahwa/ketika)
+28:67,8,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+30:43,7,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+30:49,5,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+33:6,20,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+33:37,24,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+33:49,11,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+33:49,13,فَمَا,famā,maka tidak,then not,ดังนั้น,ดังนั้นจึงไม่มี,BOUNDARY_NEGATION_DECOUPLING,Decoupled compound negation and word-boundary leak (Malay: maka tidak)
+33:51,18,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+33:53,53,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+33:53,58,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+33:59,14,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+35:37,22,فَمَا,famā,maka tidaklah,then not,ดังนั้น,ดังนั้นจึงไม่มี,BOUNDARY_NEGATION_DECOUPLING,Decoupled compound negation and word-boundary leak (Malay: maka tidaklah)
+36:40,5,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+38:4,2,أَن,an,karena,that,ที่,เพราะว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เพราะว่า' (Malay: karena)
+39:54,8,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+39:55,10,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+40:18,11,مِنْ,min,dari,any,ซึ่ง,จาก,PARTICLE_INVERSION_FIX,Restored proper lexical fidelity from phantom particle 'ซึ่ง' to 'จาก' (Malay: dari)
+40:34,7,فَمَا,famā,maka tidak,but not,แล้วสิ่งใดเล่า,แต่ทว่า,BOUNDARY_NEGATION_DECOUPLING,Decoupled compound negation and word-boundary leak (Malay: maka tidak)
+42:37,7,مَا,mā,apa-apa,and when,ที่,เมื่อใดก็ตามที่,PARTICLE_INVERSION_FIX,Restored proper lexical fidelity from phantom particle 'ที่' to 'เมื่อใดก็ตามที่' (Malay: apa-apa)
+42:47,5,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+42:51,4,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+43:66,5,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+48:24,12,أَنْ,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+49:17,3,أَنْ,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+49:17,14,أَنْ,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+50:2,3,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+53:26,13,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+57:16,5,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+57:22,15,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+58:3,13,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+58:4,9,أَن,an,bahwa,[that],ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+60:10,33,أَن,an,bahwa,if,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+61:3,5,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+65:1,20,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+70:41,2,أَن,an,untuk,to,ที่,เพื่อ,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เพื่อ' (Malay: untuk)
+74:15,3,أَنْ,an,bahwa/supaya,that,ที่,เพื่อว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เพื่อว่า' (Malay: bahwa/supaya)
+74:52,6,أَن,an,untuk,that,ที่,เพื่อ,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'เพื่อ' (Malay: untuk)
+75:40,5,أَن,an,bahwa,to,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+76:30,4,أَن,an,bahwa,that,ที่,ว่า,SUBORDINATING_PARTICLE_ALIGNMENT,Aligned subordinating particle 'an' to contextual Thai subordinator 'ว่า' (Malay: bahwa)
+92:19,4,مِن,min,dari,any,ซึ่ง,จาก,PARTICLE_INVERSION_FIX,Restored proper lexical fidelity from phantom particle 'ซึ่ง' to 'จาก' (Malay: dari)
+10:1,5,ٱلْحَكِيمِ,l-ḥakīmi,hikmah,the wise,อันเต็มไปด้วยความเมตตา,อันเปี่ยมด้วยวิทยปัญญา,LEXICAL_FIDELITY_REALIGNMENT,"10:1:5 root ح ك م (wisdom, not rahmah/mercy)"
+58:1,8,زَوْجِهَا,zawjihā,suaminya/pasangannya,her husband,สามีของเจ้า,สามีของนาง,PRONOUN_INVERSION_FIX,"58:1:8 3rd pers fem (-hā, her husband, was erroneously สามีของเจ้า)"
+58:1,9,وَتَشْتَكِىٓ,watashtakī,dan ia mengadukan,and she directs her complaint,และเจ้าก็ร้องเรียน,และนางก็ร้องเรียน,PRONOUN_INVERSION_FIX,"58:1:9 3rd pers fem (she directs complaint, was erroneously และเจ้าก็ร้องเรียน)"
+24:39,6,يَحْسَبُهُ,yaḥsabuhu,mengiranya,thinks it,ผู้กระหายน้ำ,คิดว่ามัน,INTRA_VERSE_WORD_SWAP,"24:39:6 verb yahsabuhu (thinks it), was swapped with pos 7"
+24:39,7,ٱلظَّمْـَٔانُ,l-ẓamānu,orang-orang yang dahaga,the thirsty one,คิดว่ามัน,ผู้กระหายน้ำ,INTRA_VERSE_WORD_SWAP,"24:39:7 noun al-zamaanu (the thirsty one), was swapped with pos 6"
+53:32,3,كَبَـٰٓئِرَ,kabāira,besar,great,บาป,ใหญ่หลวง,INTRA_VERSE_WORD_SWAP,"53:32:3 kabair (great), was swapped with pos 4, unabsorbed บาป"
+53:32,4,ٱلْإِثْمِ,l-ith'mi,dosa,sins,ใหญ่,บาป,INTRA_VERSE_WORD_SWAP,"53:32:4 al-ithm (sins), was swapped with pos 3"
+42:37,3,كَبَـٰٓئِرَ,kabāira,besar,(the) greater,บาป,ใหญ่หลวง,INTRA_VERSE_WORD_SWAP,"42:37:3 kabair (greater), was swapped with pos 4, unabsorbed บาป"
+42:37,4,ٱلْإِثْمِ,l-ith'mi,dosa,sins,อันใหญ่หลวง,บาป,INTRA_VERSE_WORD_SWAP,"42:37:4 al-ithm (sins), was swapped with pos 3"
+7:141,7,سُوٓءَ,sūa,seburuk-buruk,(with) worst,ด้วยการลงทัณฑ์,อันชั่วร้ายยิ่งของ,INTRA_VERSE_WORD_SWAP,"7:141:7 soo-a (worst/evil), was swapped with pos 8"
+7:141,8,ٱلْعَذَابِ ۖ,l-ʿadhābi,azab,(of) torment,อันชั่วร้ายยิ่ง,การลงทัณฑ์,INTRA_VERSE_WORD_SWAP,"7:141:8 al-adhaab (torment), was swapped with pos 7"
+59:2,11,لِأَوَّلِ,li-awwali,pada yang pertama,at (the) first,ในการเนรเทศ,ในการ(เนรเทศ)ครั้งแรกของ,INTRA_VERSE_WORD_SWAP,"59:2:11 li-awwali (at first), was swapped with pos 12"
+59:2,12,ٱلْحَشْرِ ۚ,l-ḥashri,pengusiran,gathering,ครั้งแรก,การรวมพล (การขับไล่),INTRA_VERSE_WORD_SWAP,"59:2:12 al-hashr (gathering/expulsion), was swapped with pos 11"
+39:23,3,أَحْسَنَ,aḥsana,paling baik,(the) best,ซึ่งคำพูด,อันดียิ่งของ,INTRA_VERSE_WORD_SWAP,"39:23:3 ahsana (the best of), was swapped with pos 4"
+39:23,4,ٱلْحَدِيثِ,l-ḥadīthi,pembicaraan/perkataan,(of) [the] statement,ที่ดียิ่ง,คำพูด (ดำรัส),INTRA_VERSE_WORD_SWAP,"39:23:4 al-hadeeth (the statement/speech), was swapped with pos 3"
+3:159,10,غَلِيظَ,ghalīẓa,kasar,(and) harsh,ผู้มีใจ,(จิตใจ)หยาบกระด้าง,INTRA_VERSE_WORD_SWAP,"3:159:10 ghaleeda (harsh), was swapped with pos 11"
+3:159,11,ٱلْقَلْبِ,l-qalbi,hati,(at) [the] heart,กระด้าง,แห่งหัวใจ (จิตใจ),INTRA_VERSE_WORD_SWAP,"3:159:11 al-qalb (the heart), was swapped with pos 10"
+57:23,14,مُخْتَالٍۢ,mukh'tālin,sombong,self-deluded,ผู้โอ้อวด,คนเย่อหยิ่งจองหอง,INTRA_VERSE_WORD_SWAP,"57:23:14 mukhtaal (arrogant/conceited), was swapped with pos 15"
+57:23,15,فَخُورٍ,fakhūrin,membanggakan diri,boaster,ผู้หลงระเริง,คนชอบโอ้อวด,INTRA_VERSE_WORD_SWAP,"57:23:15 fakhoor (boaster), was swapped with pos 14"
+60:11,11,ذَهَبَتْ,dhahabat,pergi/lari,have gone,ภรรยาของพวกเขาไป,ได้หนีไป,PHRASE_PACKING_UNPACKED,"60:11:11 dhabat (have gone/fled), absorbed azwaajuhum from pos 12"
+60:11,12,أَزْوَٰجُهُم,azwājuhum,isteri-isteri mereka,their wives,ภรรยาของพวกเขา,บรรดาภรรยาของพวกเขา,TRIANGULATED_WBW_FIX,60:11:12 azwaajuhum (their wives)
+17:47,13,يَقُولُ,yaqūlu,berkat,say,บรรดาผู้ (อธรรม) กล่าวว่า,กล่าวว่า,PHRASE_PACKING_UNPACKED,"17:47:13 yaqoolu (say), absorbed al-zaalimoon from pos 14"
+32:3,15,مِّن,min,dari,before you,ก่อนหน้า,จาก,DUPLICATE_TOKEN_DEDUPLICATION,"32:3:15 min (from), duplicated with pos 16 qablika"
+33:21,10,كَانَ,kāna,adalah,has,หวัง,ปรากฏว่า,DUPLICATE_TOKEN_DEDUPLICATION,"33:21:10 kaana (has been / was), duplicated with pos 11 yarjoo"
+25:3,11,يَمْلِكُونَ,yamlikūna,kuasa/mampu,they possess,ทรงครอง,พวกมันมีอำนาจครอบครอง,HONORIFIC_ALIGNMENT,"25:3:11 idols do not possess, remove royal ทรง"
+25:3,17,يَمْلِكُونَ,yamlikūna,mereka kuasa/tidak mampu,they control,ทรงครอง,พวกมันมีอำนาจครอบครอง,HONORIFIC_ALIGNMENT,"25:3:17 idols do not possess, remove royal ทรง"
+17:71,3,كُلَّ,kulla,tiap-tiap,all,มนุษย์,ทุกๆ (แต่ละ),INTRA_VERSE_WORD_SWAP,"17:71:3 kulla (all/every), was swapped with pos 4"
+17:71,4,أُنَاسٍۭ,unāsin,manusia,human beings,ทุกคน,กลุ่มชน (มนุษย์),INTRA_VERSE_WORD_SWAP,"17:71:4 unaasin (human beings/people), was swapped with pos 3"
+12:72,11,بِهِۦ,bihi,terhadapnya,for it,รับประกัน,ต่อสิ่งนั้น (มัน),INTRA_VERSE_WORD_SWAP,"12:72:11 bihi (for it), was swapped with pos 12"
+12:72,12,زَعِيمٌۭ,zaʿīmun,menjamin,(is) responsible,สิ่งนั้น,เป็นผู้ค้ำประกัน (ผู้รับรอง),INTRA_VERSE_WORD_SWAP,"12:72:12 zaeem (guarantor/responsible), was swapped with pos 11"
+2:206,6,أَخَذَتْهُ,akhadhathu,ia mengambilnya/bangkit,takes him,ความเย่อหยิ่งก็,ได้เข้าครอบงำเขา,INTRA_VERSE_WORD_SWAP,"2:206:6 verb akhadhathu (seizes him), was swapped with pos 7"
+2:206,7,ٱلْعِزَّةُ,l-ʿizatu,kesombongan,(his) pride,ครอบงำเขา,ความหยิ่งผยอง (ความเย่อหยิ่ง),INTRA_VERSE_WORD_SWAP,"2:206:7 noun al-izzatu (pride), was swapped with pos 6"
+8:53,5,يَكُ,yaku,ada,is,ทรงเปลี่ยนแปลง,ทรงเป็น,PHRASE_PACKING_UNPACKED,"8:53:5 verb yaku (is/was), absorbed mughayyiran pos 6"
+15:5,3,مِنْ,min,dari,any,ประชาชาติใด,(จาก)ใดๆ,PHRASE_PACKING_UNPACKED,"15:5:3 particle min (any), absorbed ummatin pos 4"
+9:13,11,أَوَّلَ,awwala,pertama,first,เป็นครั้ง,เป็นครั้งแรกของ,INTRA_VERSE_WORD_SWAP,"9:13:11 awwala (first), was swapped with pos 12"
+9:13,12,مَرَّةٍ ۚ,marratin,kali,time,แรก,ครั้ง,INTRA_VERSE_WORD_SWAP,"9:13:12 marrah (time/instance), was swapped with pos 11"
+18:66,4,هَلْ,hal,apakah,May,ฉันจะติดตามท่านได้ไหม,ได้หรือไม่,PHRASE_PACKING_UNPACKED,"18:66:4 interrogative hal, swallowed entire phrase"
+18:66,5,أَتَّبِعُكَ,attabiʿuka,aku mengikuti kamu,I follow you,เพื่อที่ฉันจะติดตามท่าน,ฉันจะติดตามท่าน,VERB_RESTORATION,18:66:5 verb attabiuka (I follow you)
+18:66,6,عَلَىٰٓ,ʿalā,atas/terhadap,on,เพื่อ,บน (เงื่อนไข),TRIANGULATED_WBW_FIX,18:66:6 preposition ala (upon condition)
+18:66,7,أَن,an,supaya,that,เพื่อที่,ว่า (การที่),TRIANGULATED_WBW_FIX,18:66:7 subordinator an (that)
+42:20,21,مِن,min,dari,any,ส่วน,(จาก)ใดๆ,DUPLICATE_TOKEN_DEDUPLICATION,"42:20:21 particle min, duplicated naseebin"
+42:20,22,نَّصِيبٍ,naṣībin,bahagian,share,ได้ส่วนแบ่งใดๆ,ส่วนแบ่ง,TRIANGULATED_WBW_FIX,42:20:22 noun naseebin (share)
+24:47,10,مِّنۢ,min,dari,after,หลังจาก,ตั้งแต่,TRIANGULATED_WBW_FIX,24:47:10 preposition min
+24:47,11,بَعْدِ,baʿdi,sesudah,after,นั้น,หลังจาก,TRIANGULATED_WBW_FIX,"24:47:11 noun baadi (after), was mistranslated as นั้น"
+24:47,12,ذَٰلِكَ ۚ,dhālika,demikian itu,that,สิ่งนั้น,สิ่งนั้น (นั้น),TRIANGULATED_WBW_FIX,24:47:12 demonstrative dhalika
+13:4,3,قِطَعٌۭ,qiṭaʿun,bagian-bagian,are tracks,มีผืนแผ่นดิน,(มี)ผืนส่วนต่างๆ,DUPLICATE_TOKEN_DEDUPLICATION,"13:4:3 plural noun qitaun (plots/tracts), duplicated al-ard"
+2:245,11,كَثِيرَةًۭ ۚ,kathīratan,yang banyak,many,ทวีคูณ,อันมากมาย,TRIANGULATED_WBW_FIX,"2:245:11 adjective katheeratan (many), was translated as ทวีคูณ"
+36:32,3,لَّمَّا,lammā,melainkan,then,ทั้งหมด,เว้นแต่,DUPLICATE_TOKEN_DEDUPLICATION,"36:32:3 exceptive lamma, duplicated jameeun"
+12:4,15,سَـٰجِدِينَ,sājidīna,bersujud,prostrating,กราบสุดยอด,ก้มกราบ (สุญูด),OCR_CORRECTION,"12:4:15 saajideen (prostrating), was OCR error กราบสุดยอด"
+6:138,17,يَذْكُرُونَ,yadhkurūna,mereka menyebut,they mention,พวกเขาเอ่ยนาม,พวกเขากล่าวถึง,PHRASE_PACKING_UNPACKED,"6:138:17 yadhkuroona (mention), unabsorbed ism/พระนาม from pos 18"
+6:138,18,ٱسْمَ,is'ma,nama,(the) name,เอ่ยนาม,พระนาม,DUPLICATE_TOKEN_DEDUPLICATION,"6:138:18 isma (the name), was duplicate เอ่ยนาม"
+5:96,14,دُمْتُمْ,dum'tum,selama kamu,long as you,พวกท่าน,พวกท่านยังคงอยู่,VERB_RESTORATION,"5:96:14 dumtum (as long as you remain), restored verb daama"
+5:117,17,دُمْتُ,dum'tu,selama aku,as long as I,ฉันได้,ฉันยังคงอยู่,VERB_RESTORATION,"5:117:17 dumtu (as long as I remained), restored verb daama"
+20:91,3,نَّبْرَحَ,nabraḥa,selalu/tetap,we will cease,พวกเราจะหยุด,พวกเราหยุดยั้ง,DUPLICATE_TOKEN_DEDUPLICATION,"20:91:3 nabraha (we cease), removed duplicate จะ from lan"
+77:10,3,نُسِفَتْ,nusifat,dihancurkan,are blown away,ถูกทำให้ปลิวหายไป,ถูกแตกออกเป็นผุยผง,TRIANGULATED_WBW_FIX,"77:10:3 nusifat (are blown away / shattered into dust, was erroneously ถูกทำให้ปลิวหายไป)"

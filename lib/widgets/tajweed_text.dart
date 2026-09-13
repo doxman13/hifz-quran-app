@@ -12,8 +12,8 @@ class TajweedText extends StatelessWidget {
 
   Color _getColorForClass(String ruleClass) {
     // Strip quotes if they exist in the class name e.g. class='ham_wasl'
-    ruleClass = ruleClass.replaceAll("'", "").replaceAll('"', '');
-    switch (ruleClass) {
+    final sanitized = ruleClass.replaceAll("'", "").replaceAll('"', '');
+    switch (sanitized) {
       case 'madda_normal':
       case 'madda_permissible':
       case 'madda_necessary':
@@ -24,6 +24,8 @@ class TajweedText extends StatelessWidget {
       case 'idgham_ghunnah':
         return Colors.green;
       case 'idgham_wo_ghunnah':
+      case 'idgham_mutajanisayn':
+      case 'idgham_mutaqaribayn':
       case 'slnt':
       case 'ham_wasl':
       case 'laam_shamsiyah':
@@ -43,36 +45,22 @@ class TajweedText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final spans = <TextSpan>[];
-    
-    // A simple regex to match <rule class=... >...</rule> or plain text
-    final regex = RegExp(r'<rule class=([^>]+)>([^<]+)</rule>|([^<]+)');
-    final matches = regex.allMatches(text);
+    final parts = _parseTajweedParts(text);
 
-    for (final match in matches) {
-      if (match.group(1) != null) {
-        // This is a rule match
-        final ruleClass = match.group(1)!;
-        final content = match.group(2)!;
-        spans.add(TextSpan(
-          text: content,
-          style: TextStyle(
-            fontFamily: 'Tajweed', // The font family defined in pubspec.yaml
-            fontSize: fontSize,
-            color: _getColorForClass(ruleClass),
-          ),
-        ));
-      } else {
-        // This is plain text
-        final content = match.group(3)!;
-        spans.add(TextSpan(
-          text: content,
-          style: TextStyle(
-            fontFamily: 'Tajweed',
-            fontSize: fontSize,
-            color: Theme.of(context).brightness == Brightness.dark ? Colors.white : Colors.black,
-          ),
-        ));
-      }
+    for (final part in parts) {
+      final isRule = part.className.isNotEmpty;
+      spans.add(TextSpan(
+        text: part.text,
+        style: TextStyle(
+          fontFamily: 'Tajweed',
+          fontSize: fontSize,
+          color: isRule
+              ? _getColorForClass(part.className)
+              : (Theme.of(context).brightness == Brightness.dark
+                  ? Colors.white
+                  : Colors.black),
+        ),
+      ));
     }
 
     return RichText(
@@ -81,4 +69,79 @@ class TajweedText extends StatelessWidget {
       text: TextSpan(children: spans),
     );
   }
+
+  static List<_TajweedPart> _parseTajweedParts(String wordStr) {
+    final parts = <_TajweedPart>[];
+    final classStack = <String>[];
+    var buffer = StringBuffer();
+    var bufferClass = '';
+
+    String activeClass() => classStack.isEmpty ? '' : classStack.last;
+
+    void flushBuffer() {
+      if (buffer.isEmpty) return;
+      parts.add(_TajweedPart(
+        text: buffer.toString(),
+        className: bufferClass,
+      ));
+      buffer = StringBuffer();
+    }
+
+    var index = 0;
+    while (index < wordStr.length) {
+      final tagStart = wordStr.indexOf('<', index);
+      if (tagStart == -1) {
+        final text = wordStr.substring(index);
+        final nextClass = activeClass();
+        if (buffer.isNotEmpty && bufferClass != nextClass) {
+          flushBuffer();
+        }
+        bufferClass = nextClass;
+        buffer.write(text);
+        break;
+      }
+
+      if (tagStart > index) {
+        final text = wordStr.substring(index, tagStart);
+        final nextClass = activeClass();
+        if (buffer.isNotEmpty && bufferClass != nextClass) {
+          flushBuffer();
+        }
+        bufferClass = nextClass;
+        buffer.write(text);
+      }
+
+      final tagEnd = wordStr.indexOf('>', tagStart + 1);
+      if (tagEnd == -1) {
+        break;
+      }
+
+      final tag = wordStr.substring(tagStart + 1, tagEnd).trim();
+      if (tag.startsWith('/')) {
+        if (classStack.isNotEmpty) classStack.removeLast();
+      } else if (!tag.startsWith('img') && !tag.endsWith('/')) {
+        final className = _extractClass(tag);
+        classStack.add(className);
+      }
+
+      index = tagEnd + 1;
+    }
+
+    flushBuffer();
+    return parts;
+  }
+
+  static String _extractClass(String tag) {
+    final match = RegExp(r'''class\s*=\s*["']?([^"'>\s]+)''').firstMatch(tag);
+    if (match != null) {
+      return match.group(1)?.replaceAll("'", "").replaceAll('"', '').trim() ?? '';
+    }
+    return '';
+  }
+}
+
+class _TajweedPart {
+  final String text;
+  final String className;
+  _TajweedPart({required this.text, required this.className});
 }

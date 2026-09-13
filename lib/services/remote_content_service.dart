@@ -28,6 +28,27 @@ class RemoteContentUpdateResult {
   bool get hasFailures => failedKeys.isNotEmpty;
 }
 
+class RemoteContentBundledVersions {
+  static const Map<String, String> versions = {
+    RemoteContentKey.thaiV3: '1.0.2',
+    RemoteContentKey.quranThemes: '1.0.0',
+    RemoteContentKey.mokhtasarTafsir: '1.0.0',
+  };
+}
+
+int compareVersions(String v1, String v2) {
+  final parts1 = v1.split('.').map((p) => int.tryParse(p) ?? 0).toList();
+  final parts2 = v2.split('.').map((p) => int.tryParse(p) ?? 0).toList();
+  final maxLength = parts1.length > parts2.length ? parts1.length : parts2.length;
+  for (var i = 0; i < maxLength; i++) {
+    final p1 = i < parts1.length ? parts1[i] : 0;
+    final p2 = i < parts2.length ? parts2[i] : 0;
+    if (p1 > p2) return 1;
+    if (p1 < p2) return -1;
+  }
+  return 0;
+}
+
 class RemoteContentService {
   static final RemoteContentService instance = RemoteContentService._();
 
@@ -35,23 +56,58 @@ class RemoteContentService {
 
   final RemoteContentCache _cache = RemoteContentCache();
 
+  static const int appBuildCode = 17;
   static const _versionPrefix = 'remoteContentVersion_';
   static const _lastAutoCheckKey = 'remoteContentLastAutoCheckAt';
+  static const _lastKnownBuildKey = 'lastKnownAppBuildCode';
   static const _defaultBucket = 'app-content';
   static const _autoCheckInterval = Duration(hours: 24);
+
+  /// Automatically wipes all downloaded .json cache whenever the app itself is updated to a new build.
+  Future<void> cleanOnAppUpgrade() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final lastKnownBuild = prefs.getInt(_lastKnownBuildKey) ?? 0;
+      if (lastKnownBuild < appBuildCode) {
+        await _cache.clearAll();
+        for (final key in RemoteContentKey.all) {
+          await prefs.remove('$_versionPrefix$key');
+        }
+        await prefs.setInt(_lastKnownBuildKey, appBuildCode);
+      }
+    } catch (_) {}
+  }
 
   Future<String> loadString({
     required String contentKey,
     required String bundledAssetPath,
   }) async {
     try {
-      final content = await _cache.readContent(contentKey);
-      if (content != null) {
-        jsonDecode(content);
-        return content;
+      final bundledVersion =
+          RemoteContentBundledVersions.versions[contentKey] ?? '1.0.0';
+      final prefs = await SharedPreferences.getInstance();
+      final localCachedVersion = prefs.getString('$_versionPrefix$contentKey');
+
+      // If the app bundle has a version equal to or newer than the cached OTA version,
+      // purge the old downloaded cache so the app always uses the fresh bundled asset!
+      if (localCachedVersion != null &&
+          compareVersions(bundledVersion, localCachedVersion) >= 0) {
+        await _cache.deleteContent(contentKey);
+        await prefs.setString('$_versionPrefix$contentKey', bundledVersion);
+        return rootBundle.loadString(bundledAssetPath);
+      }
+
+      // If cached version is strictly newer than bundled asset, read OTA cache
+      if (localCachedVersion != null &&
+          compareVersions(localCachedVersion, bundledVersion) > 0) {
+        final content = await _cache.readContent(contentKey);
+        if (content != null) {
+          jsonDecode(content);
+          return content;
+        }
       }
     } catch (_) {
-      // Fall back to the bundled asset if the cached file is missing/corrupt.
+      // Fall back to the bundled asset if reading cache fails
     }
 
     return rootBundle.loadString(bundledAssetPath);
@@ -104,26 +160,38 @@ class RemoteContentService {
 
     if (manifest == null) return false;
 
-    final version = manifest['version']?.toString();
+    final remoteVersion = manifest['version']?.toString();
     final storagePath = manifest['storage_path']?.toString();
     final bucket = manifest['storage_bucket']?.toString() ?? _defaultBucket;
-    if (version == null ||
-        version.isEmpty ||
+    if (remoteVersion == null ||
+        remoteVersion.isEmpty ||
         storagePath == null ||
         storagePath.isEmpty) {
       return false;
     }
 
+    final bundledVersion =
+        RemoteContentBundledVersions.versions[contentKey] ?? '1.0.0';
     final prefs = await SharedPreferences.getInstance();
-    final localVersion = prefs.getString('$_versionPrefix$contentKey');
-    if (localVersion == version) return false;
+    final localCachedVersion =
+        prefs.getString('$_versionPrefix$contentKey') ?? bundledVersion;
+
+    // Only download if the remote version is strictly newer than both bundled and local cached versions
+    final isNewerThanCached =
+        compareVersions(remoteVersion, localCachedVersion) > 0;
+    final isNewerThanBundled =
+        compareVersions(remoteVersion, bundledVersion) > 0;
+
+    if (!isNewerThanCached || !isNewerThanBundled) {
+      return false;
+    }
 
     final bytes = await client.storage.from(bucket).download(storagePath);
     final content = utf8.decode(bytes);
     jsonDecode(content);
 
     await _cache.writeContent(contentKey, content);
-    await prefs.setString('$_versionPrefix$contentKey', version);
+    await prefs.setString('$_versionPrefix$contentKey', remoteVersion);
     return true;
   }
 }

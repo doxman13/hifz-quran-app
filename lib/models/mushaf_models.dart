@@ -556,11 +556,21 @@ class MushafRecentReading {
 
   factory MushafRecentReading.fromJson(Map<String, dynamic> json) {
     return MushafRecentReading(
-      mushafId: int.tryParse(json['mushafId']?.toString() ?? '') ?? 1,
-      pageNumber: int.tryParse(json['pageNumber']?.toString() ?? '') ?? 1,
-      profileId: json['profileId']?.toString(),
+      mushafId: int.tryParse(
+            json['mushafId']?.toString() ?? json['mushaf_id']?.toString() ?? '',
+          ) ??
+          1,
+      pageNumber: int.tryParse(
+            json['pageNumber']?.toString() ??
+                json['page_number']?.toString() ??
+                '',
+          ) ??
+          1,
+      profileId: (json['profileId'] ?? json['profile_id'])?.toString(),
       updatedAt:
-          DateTime.tryParse(json['updatedAt']?.toString() ?? '') ??
+          DateTime.tryParse(
+            (json['updatedAt'] ?? json['updated_at'])?.toString() ?? '',
+          ) ??
           DateTime.now(),
     );
   }
