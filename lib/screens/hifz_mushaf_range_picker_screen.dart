@@ -63,6 +63,7 @@ class _HifzMushafRangePickerScreenState
   int? _startVerse;
   int? _endVerse;
   Set<String> _highlightedVerseKeys = {};
+  bool _isBarCollapsed = false;
   late final PageController _pageController;
 
   @override
@@ -401,7 +402,10 @@ class _HifzMushafRangePickerScreenState
                     .fetchPage(mushafId: 2, pageNumber: pageNumber),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
-                    return const MushafPageSkeleton();
+                    return const FittedBox(
+                      fit: BoxFit.contain,
+                      child: MushafPageSkeleton(),
+                    );
                   }
                   final mushafPage = snapshot.data!;
                   const actualMushafId = 2;
@@ -424,11 +428,11 @@ class _HifzMushafRangePickerScreenState
                   return Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: layout.horizontalPadding,
-                      vertical: 12.0,
+                      vertical: 8.0,
                     ),
                     child: FittedBox(
                       fit: BoxFit.contain,
-                      alignment: Alignment.topCenter,
+                      alignment: Alignment.center,
                       child: SizedBox(
                         width: layout.pageWidth,
                         child: Column(
@@ -479,7 +483,7 @@ class _HifzMushafRangePickerScreenState
     );
   }
 
-  Widget _buildFloatingBottomBar(BuildContext context) {
+  Widget _buildBottomBar(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final isThai = context.watch<SettingsProvider>().languageCode == 'th';
@@ -494,147 +498,276 @@ class _HifzMushafRangePickerScreenState
     final minV = s < e ? s : e;
     final maxV = s < e ? e : s;
     final verseCount = hasSelection ? (maxV - minV + 1) : 0;
-    final startPage = hasSelection ? getMedinaMushafPageNumber(_selectedSurah, minV) : _currentPage;
-    final endPage = hasSelection ? getMedinaMushafPageNumber(_selectedSurah, maxV) : _currentPage;
+    final startPage = hasSelection
+        ? getMedinaMushafPageNumber(_selectedSurah, minV)
+        : _currentPage;
+    final endPage = hasSelection
+        ? getMedinaMushafPageNumber(_selectedSurah, maxV)
+        : _currentPage;
 
-    return Positioned(
-      left: 16,
-      right: 16,
-      bottom: 16,
-      child: SafeArea(
-        child: Material(
-          elevation: 6,
-          borderRadius: BorderRadius.circular(24),
-          color: colorScheme.surface,
-          shadowColor: Colors.black.withValues(alpha: 0.15),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.6),
-                width: 1,
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 600),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+          child: Material(
+            elevation: 0,
+            borderRadius: BorderRadius.circular(20),
+            color: colorScheme.surfaceContainerLow,
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: colorScheme.outlineVariant.withValues(alpha: 0.6),
+                  width: 1,
+                ),
               ),
-            ),
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                if (!hasSelection) ...[
-                  Row(
-                    children: [
-                      Icon(Icons.touch_app_rounded,
-                          color: colorScheme.primary, size: 24),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              isThai
-                                  ? 'แตะอายะห์เพื่อกำหนดจุดเริ่มต้น'
-                                  : 'Tap an ayah to set range start',
-                              style: textTheme.bodyLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              isThai
-                                  ? 'ปัดซ้าย-ขวาเพื่อเปิดหน้า หรือเปลี่ยนซูเราะฮ์ด้านบน'
-                                  : 'Swipe left/right to browse, or jump to surah above',
-                              style: textTheme.bodySmall?.copyWith(
-                                color: colorScheme.onSurfaceVariant,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+              child: AnimatedSize(
+                duration: const Duration(milliseconds: 200),
+                curve: Curves.easeInOut,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 12,
                   ),
-                ] else ...[
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                          color: colorScheme.primaryContainer,
-                          shape: BoxShape.circle,
+                  child: _isBarCollapsed
+                      ? _buildCollapsedBar(
+                          colorScheme: colorScheme,
+                          textTheme: textTheme,
+                          isThai: isThai,
+                          surahName: surahName,
+                          hasSelection: hasSelection,
+                          isRangeComplete: isRangeComplete,
+                          minV: minV,
+                          maxV: maxV,
+                          verseCount: verseCount,
+                        )
+                      : _buildExpandedBar(
+                          colorScheme: colorScheme,
+                          textTheme: textTheme,
+                          isThai: isThai,
+                          surahName: surahName,
+                          hasSelection: hasSelection,
+                          isRangeComplete: isRangeComplete,
+                          minV: minV,
+                          maxV: maxV,
+                          verseCount: verseCount,
+                          startPage: startPage,
+                          endPage: endPage,
                         ),
-                        child: Icon(
-                          Icons.bookmark_added_rounded,
-                          color: colorScheme.onPrimaryContainer,
-                          size: 20,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              surahName,
-                              style: textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: colorScheme.primary,
-                              ),
-                            ),
-                            Text(
-                              isRangeComplete
-                                  ? '${isThai ? 'อายะห์' : 'Ayat'} $minV – $maxV ($verseCount ${isThai ? 'อายะห์' : 'verses'} · ${isThai ? 'หน้า' : 'P.'} $startPage${startPage != endPage ? '–$endPage' : ''})'
-                                  : '${isThai ? 'อายะห์เริ่ม' : 'Start Ayah'}: $minV · ${isThai ? 'แตะอายะห์สิ้นสุด' : 'Tap ending ayah'}',
-                              style: textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w600,
-                                color: colorScheme.onSurface,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Row(
-                    children: [
-                      OutlinedButton.icon(
-                        onPressed: _resetSelection,
-                        icon: const Icon(Icons.refresh_rounded, size: 18),
-                        label: Text(isThai ? 'รีเซ็ต' : 'Reset'),
-                        style: OutlinedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: FilledButton.icon(
-                          onPressed: _confirmSelection,
-                          icon: const Icon(Icons.check_rounded, size: 20),
-                          label: Text(
-                            isRangeComplete
-                                ? (isThai ? 'ยืนยันช่วงนี้' : 'Confirm Range')
-                                : (isThai
-                                    ? 'เลือก 1 อายะห์นี้'
-                                    : 'Select Single Ayah'),
-                          ),
-                          style: FilledButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(16),
-                            ),
-                            padding: const EdgeInsets.symmetric(vertical: 12),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ],
+                ),
+              ),
             ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildCollapsedBar({
+    required ColorScheme colorScheme,
+    required TextTheme textTheme,
+    required bool isThai,
+    required String surahName,
+    required bool hasSelection,
+    required bool isRangeComplete,
+    required int minV,
+    required int maxV,
+    required int verseCount,
+  }) {
+    return InkWell(
+      onTap: () => setState(() => _isBarCollapsed = false),
+      borderRadius: BorderRadius.circular(16),
+      child: Row(
+        children: [
+          Icon(
+            hasSelection
+                ? Icons.bookmark_added_rounded
+                : Icons.touch_app_rounded,
+            color: colorScheme.primary,
+            size: 20,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              hasSelection
+                  ? '$surahName ${isRangeComplete ? '$minV–$maxV ($verseCount ${isThai ? 'อายะห์' : 'ayat'})' : '${isThai ? 'เริ่ม' : 'Start'} $minV'}'
+                  : (isThai
+                      ? 'แตะเลือกอายะห์บนหน้ามุศฮัฟ'
+                      : 'Tap verses on page to select'),
+              style: textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: colorScheme.onSurface,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          if (hasSelection) ...[
+            IconButton(
+              icon: const Icon(Icons.refresh_rounded, size: 18),
+              tooltip: isThai ? 'รีเซ็ต' : 'Reset',
+              visualDensity: VisualDensity.compact,
+              onPressed: _resetSelection,
+            ),
+            IconButton.filled(
+              icon: const Icon(Icons.check_rounded, size: 18),
+              tooltip: isThai ? 'ยืนยัน' : 'Confirm',
+              visualDensity: VisualDensity.compact,
+              onPressed: _confirmSelection,
+            ),
+          ],
+          IconButton(
+            icon: const Icon(Icons.keyboard_arrow_up_rounded, size: 22),
+            tooltip: isThai ? 'ขยายกล่อง' : 'Expand',
+            visualDensity: VisualDensity.compact,
+            onPressed: () => setState(() => _isBarCollapsed = false),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExpandedBar({
+    required ColorScheme colorScheme,
+    required TextTheme textTheme,
+    required bool isThai,
+    required String surahName,
+    required bool hasSelection,
+    required bool isRangeComplete,
+    required int minV,
+    required int maxV,
+    required int verseCount,
+    required int startPage,
+    required int endPage,
+  }) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        if (!hasSelection) ...[
+          Row(
+            children: [
+              Icon(Icons.touch_app_rounded,
+                  color: colorScheme.primary, size: 24),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      isThai
+                          ? 'แตะอายะห์เพื่อกำหนดจุดเริ่มต้น'
+                          : 'Tap an ayah to set range start',
+                      style: textTheme.bodyLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    Text(
+                      isThai
+                          ? 'ปัดซ้าย-ขวาเพื่อเปิดหน้า หรือเปลี่ยนซูเราะฮ์ด้านบน'
+                          : 'Swipe left/right to browse, or jump to surah above',
+                      style: textTheme.bodySmall?.copyWith(
+                        color: colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 22),
+                tooltip: isThai ? 'ย่อกล่อง' : 'Collapse',
+                visualDensity: VisualDensity.compact,
+                onPressed: () => setState(() => _isBarCollapsed = true),
+              ),
+            ],
+          ),
+        ] else ...[
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: colorScheme.primaryContainer,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  Icons.bookmark_added_rounded,
+                  color: colorScheme.onPrimaryContainer,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      surahName,
+                      style: textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.primary,
+                      ),
+                    ),
+                    Text(
+                      isRangeComplete
+                          ? '${isThai ? 'อายะห์' : 'Ayat'} $minV – $maxV ($verseCount ${isThai ? 'อายะห์' : 'verses'} · ${isThai ? 'หน้า' : 'P.'} $startPage${startPage != endPage ? '–$endPage' : ''})'
+                          : '${isThai ? 'อายะห์เริ่ม' : 'Start Ayah'}: $minV · ${isThai ? 'แตะอายะห์สิ้นสุด' : 'Tap ending ayah'}',
+                      style: textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 22),
+                tooltip: isThai ? 'ย่อกล่อง' : 'Collapse',
+                visualDensity: VisualDensity.compact,
+                onPressed: () => setState(() => _isBarCollapsed = true),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              OutlinedButton.icon(
+                onPressed: _resetSelection,
+                icon: const Icon(Icons.refresh_rounded, size: 18),
+                label: Text(isThai ? 'รีเซ็ต' : 'Reset'),
+                style: OutlinedButton.styleFrom(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16, vertical: 12),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: _confirmSelection,
+                  icon: const Icon(Icons.check_rounded, size: 20),
+                  label: Text(
+                    isRangeComplete
+                        ? (isThai ? 'ยืนยันช่วงนี้' : 'Confirm Range')
+                        : (isThai
+                            ? 'เลือก 1 อายะห์นี้'
+                            : 'Select Single Ayah'),
+                  ),
+                  style: FilledButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ],
     );
   }
 
@@ -692,24 +825,30 @@ class _HifzMushafRangePickerScreenState
           const SizedBox(width: 8),
         ],
       ),
-      body: Stack(
-        children: [
-          PageView.builder(
-            controller: _pageController,
-            reverse: true,
-            itemCount: 604,
-            onPageChanged: (index) {
-              setState(() {
-                _currentPage = index + 1;
-              });
-            },
-            itemBuilder: (context, index) {
-              final pageNumber = index + 1;
-              return _buildMushafPickerPage(context, pageNumber);
-            },
-          ),
-          _buildFloatingBottomBar(context),
-        ],
+      body: SafeArea(
+        top: false,
+        bottom: true,
+        child: Column(
+          children: [
+            Expanded(
+              child: PageView.builder(
+                controller: _pageController,
+                reverse: true,
+                itemCount: 604,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentPage = index + 1;
+                  });
+                },
+                itemBuilder: (context, index) {
+                  final pageNumber = index + 1;
+                  return _buildMushafPickerPage(context, pageNumber);
+                },
+              ),
+            ),
+            _buildBottomBar(context),
+          ],
+        ),
       ),
     );
   }
