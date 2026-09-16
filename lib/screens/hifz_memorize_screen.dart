@@ -42,7 +42,6 @@ import '../widgets/voice_recitation_banner.dart';
 import '../models/hifz_verse_chunk.dart';
 import '../services/waqf_chunker_service.dart';
 import '../widgets/mushaf_page_skeleton.dart';
-import '../widgets/hifz_quick_settings_sheet.dart';
 
 class HifzMemorizeScreen extends StatefulWidget {
   final QuranRepository quranRepository;
@@ -2167,6 +2166,20 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
     );
   }
 
+  PopupMenuItem<String> _buildPopupItem(
+      String value, IconData icon, String label) {
+    return PopupMenuItem<String>(
+      value: value,
+      child: Row(
+        children: [
+          Icon(icon, size: 20),
+          const SizedBox(width: 12),
+          Text(label),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
@@ -2565,88 +2578,118 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
             },
           ),
 
-          // Gear/more icon -> Flexcil Hifz Quick Settings modal
+          // Gear/more icon with popup menu (all settings consolidated)
           Consumer<SettingsProvider>(
             builder: (context, settings, _) {
-              return IconButton(
-                icon: const Icon(Icons.tune_rounded, size: 22),
-                tooltip: 'Quick Settings',
-                onPressed: () {
-                  showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    builder: (sheetCtx) => HifzQuickSettingsSheet(
-                      isMushafView: _isMushafView,
-                      isTajweedMushaf: _isTajweedMushaf,
-                      onToggleTajweed: (val) {
-                        setState(() => _isTajweedMushaf = val);
-                      },
-                      showWbw: _showWbw,
-                      onToggleWbw: (val) {
-                        setState(() => _showWbw = val);
-                        settings.toggleShowWordByWord(val);
-                      },
-                      chunkLongVerses: _chunkLongVerses,
-                      onToggleChunking: (val) async {
-                        setState(() => _chunkLongVerses = val);
-                        final prefs = await SharedPreferences.getInstance();
-                        await prefs.setBool('hifz_chunk_long_verses', val);
-                        await _loadVerseChunks(regenerate: true);
-                      },
-                      isReview: isReview,
-                      onSwitchMode: () {
-                        Navigator.pop(sheetCtx);
-                        Navigator.pop(context);
-                      },
-                      onOpenRangeSetup: () {
-                        Navigator.pop(sheetCtx);
-                        _openNewVersesSetup(context);
-                      },
-                      onOpenReport: () {
-                        Navigator.pop(sheetCtx);
-                        _showRepetitionReportModal(context, provider);
-                      },
-                      onOpenMastery: () async {
-                        Navigator.pop(sheetCtx);
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => HifzMasteryListScreen(
-                              quranRepository: widget.quranRepository,
-                            ),
+              return PopupMenuButton<String>(
+                icon: const Icon(Icons.more_vert_rounded, size: 22),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                onSelected: (val) async {
+                  switch (val) {
+                    case 'switch_mode':
+                      Navigator.pop(context);
+                      break;
+                    case 'wbw':
+                      final nextWbw = !_showWbw;
+                      setState(() {
+                        _showWbw = nextWbw;
+                      });
+                      settings.toggleShowWordByWord(nextWbw);
+                      break;
+                    case 'dark_mode':
+                      settings.toggleDarkMode(!settings.isDarkMode);
+                      break;
+                    case 'range':
+                      _openNewVersesSetup(context);
+                      break;
+                    case 'report':
+                      _showRepetitionReportModal(context, provider);
+                      break;
+                    case 'mastery':
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => HifzMasteryListScreen(
+                              quranRepository: widget.quranRepository),
+                        ),
+                      );
+                      break;
+                    case 'tajweed':
+                      setState(() {
+                        _isTajweedMushaf = !_isTajweedMushaf;
+                      });
+                      break;
+                    case 'ble_settings':
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const HifzSettingsScreen(),
+                        ),
+                      );
+                      if (mounted) {
+                        _applyInputModeSettings();
+                        setState(() {});
+                      }
+                      break;
+                    case 'guide':
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const HifzGuideScreen(),
+                        ),
+                      );
+                      break;
+                    case 'chunk_toggle':
+                      final newChunkVal = !_chunkLongVerses;
+                      setState(() {
+                        _chunkLongVerses = newChunkVal;
+                      });
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool('hifz_chunk_long_verses', newChunkVal);
+                      await _loadVerseChunks(regenerate: true);
+                      if (context.mounted) {
+                        final isThai = Localizations.localeOf(context).languageCode == 'th';
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(newChunkVal
+                                ? (isThai ? 'เปิดการแบ่งย่อยอายะฮ์ยาวแล้ว' : 'Chunk long verses enabled')
+                                : (isThai ? 'ปิดการแบ่งย่อยอายะฮ์ยาวแล้ว' : 'Chunk long verses disabled')),
+                            duration: const Duration(seconds: 2),
                           ),
                         );
-                      },
-                      onOpenGuide: () {
-                        Navigator.pop(sheetCtx);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const HifzGuideScreen(),
-                          ),
-                        );
-                      },
-                      onOpenFullSettings: () async {
-                        Navigator.pop(sheetCtx);
-                        await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const HifzSettingsScreen(),
-                          ),
-                        );
-                        if (mounted) {
-                          _applyInputModeSettings();
-                          setState(() {});
-                        }
-                      },
-                      currentSurahName: widget.quranRepository
-                          .getSurahName(widget.surahNumber.toString()),
-                      startVerse: _selectedRepeatStart,
-                      endVerse: _selectedEndVerse,
-                    ),
-                  );
+                      }
+                      break;
+                  }
                 },
+                itemBuilder: (_) => [
+                  _buildPopupItem('switch_mode', Icons.swap_horiz_rounded, 'Switch Mode'),
+                  if (!_isMushafView)
+                    _buildPopupItem(
+                      'wbw',
+                      _showWbw ? Icons.spellcheck_rounded : Icons.spellcheck_outlined,
+                      _showWbw ? 'Hide Word by Word' : 'Word by Word (WBW)',
+                    ),
+                  _buildPopupItem(
+                    'dark_mode',
+                    settings.isDarkMode ? Icons.light_mode_rounded : Icons.dark_mode_rounded,
+                    settings.isDarkMode ? 'Light Mode' : 'Dark Mode',
+                  ),
+                  _buildPopupItem('tajweed', Icons.font_download_outlined, _isTajweedMushaf ? 'Standard Mushaf' : 'Tajweed Mushaf'),
+                  _buildPopupItem('ble_settings', Icons.settings_outlined, 'Hifz & Translation Settings'),
+                  if (!isReview)
+                    _buildPopupItem(
+                      'chunk_toggle',
+                      Icons.auto_stories_rounded,
+                      _chunkLongVerses ? 'Chunk Long Verses (ON)' : 'Chunk Long Verses (OFF)',
+                    ),
+                  if (!isReview)
+                    _buildPopupItem('range', Icons.tune_rounded, 'Select Range'),
+                  _buildPopupItem('report', Icons.analytics_outlined, 'Report'),
+                  _buildPopupItem('mastery', Icons.workspace_premium_outlined, 'Mastery'),
+                  _buildPopupItem('guide', Icons.menu_book_outlined, 'How to Hifz (Guide)'),
+                ],
               );
             },
           ),
