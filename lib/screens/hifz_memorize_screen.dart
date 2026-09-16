@@ -90,7 +90,7 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
   Map<int, List<HifzVerseChunk>> _verseChunksMap = {};
   bool _isMushafView = true;
   bool _isTajweedMushaf = false;
-  bool _showWbw = false;
+  bool _showWbw = true;
   bool _isSurahMode = true;
   int _selectedPage = 1;
   late int _selectedRepeatStart;
@@ -2592,9 +2592,11 @@ class _HifzMemorizeScreenState extends State<HifzMemorizeScreen>
                       Navigator.pop(context);
                       break;
                     case 'wbw':
+                      final nextWbw = !_showWbw;
                       setState(() {
-                        _showWbw = !_showWbw;
+                        _showWbw = nextWbw;
                       });
+                      settings.toggleShowWordByWord(nextWbw);
                       break;
                     case 'dark_mode':
                       settings.toggleDarkMode(!settings.isDarkMode);
