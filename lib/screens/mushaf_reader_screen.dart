@@ -31,6 +31,7 @@ import 'hifz_mushaf_range_picker_screen.dart';
 import 'hifz_new_verses_setup_screen.dart';
 import 'hifz_review_setup_screen.dart';
 import 'hifz_settings_screen.dart';
+import '../widgets/flexcil_settings_widgets.dart';
 import '../models/hifz_session_config.dart';
 
 class MushafReaderScreen extends StatefulWidget {
@@ -1795,33 +1796,85 @@ class _MushafReaderSettingsSheetState
   @override
   Widget build(BuildContext context) {
     final settings = Provider.of<SettingsProvider>(context);
-    final colors = settings.getAppColors();
+    final colorScheme = Theme.of(context).colorScheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final isThai = settings.languageCode == 'th';
     final type = mushafTypeById(_mushafId);
 
     return Padding(
       padding: EdgeInsets.fromLTRB(
-        20,
+        16,
         8,
-        20,
-        MediaQuery.of(context).viewInsets.bottom + 28,
+        16,
+        MediaQuery.of(context).viewInsets.bottom + 24,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Drag Handle
+          Center(
+            child: Container(
+              width: 38,
+              height: 4.5,
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: colorScheme.onSurfaceVariant.withValues(alpha: 0.35),
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+          ),
+
+          // Header
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                context.tr('mushaf_settings'),
-                style: GoogleFonts.notoSansThai(
-                  color: colors.textStrong,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w900,
-                ),
+              Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: colorScheme.primary.withValues(alpha: isDark ? 0.2 : 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(
+                      Icons.book_rounded,
+                      color: colorScheme.primary,
+                      size: 20,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        isThai ? 'การตั้งค่ามุศหัฟด่วน' : 'Quick Mushaf Settings',
+                        style: GoogleFonts.notoSansThai(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w800,
+                          color: colorScheme.onSurface,
+                        ),
+                      ),
+                      Text(
+                        isThai ? 'ฉบับมุศหัฟ ธีมสี และโปรไฟล์' : 'Script, theme, and reader profile',
+                        style: GoogleFonts.notoSansThai(
+                          fontSize: 11,
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
               IconButton(
-                icon: const Icon(Icons.close),
+                icon: const Icon(Icons.close_rounded, size: 20),
+                style: IconButton.styleFrom(
+                  backgroundColor: colorScheme.surfaceContainerHigh.withValues(alpha: 0.6),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
                 onPressed: () => Navigator.pop(context),
               ),
             ],
@@ -1829,174 +1882,124 @@ class _MushafReaderSettingsSheetState
           const SizedBox(height: 16),
 
           // Current Profile Card
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            decoration: BoxDecoration(
-              color: colors.primary.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(AppTheme.radius),
-              border: Border.all(color: colors.primary.withValues(alpha: 0.15)),
-            ),
+          FlexcilCard(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             child: Row(
               children: [
-                Icon(Icons.person_outline, color: colors.primary, size: 20),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: colorScheme.primary.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(Icons.person_outline_rounded, color: colorScheme.primary, size: 18),
+                ),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        children: [
-                          Expanded(
-                            child: Text(
-                              context.tr('current_profile'),
-                              style: GoogleFonts.notoSansThai(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w700,
-                                color: colors.primary,
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                          ),
-                          TextButton(
-                            onPressed: widget.onSeeAllProfiles,
-                            style: TextButton.styleFrom(
-                              visualDensity: VisualDensity.compact,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 0,
-                              ),
-                              minimumSize: const Size(0, 28),
-                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            ),
-                            child: Text(
-                              context.tr('see_all'),
-                              style: GoogleFonts.notoSansThai(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                          ),
-                        ],
+                      Text(
+                        context.tr('current_profile'),
+                        style: GoogleFonts.notoSansThai(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w700,
+                          color: colorScheme.primary,
+                        ),
                       ),
-                      const SizedBox(height: 2),
                       Text(
                         widget.profileName,
                         style: GoogleFonts.notoSansThai(
-                          fontSize: 14,
+                          fontSize: 13,
                           fontWeight: FontWeight.w800,
-                          color: colors.textStrong,
+                          color: colorScheme.onSurface,
                         ),
                       ),
                     ],
                   ),
                 ),
+                TextButton(
+                  onPressed: widget.onSeeAllProfiles,
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  ),
+                  child: Text(
+                    context.tr('see_all'),
+                    style: GoogleFonts.notoSansThai(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                      color: colorScheme.primary,
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
-          // Dark Mode Toggle Card
-          Container(
-            decoration: BoxDecoration(
-              color: colors.surfaceMuted,
-              borderRadius: BorderRadius.circular(AppTheme.radius),
-              border: Border.all(color: colors.borderSoft),
-            ),
-            child: SwitchListTile(
-              activeColor: colors.primary,
-              secondary: Icon(
-                settings.isDarkMode ? Icons.dark_mode : Icons.light_mode,
-                color: colors.primary,
-              ),
-              title: Text(
-                context.tr('dark_mode'),
-                style: GoogleFonts.notoSansThai(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 14,
-                  color: colors.textStrong,
-                ),
-              ),
-              subtitle: Text(
-                context.tr('optimize_brightness'),
-                style: GoogleFonts.notoSansThai(
-                  fontSize: 12,
-                  color: colors.foreground,
-                ),
-              ),
-              value: settings.isDarkMode,
-              onChanged: (val) {
-                settings.toggleDarkMode(val);
-              },
-            ),
+          // Mushaf Script Type (Segmented Pills)
+          FlexcilSectionHeader(
+            title: isThai ? 'ฉบับคัมภีร์มุศหัฟ' : 'Mushaf Script Style',
+            subtitle: isThai ? 'เลือกลายเส้นมาตรฐานหรือแบบมีสีแยกกฎ' : 'Standard 1405H or color-coded tajweed',
           ),
-          const SizedBox(height: 16),
-
-          // Display Mushaf Selection Label
-          Text(
-            context.tr('mushaf_font_layout'),
-            style: GoogleFonts.notoSansThai(
-              color: colors.textStrong,
-              fontSize: 14,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: 8),
-
-          // Modern Styled Dropdown Container
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-            decoration: BoxDecoration(
-              color: colors.surface,
-              borderRadius: BorderRadius.circular(AppTheme.radius),
-              border: Border.all(color: colors.borderSoft),
-            ),
-            child: DropdownButtonHideUnderline(
-              child: DropdownButton<int>(
-                value: _mushafId,
-                dropdownColor: colors.surface,
-                icon: Icon(Icons.keyboard_arrow_down, color: colors.foreground),
-                isExpanded: true,
-                items: visibleMushafTypes
-                    .map(
-                      (type) => DropdownMenuItem(
-                        value: type.id,
-                        child: Text(
-                          type.name,
-                          style: GoogleFonts.notoSansThai(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: colors.textStrong,
-                          ),
+          FlexcilCard(
+            padding: const EdgeInsets.all(10),
+            child: Column(
+              children: [
+                FlexcilSegmentedPills<int>(
+                  items: visibleMushafTypes
+                      .map(
+                        (t) => FlexcilPillItem<int>(
+                          value: t.id,
+                          label: t.name,
+                          icon: t.id == 21 ? Icons.palette_outlined : Icons.menu_book_rounded,
                         ),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (value) {
-                  if (value == null || value == _mushafId) return;
-                  setState(() => _mushafId = value);
-                  widget.onDisplayMushafChanged(value);
-                },
-              ),
+                      )
+                      .toList(),
+                  selectedValue: _mushafId,
+                  onSelected: (value) {
+                    if (value == _mushafId) return;
+                    setState(() => _mushafId = value);
+                    widget.onDisplayMushafChanged(value);
+                  },
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  context.tr(
+                    'current_view',
+                    args: {
+                      'name': type.name,
+                      'page': '${widget.currentPage.clamp(1, type.pageCount)}',
+                    },
+                  ),
+                  textAlign: TextAlign.center,
+                  style: GoogleFonts.notoSansThai(
+                    color: colorScheme.onSurfaceVariant,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 12),
-          Text(
-            context.tr(
-              'current_view',
-              args: {
-                'name': type.name,
-                'page': '${widget.currentPage.clamp(1, type.pageCount)}',
-              },
-            ),
-            textAlign: TextAlign.center,
-            style: GoogleFonts.notoSansThai(
-              color: colors.foreground,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
+          const SizedBox(height: 14),
+
+          // Dark Mode
+          FlexcilCard(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            child: FlexcilToggleTile(
+              icon: settings.isDarkMode ? Icons.dark_mode_rounded : Icons.light_mode_rounded,
+              title: context.tr('dark_mode'),
+              subtitle: context.tr('optimize_brightness'),
+              value: settings.isDarkMode,
+              onChanged: (val) => settings.toggleDarkMode(val),
             ),
           ),
           const SizedBox(height: 16),
-          OutlinedButton.icon(
+
+          // All Settings Button
+          FilledButton.tonalIcon(
             onPressed: () {
               Navigator.pop(context);
               Navigator.push(
@@ -2006,20 +2009,18 @@ class _MushafReaderSettingsSheetState
                 ),
               );
             },
-            style: OutlinedButton.styleFrom(
+            style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
-              side: BorderSide(color: colors.borderSoft),
             ),
-            icon: Icon(Icons.settings_outlined, size: 20, color: colors.textStrong),
+            icon: const Icon(Icons.settings_outlined, size: 20),
             label: Text(
-              settings.languageCode == 'th' ? 'การตั้งค่าทั้งหมด' : 'All Settings',
+              settings.languageCode == 'th' ? 'การตั้งค่าทั้งหมด (All Settings)' : 'All Settings',
               style: GoogleFonts.notoSansThai(
-                fontSize: 14,
+                fontSize: 13,
                 fontWeight: FontWeight.w700,
-                color: colors.textStrong,
               ),
             ),
           ),
