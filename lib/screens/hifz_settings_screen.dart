@@ -9,14 +9,22 @@ import '../providers/translation_manager_provider.dart';
 import '../widgets/translation_download_dialog.dart';
 import '../widgets/translation_manager_section.dart';
 import '../shared/translation_constants.dart';
+import '../widgets/flexcil_settings_widgets.dart';
 
-class HifzSettingsScreen extends StatelessWidget {
+class HifzSettingsScreen extends StatefulWidget {
   final bool isEmbedded;
 
   const HifzSettingsScreen({
     super.key,
     this.isEmbedded = false,
   });
+
+  @override
+  State<HifzSettingsScreen> createState() => _HifzSettingsScreenState();
+}
+
+class _HifzSettingsScreenState extends State<HifzSettingsScreen> {
+  int _selectedTabIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -27,127 +35,166 @@ class HifzSettingsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: !isEmbedded,
+        automaticallyImplyLeading: !widget.isEmbedded,
         title: Text(
           isThai ? 'การตั้งค่า' : 'Settings',
           style: textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+      body: Column(
         children: [
-          // ── 1. Display & Language ──
-          _SectionTitle(
-            title: isThai ? 'การแสดงผลและภาษา' : 'Display & Language',
-            subtitle: isThai
-                ? 'โหมดมืด ภาษา และการเปิดหน้าจอ'
-                : 'Theme mode, app language, and screen wake settings.',
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            child: FlexcilSegmentedPills<int>(
+              items: [
+                FlexcilPillItem<int>(
+                  value: 0,
+                  label: isThai ? 'อุปกรณ์ & ท่องจำ' : 'Input & Remote',
+                  icon: Icons.touch_app_rounded,
+                ),
+                FlexcilPillItem<int>(
+                  value: 1,
+                  label: isThai ? 'การอ่าน & ฟอนต์' : 'Typography',
+                  icon: Icons.format_size_rounded,
+                ),
+                FlexcilPillItem<int>(
+                  value: 2,
+                  label: isThai ? 'คำแปล' : 'Translations',
+                  icon: Icons.auto_stories_rounded,
+                ),
+                FlexcilPillItem<int>(
+                  value: 3,
+                  label: isThai ? 'ธีม & ข้อมูล' : 'Theme & Info',
+                  icon: Icons.tune_rounded,
+                ),
+              ],
+              selectedValue: _selectedTabIndex,
+              onSelected: (idx) {
+                setState(() => _selectedTabIndex = idx);
+              },
+            ),
           ),
-          const SizedBox(height: 12),
-          const _DisplayLanguageSettingCard(),
-          const SizedBox(height: 28),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              children: [
+                if (_selectedTabIndex == 0) ...[
+                  // ── 2. Memorization Controls / Input Mode ──
+                  _SectionTitle(
+                    title: isThai ? 'อุปกรณ์และการควบคุม' : 'Input & Remote Mode',
+                    subtitle: isThai
+                        ? 'เลือกวิธีเลื่อนอายะห์ขณะท่องจำ (ปุ่มในแอป รีโมท หรือแหวนสมาร์ต)'
+                        : 'Choose how you advance through verses during memorization.',
+                  ),
+                  const SizedBox(height: 12),
+                  _InputModeOptionCard(
+                    title: isThai ? 'ปุ่มนับในแอป (หน้าจอ)' : 'In-App Tally Button',
+                    subtitle: isThai
+                        ? 'ใช้ปุ่มนับที่ด้านล่างของหน้าจอเพื่อบันทึกและเลื่อนอายะห์ ไม่จำเป็นต้องใช้อุปกรณ์ภายนอก'
+                        : 'Use the tally button at the bottom of the screen to manually advance each verse. No hardware needed.',
+                    icon: Icons.touch_app_rounded,
+                    value: HifzInputMode.inAppTally,
+                    groupValue: settings.hifzInputMode,
+                    onSelect: () => settings.setHifzInputMode(HifzInputMode.inAppTally),
+                  ),
+                  const SizedBox(height: 12),
+                  _InputModeOptionCard(
+                    title: isThai ? 'รีโมทบลูทูธ / ชัตเตอร์' : 'Bluetooth Remote / Shutter',
+                    subtitle: isThai
+                        ? 'ใช้ปุ่มชัตเตอร์หรือปุ่มปรับเสียงของรีโมทเลื่อนอายะห์ สะดวกเมื่อถือมือถือหรือวางไว้บนแท่น'
+                        : 'Use a Bluetooth shutter or remote to tap through verses. Volume keys are captured for navigation.',
+                    icon: Icons.bluetooth_searching_rounded,
+                    value: HifzInputMode.bluetoothShutter,
+                    groupValue: settings.hifzInputMode,
+                    onSelect: () => settings.setHifzInputMode(HifzInputMode.bluetoothShutter),
+                  ),
+                  const SizedBox(height: 12),
+                  _InputModeOptionCard(
+                    title: isThai ? 'แหวนบลูทูธอัจฉริยะ (BLE Smart Ring)' : 'BLE Smart Ring',
+                    subtitle: isThai
+                        ? 'เชื่อมต่อแหวน Smart Tasbih, Zikir Ring, iQibla เพื่อเลื่อนอายะห์แบบแฮนด์ฟรี'
+                        : 'Connect to a BLE smart ring for hands-free verse advancement (Smart Tasbih, Zikir Ring, iQibla, etc.).',
+                    icon: Icons.watch_rounded,
+                    value: HifzInputMode.bleSmartRing,
+                    groupValue: settings.hifzInputMode,
+                    onSelect: () => settings.setHifzInputMode(HifzInputMode.bleSmartRing),
+                  ),
+                  if (isBleSelected) ...[
+                    const SizedBox(height: 12),
+                    const BleDeviceManagementUI(),
+                  ],
+                  const SizedBox(height: 28),
 
-          // ── 2. Memorization Controls / Input Mode ──
-          _SectionTitle(
-            title: isThai ? 'อุปกรณ์และการควบคุม' : 'Input & Remote Mode',
-            subtitle: isThai
-                ? 'เลือกวิธีเลื่อนอายะห์ขณะท่องจำ (ปุ่มในแอป รีโมท หรือแหวนสมาร์ต)'
-                : 'Choose how you advance through verses during memorization.',
-          ),
-          const SizedBox(height: 12),
-          _InputModeOptionCard(
-            title: isThai ? 'ปุ่มนับในแอป (หน้าจอ)' : 'In-App Tally Button',
-            subtitle: isThai
-                ? 'ใช้ปุ่มนับที่ด้านล่างของหน้าจอเพื่อบันทึกและเลื่อนอายะห์ ไม่จำเป็นต้องใช้อุปกรณ์ภายนอก'
-                : 'Use the tally button at the bottom of the screen to manually advance each verse. No hardware needed.',
-            icon: Icons.touch_app_rounded,
-            value: HifzInputMode.inAppTally,
-            groupValue: settings.hifzInputMode,
-            onSelect: () => settings.setHifzInputMode(HifzInputMode.inAppTally),
-          ),
-          const SizedBox(height: 12),
-          _InputModeOptionCard(
-            title: isThai ? 'รีโมทบลูทูธ / ชัตเตอร์' : 'Bluetooth Remote / Shutter',
-            subtitle: isThai
-                ? 'ใช้ปุ่มชัตเตอร์หรือปุ่มปรับเสียงของรีโมทเลื่อนอายะห์ สะดวกเมื่อถือมือถือหรือวางไว้บนแท่น'
-                : 'Use a Bluetooth shutter or remote to tap through verses. Volume keys are captured for navigation.',
-            icon: Icons.bluetooth_searching_rounded,
-            value: HifzInputMode.bluetoothShutter,
-            groupValue: settings.hifzInputMode,
-            onSelect: () => settings.setHifzInputMode(HifzInputMode.bluetoothShutter),
-          ),
-          const SizedBox(height: 12),
-          _InputModeOptionCard(
-            title: isThai ? 'แหวนบลูทูธอัจฉริยะ (BLE Smart Ring)' : 'BLE Smart Ring',
-            subtitle: isThai
-                ? 'เชื่อมต่อแหวน Smart Tasbih, Zikir Ring, iQibla เพื่อเลื่อนอายะห์แบบแฮนด์ฟรี'
-                : 'Connect to a BLE smart ring for hands-free verse advancement (Smart Tasbih, Zikir Ring, iQibla, etc.).',
-            icon: Icons.watch_rounded,
-            value: HifzInputMode.bleSmartRing,
-            groupValue: settings.hifzInputMode,
-            onSelect: () => settings.setHifzInputMode(HifzInputMode.bleSmartRing),
-          ),
-          if (isBleSelected) ...[
-            const SizedBox(height: 12),
-            const BleDeviceManagementUI(),
-          ],
-          const SizedBox(height: 28),
+                  // ── 3. Voice Recitation Tracking ──
+                  _SectionTitle(
+                    title: isThai ? 'ตรวจจับเสียงอ่าน (AI Recitation)' : 'Voice Recitation Tracking',
+                    subtitle: isThai
+                        ? 'ระบบตรวจจับเสียงอ่านออฟไลน์บนเครื่อง ตรวจจับการอ่านข้ามอายะห์'
+                        : 'On-device speech recognition to auto-advance and detect skipped verses.',
+                  ),
+                  const SizedBox(height: 12),
+                  const _VoiceRecitationSettingCard(),
+                  const SizedBox(height: 28),
 
-          // ── 3. Voice Recitation Tracking ──
-          _SectionTitle(
-            title: isThai ? 'ตรวจจับเสียงอ่าน (AI Recitation)' : 'Voice Recitation Tracking',
-            subtitle: isThai
-                ? 'ระบบตรวจจับเสียงอ่านออฟไลน์บนเครื่อง ตรวจจับการอ่านข้ามอายะห์'
-                : 'On-device speech recognition to auto-advance and detect skipped verses.',
-          ),
-          const SizedBox(height: 12),
-          const _VoiceRecitationSettingCard(),
-          const SizedBox(height: 28),
+                  // ── 4. Audio Playback & Volume ──
+                  _SectionTitle(
+                    title: isThai ? 'เสียงผู้อ่านและระดับเสียง' : 'Audio Playback',
+                    subtitle: isThai
+                        ? 'ปรับระดับเสียงของแอปโดยตรงเมื่อปุ่มเสียงของเครื่องถูกใช้เป็นชัตเตอร์'
+                        : 'Adjust recitation volume directly in-app when hardware keys are used as shutters.',
+                  ),
+                  const SizedBox(height: 12),
+                  const _InAppVolumeControlCard(),
+                ],
+                if (_selectedTabIndex == 1) ...[
+                  // ── 5. Quran Text & Font Sizes ──
+                  _SectionTitle(
+                    title: isThai ? 'ตัวอักษรและขนาด' : 'Quran Text & Font Sizes',
+                    subtitle: isThai
+                        ? 'ปรับขนาดตัวอักษรอาหรับ คำแปล และการแสดงคำต่อคำ'
+                        : 'Customize font sizes for Arabic, translation, and word-by-word display.',
+                  ),
+                  const SizedBox(height: 12),
+                  const _QuranTextFontSettingCard(),
+                ],
+                if (_selectedTabIndex == 2) ...[
+                  // ── 6. Translations ──
+                  _SectionTitle(
+                    title: isThai ? 'คำแปลอัลกุรอาน' : 'Translations',
+                    subtitle: isThai
+                        ? 'เลือกคำแปลหลักที่ใช้ในโหมดแอบดูและรายการอายะห์'
+                        : 'Select translation used during verse peek, reveal & list view.',
+                  ),
+                  const SizedBox(height: 12),
+                  const _TranslationSettingCard(),
+                ],
+                if (_selectedTabIndex == 3) ...[
+                  // ── 1. Display & Language ──
+                  _SectionTitle(
+                    title: isThai ? 'การแสดงผลและภาษา' : 'Display & Language',
+                    subtitle: isThai
+                        ? 'โหมดมืด ภาษา และการเปิดหน้าจอ'
+                        : 'Theme mode, app language, and screen wake settings.',
+                  ),
+                  const SizedBox(height: 12),
+                  const _DisplayLanguageSettingCard(),
+                  const SizedBox(height: 28),
 
-          // ── 4. Audio Playback & Volume ──
-          _SectionTitle(
-            title: isThai ? 'เสียงผู้อ่านและระดับเสียง' : 'Audio Playback',
-            subtitle: isThai
-                ? 'ปรับระดับเสียงของแอปโดยตรงเมื่อปุ่มเสียงของเครื่องถูกใช้เป็นชัตเตอร์'
-                : 'Adjust recitation volume directly in-app when hardware keys are used as shutters.',
+                  // ── 7. About App ──
+                  _SectionTitle(
+                    title: isThai ? 'เกี่ยวกับแอป' : 'About Hifz Quran',
+                    subtitle: isThai
+                        ? 'ข้อมูลแอปพลิเคชันสำหรับท่องจำอัลกุรอาน'
+                        : 'Application information and version.',
+                  ),
+                  const SizedBox(height: 12),
+                  const _AboutAppCard(),
+                ],
+                const SizedBox(height: 28),
+              ],
+            ),
           ),
-          const SizedBox(height: 12),
-          const _InAppVolumeControlCard(),
-          const SizedBox(height: 28),
-
-          // ── 5. Quran Text & Font Sizes ──
-          _SectionTitle(
-            title: isThai ? 'ตัวอักษรและขนาด' : 'Quran Text & Font Sizes',
-            subtitle: isThai
-                ? 'ปรับขนาดตัวอักษรอาหรับ คำแปล และการแสดงคำต่อคำ'
-                : 'Customize font sizes for Arabic, translation, and word-by-word display.',
-          ),
-          const SizedBox(height: 12),
-          const _QuranTextFontSettingCard(),
-          const SizedBox(height: 28),
-
-          // ── 6. Translations ──
-          _SectionTitle(
-            title: isThai ? 'คำแปลอัลกุรอาน' : 'Translations',
-            subtitle: isThai
-                ? 'เลือกคำแปลหลักที่ใช้ในโหมดแอบดูและรายการอายะห์'
-                : 'Select translation used during verse peek, reveal & list view.',
-          ),
-          const SizedBox(height: 12),
-          const _TranslationSettingCard(),
-          const SizedBox(height: 28),
-
-          // ── 7. About App ──
-          _SectionTitle(
-            title: isThai ? 'เกี่ยวกับแอป' : 'About Hifz Quran',
-            subtitle: isThai
-                ? 'ข้อมูลแอปพลิเคชันสำหรับท่องจำอัลกุรอาน'
-                : 'Application information and version.',
-          ),
-          const SizedBox(height: 12),
-          const _AboutAppCard(),
-          const SizedBox(height: 24),
         ],
       ),
     );
@@ -162,27 +209,33 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final amberColor = isDark ? const Color(0xFFFBBF24) : const Color(0xFF8A6530);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: colorScheme.onSurface,
+    return Padding(
+      padding: const EdgeInsets.only(left: 4, bottom: 4),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title.toUpperCase(),
+            style: GoogleFonts.notoSansThai(
+              fontWeight: FontWeight.w900,
+              fontSize: 11,
+              letterSpacing: 1.2,
+              color: amberColor,
+            ),
           ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          subtitle,
-          style: textTheme.bodySmall?.copyWith(
-            color: colorScheme.onSurfaceVariant,
+          const SizedBox(height: 2),
+          Text(
+            subtitle,
+            style: GoogleFonts.notoSansThai(
+              fontSize: 12,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
