@@ -2950,12 +2950,12 @@ class MushafLine extends StatelessWidget {
       2 => pageNumber <= 2 ? 38.0 : 30.5,
       4 => 23.5,
       6 => 25.0,
-      11 => pageNumber <= 2 ? 34.0 : 29.5,
+      11 || 21 => pageNumber <= 2 ? 34.0 : 29.5,
       19 => 25.2,
       _ => 22.5,
     };
-    final bool isQcf = mushafId == 1 || mushafId == 2 || mushafId == 19 || mushafId == 11;
-    final isUthmaniTajweed = mushafId == 11;
+    final bool isQcf = mushafId == 1 || mushafId == 2 || mushafId == 19 || mushafId == 11 || mushafId == 21;
+    final isUthmaniTajweed = mushafId == 11 || mushafId == 21;
     final baseStyle = TextStyle(
       fontFamily: fontFamily,
       fontSize: fontSize,
@@ -3005,7 +3005,7 @@ class MushafLine extends StatelessWidget {
       final recognizer = TapGestureRecognizer()
         ..onTap = () => onVerseTap(word.verseKey);
 
-      if ((mushafId == 11) && word.tajweedParts.isNotEmpty) {
+      if ((mushafId == 11 || mushafId == 21) && word.tajweedParts.isNotEmpty) {
         for (final part in word.tajweedParts) {
           final tajweedColor = _getTajweedColor(part.className, context) ?? baseStyle.color;
           textSpans.add(
@@ -3027,8 +3027,8 @@ class MushafLine extends StatelessWidget {
           ),
         );
       } else {
-        final overrideFont = (mushafId == 11 && isEndWord) ? 'qcf_v1_p$pageNumber' : null;
-        final overrideFontSize = (mushafId == 11 && isEndWord) ? (pageNumber <= 2 ? 38.0 : 30.5) : baseStyle.fontSize;
+        final overrideFont = ((mushafId == 11 || mushafId == 21) && isEndWord) ? 'qcf_v1_p$pageNumber' : null;
+        final overrideFontSize = ((mushafId == 11 || mushafId == 21) && isEndWord) ? (pageNumber <= 2 ? 38.0 : 30.5) : baseStyle.fontSize;
         final defaultColor = baseStyle.color;
         textSpans.add(
           TextSpan(

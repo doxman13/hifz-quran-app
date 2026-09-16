@@ -178,10 +178,10 @@ class QuranFoundationRepository {
     final pageCount = mushafTypeById(resolvedMushafId).pageCount;
     final safePage = _clampInt(pageNumber, 1, pageCount);
 
-    if (mushafId == 11) {
+    if (mushafId == 11 || mushafId == 21) {
       final basePage = await fetchPage(mushafId: 2, pageNumber: safePage);
-      await TajweedService.load();
-      return TajweedService.augmentMushafPage(basePage);
+      await TajweedService.load(mushafId: mushafId);
+      return TajweedService.augmentMushafPage(basePage, targetMushafId: mushafId);
     }
 
     if (mushafId == qcfPackageMushafId) {
@@ -276,7 +276,7 @@ class QuranFoundationRepository {
       return 'qcf_v2_p$pageNumber';
     } else if (mushafId == 2) {
       return 'qcf_v1_p$pageNumber';
-    } else if (mushafId == 11) {
+    } else if (mushafId == 11 || mushafId == 21) {
       return 'Tajweed';
     } else if (mushafId == 19) {
       return 'p$pageNumber-v4';
@@ -292,7 +292,7 @@ class QuranFoundationRepository {
       return 'https://verses.quran.foundation/fonts/quran/hafs/v2/ttf/p$pageNumber.ttf';
     } else if (mushafId == 2) {
       return 'https://verses.quran.foundation/fonts/quran/hafs/v1/ttf/p$pageNumber.ttf';
-    } else if (mushafId == 11) {
+    } else if (mushafId == 11 || mushafId == 21) {
       return null;
     } else if (mushafId == 19) {
       return 'https://verses.quran.foundation/fonts/quran/hafs/v4/colrv1/ttf/p$pageNumber.ttf';
