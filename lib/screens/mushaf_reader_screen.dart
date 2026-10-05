@@ -144,6 +144,8 @@ class _MushafReaderScreenState extends State<MushafReaderScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (mounted) {
         final settings = Provider.of<SettingsProvider>(context, listen: false);
+        final transManager = Provider.of<TranslationManagerProvider>(context, listen: false);
+        transManager.loadTranslationIntoCache(settings.primaryTranslationId);
         if (settings.keepAwake) {
           WakelockPlus.enable();
         }
@@ -383,25 +385,39 @@ class _MushafReaderScreenState extends State<MushafReaderScreen> {
 
     final settings = context.read<SettingsProvider>();
     final transManager = context.read<TranslationManagerProvider>();
-    String translation = 'Translation not found.';
+    final thaiTextProtection = context.read<ThaiTextProtectionProvider>();
 
-    if (verse != null) {
-      if (settings.primaryTranslationId == 'english') {
-        translation = verse.english;
-      } else if (settings.primaryTranslationId == 'thai_v2') {
-        translation = verse.thaiV2;
-      } else if (settings.primaryTranslationId == 'thai_v3') {
-        translation = verse.thaiV3;
+    if (!transManager.isTranslationLoaded(settings.primaryTranslationId)) {
+      await transManager.loadTranslationIntoCache(settings.primaryTranslationId);
+    }
+    if (!mounted) return;
+
+    String resolved = resolveVerseTranslationText(
+      context: context,
+      verseKey: verseKey,
+      verse: verse,
+      settings: settings,
+      transManager: transManager,
+      repository: widget.quranRepository,
+    );
+
+    if (resolved.isEmpty) {
+      if (verse != null) {
+        resolved = verse.thaiV3.isNotEmpty
+            ? verse.thaiV3
+            : (verse.english.isNotEmpty ? verse.english : 'Translation not found.');
       } else {
-        final idInt = int.tryParse(settings.primaryTranslationId) ?? -1;
-        final customTrans = transManager.getVerseTranslation(idInt, verseKey);
-        if (customTrans != null) {
-          translation = customTrans;
-        } else {
-          translation = verse.thaiV3; // Fallback
-        }
+        resolved = 'Translation not found.';
       }
     }
+
+    final isThai = resolveEffectiveTranslationLanguage(
+          context,
+          settings: settings,
+          translationId: settings.primaryTranslationId,
+        ) ==
+        'th';
+    final translation = isThai ? thaiTextProtection.protect(resolved) : resolved;
     final isBookmarked = context
         .read<MushafReadingProvider>()
         .isVerseBookmarked(profile.mushafId, pageNumber, verseKey);
@@ -3284,21 +3300,34 @@ class _TranslationPanel extends StatelessWidget {
             ),
             Flexible(
               child: SingleChildScrollView(
-                child: RichText(
-                  locale: const Locale('th', 'TH'),
-                  softWrap: true,
-                  text: TextSpan(
-                    children: HtmlParser.parseTranslationText(
+                child: Builder(
+                  builder: (context) {
+                    final settings = context.read<SettingsProvider>();
+                    final style = getTranslationTextStyle(
                       context,
-                      translation,
-                      GoogleFonts.notoSansThai(
-                        color: colors.foreground,
-                        fontSize: fontSize,
-                        height: 1.55,
+                      fontSize: fontSize,
+                      height: 1.55,
+                      color: colors.foreground,
+                      translationId: settings.primaryTranslationId,
+                    );
+                    final lang = resolveEffectiveTranslationLanguage(
+                      context,
+                      settings: settings,
+                      translationId: settings.primaryTranslationId,
+                    );
+                    return RichText(
+                      locale: Locale(lang),
+                      softWrap: true,
+                      text: TextSpan(
+                        children: HtmlParser.parseTranslationText(
+                          context,
+                          translation,
+                          style,
+                          colors.primary,
+                        ),
                       ),
-                      colors.primary,
-                    ),
-                  ),
+                    );
+                  },
                 ),
               ),
             ),
@@ -4068,22 +4097,37 @@ class _TranslationVerseRowState extends State<_TranslationVerseRow> {
       color: widget.colors.textStrong,
     );
 
-    final primaryId = widget.settings.primaryTranslationId;
-    String rawTranslation = '';
-    if (primaryId == 'thai_v3') {
-      rawTranslation = widget.verse.thaiV3;
-    } else if (primaryId == 'thai_v2') {
-      rawTranslation = widget.verse.thaiV2;
-    } else if (primaryId == 'english' || primaryId == 'en_sahih') {
-      rawTranslation = widget.verse.english;
-    } else {
-      rawTranslation = widget.verse.thaiV3.isNotEmpty
-          ? widget.verse.thaiV3
-          : widget.verse.thaiV2;
-    }
+    final transManager = context.watch<TranslationManagerProvider>();
+    final resolvedText = resolveVerseTranslationText(
+      context: context,
+      verseKey: widget.verseKey,
+      verse: widget.verse,
+      settings: widget.settings,
+      transManager: transManager,
+      repository: widget.quranRepository,
+    );
+    final rawTranslation = resolvedText.isNotEmpty
+        ? resolvedText
+        : (widget.verse.thaiV3.isNotEmpty
+            ? widget.verse.thaiV3
+            : widget.verse.thaiV2);
 
+    final effectiveLang = resolveEffectiveTranslationLanguage(
+      context,
+      settings: widget.settings,
+      translationId: widget.settings.primaryTranslationId,
+    );
     final thaiTextProtection = Provider.of<ThaiTextProtectionProvider>(context);
-    final translation = thaiTextProtection.protect(rawTranslation);
+    final translation = effectiveLang == 'th'
+        ? thaiTextProtection.protect(rawTranslation)
+        : rawTranslation;
+    final translationStyle = getTranslationTextStyle(
+      context,
+      fontSize: widget.settings.translationFontSize,
+      height: 1.5,
+      color: widget.colors.foreground,
+      translationId: widget.settings.primaryTranslationId,
+    );
 
     return Material(
       color: widget.isHighlighted
@@ -4171,11 +4215,7 @@ class _TranslationVerseRowState extends State<_TranslationVerseRow> {
                 child: Text(
                   translation,
                   textAlign: TextAlign.left,
-                  style: GoogleFonts.notoSansThai(
-                    fontSize: widget.settings.translationFontSize,
-                    height: 1.5,
-                    color: widget.colors.foreground,
-                  ),
+                  style: translationStyle,
                 ),
               ),
             ],

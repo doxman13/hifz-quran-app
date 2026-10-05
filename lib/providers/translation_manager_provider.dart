@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_background_service/flutter_background_service.dart';
 import '../data/translation_database.dart';
@@ -111,6 +110,15 @@ class TranslationManagerProvider extends ChangeNotifier {
           tId.toString() == canonicalId ||
           tId.toString() == id.toString();
     });
+  }
+
+  bool isTranslationLoaded(dynamic id) {
+    if (id == null) return false;
+    final canonicalId = TranslationConstants.resolveTranslationId(id);
+    final apiId = TranslationConstants.resolveApiId(id);
+    return _activeTranslationsCache.containsKey(id) ||
+        _activeTranslationsCache.containsKey(canonicalId) ||
+        (apiId != null && _activeTranslationsCache.containsKey(apiId));
   }
 
   /// Load a translation into memory cache if not already loaded.

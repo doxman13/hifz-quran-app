@@ -95,18 +95,24 @@ String resolveVerseTranslationText({
     final en = (verseItem['translation_en'] as String?) ?? (verseItem['translation'] as String?) ?? '';
     final ms = (verseItem['translation_ms'] as String?) ?? '';
 
-    if (primaryId == 'en_usmani') {
+    if (primaryId == 'en_usmani' || primaryId == 'english') {
+      final tm = transManager ?? Provider.of<TranslationManagerProvider>(context, listen: false);
+      final enText = tm.getVerseTranslation('en_usmani', verseKey) ?? tm.getVerseTranslation('english', verseKey);
+      if (enText != null && enText.isNotEmpty) return enText;
       if (en.isNotEmpty) return en;
       if (verse != null && verse.english.isNotEmpty && verse.english != 'N/A') return verse.english;
+      return 'Loading translation...';
+    } else if (primaryId == 'ms_basmeih' || primaryId == 'malay') {
       final tm = transManager ?? Provider.of<TranslationManagerProvider>(context, listen: false);
-      final enText = tm.getVerseTranslation('en_usmani', verseKey);
-      if (enText != null && enText.isNotEmpty) return enText;
-    } else if (primaryId == 'ms_basmeih') {
-      if (ms.isNotEmpty) return ms;
-      final tm = transManager ?? Provider.of<TranslationManagerProvider>(context, listen: false);
-      final msText = tm.getVerseTranslation('ms_basmeih', verseKey);
+      final msText = tm.getVerseTranslation('ms_basmeih', verseKey) ?? tm.getVerseTranslation('malay', verseKey);
       if (msText != null && msText.isNotEmpty) return msText;
+      if (ms.isNotEmpty) return ms;
+      return 'Loading translation...';
     } else if (primaryId == 'thai_v3') {
+      if (verse != null && verse.thaiV3.isNotEmpty) return verse.thaiV3;
+      if (th.isNotEmpty) return th;
+    } else if (primaryId == 'thai_v2') {
+      if (verse != null && verse.thaiV2.isNotEmpty) return verse.thaiV2;
       if (verse != null && verse.thaiV3.isNotEmpty) return verse.thaiV3;
       if (th.isNotEmpty) return th;
     } else {
@@ -129,23 +135,27 @@ String resolveVerseTranslationText({
           if (ms.isNotEmpty) return ms;
         }
       }
-      if (th.isNotEmpty) return th;
-      if (en.isNotEmpty) return en;
+      return 'Loading translation...';
     }
   }
 
   // 2. If a Verse model object is available
   if (verse != null) {
-    if (primaryId == 'en_usmani') {
-      if (verse.english.isNotEmpty && verse.english != 'N/A') return verse.english;
+    if (primaryId == 'en_usmani' || primaryId == 'english') {
       final tm = transManager ?? Provider.of<TranslationManagerProvider>(context, listen: false);
-      final enText = tm.getVerseTranslation('en_usmani', verseKey);
+      final enText = tm.getVerseTranslation('en_usmani', verseKey) ?? tm.getVerseTranslation('english', verseKey);
       if (enText != null && enText.isNotEmpty) return enText;
-    } else if (primaryId == 'ms_basmeih') {
+      if (verse.english.isNotEmpty && verse.english != 'N/A') return verse.english;
+      return 'Loading translation...';
+    } else if (primaryId == 'ms_basmeih' || primaryId == 'malay') {
       final tm = transManager ?? Provider.of<TranslationManagerProvider>(context, listen: false);
-      final msText = tm.getVerseTranslation('ms_basmeih', verseKey);
+      final msText = tm.getVerseTranslation('ms_basmeih', verseKey) ?? tm.getVerseTranslation('malay', verseKey);
       if (msText != null && msText.isNotEmpty) return msText;
+      return 'Loading translation...';
     } else if (primaryId == 'thai_v3') {
+      if (verse.thaiV3.isNotEmpty) return verse.thaiV3;
+    } else if (primaryId == 'thai_v2') {
+      if (verse.thaiV2.isNotEmpty) return verse.thaiV2;
       if (verse.thaiV3.isNotEmpty) return verse.thaiV3;
     } else {
       final tm = transManager ?? Provider.of<TranslationManagerProvider>(context, listen: false);
@@ -154,8 +164,7 @@ String resolveVerseTranslationText({
       if (customText != null && customText.isNotEmpty) {
         return customText;
       }
-      if (verse.thaiV3.isNotEmpty) return verse.thaiV3;
-      if (verse.english.isNotEmpty) return verse.english;
+      return 'Loading translation...';
     }
   }
 

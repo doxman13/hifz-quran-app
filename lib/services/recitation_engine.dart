@@ -84,6 +84,11 @@ class RecitationEngine {
 
     final byteData = await rootBundle.load(assetPath);
     final assetLen = byteData.lengthInBytes;
+    if (assetLen < 1000000) {
+      throw StateError(
+        'Model file "$assetPath" is corrupted or an unpulled Git LFS pointer ($assetLen bytes). Please ensure Git LFS model is downloaded.',
+      );
+    }
 
     if (await cachedFile.exists()) {
       final len = await cachedFile.length();
