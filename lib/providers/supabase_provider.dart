@@ -62,7 +62,9 @@ class SupabaseProvider extends ChangeNotifier {
   Future<void> signInWithOtp(String email) async {
     await _client.auth.signInWithOtp(
       email: email.trim(),
-      emailRedirectTo: 'io.supabase.thaiquran://login-callback',
+      emailRedirectTo: kIsWeb
+          ? Uri.base.origin
+          : 'io.supabase.thaiquran://login-callback',
     );
   }
 
@@ -71,7 +73,7 @@ class SupabaseProvider extends ChangeNotifier {
     await _client.auth.signInWithOAuth(
       OAuthProvider.google,
       redirectTo: kIsWeb
-          ? null
+          ? Uri.base.origin
           : 'io.supabase.thaiquran://login-callback',
     );
   }

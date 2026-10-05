@@ -52,9 +52,9 @@ Future<void> _initializeAppServices() async {
   await AppTheme.prewarmFonts();
 
   await Supabase.initialize(
-    url: 'https://qeciqdjidugdipgqxysm.supabase.co',
+    url: 'https://atouicznofujiwqavxer.supabase.co',
     anonKey:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFlY2lxZGppZHVnZGlwZ3F4eXNtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE5MzQxMzcsImV4cCI6MjA5NzUxMDEzN30.HtEVA3me06ShjtTRe6KdjV6qd3hPkiJTC9GAW0xDGuY',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF0b3VpY3pub2Z1aml3cWF2eGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA3MTU1ODksImV4cCI6MjEwNjI5MTU4OX0.H558zeNMkz-06QZxMcusjpcGufxuYzOwYJQxNOP6nsI',
   );
 
   await _initializeAudioBackground();
