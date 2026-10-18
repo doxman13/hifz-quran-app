@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 class OfflineQuranDatabaseService {
   static Database? _database;
   static const String _dbName = 'quran_offline.db';
-  static const int _targetDbVersion = 38;
+  static const int _targetDbVersion = 39;
 
   static Future<Database> get database async {
     if (_database != null) return _database!;
