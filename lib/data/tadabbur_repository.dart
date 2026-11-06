@@ -87,7 +87,7 @@ class TadabburRepository {
       }
 
       final response = await _client.from('tadabbur_notes').upsert(data).select().single();
-      return TadabburNote.fromJson(response as Map<String, dynamic>);
+      return TadabburNote.fromJson(response);
     } catch (e) {
       debugPrint('TadabburRepository: Error saving note to Supabase: $e');
       rethrow;

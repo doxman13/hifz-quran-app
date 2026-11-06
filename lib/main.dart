@@ -6,7 +6,6 @@ import 'package:just_audio_background/just_audio_background.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'firebase_options.dart';
 import 'providers/ble_remote_provider.dart';
 import 'providers/progress_provider.dart';
@@ -21,7 +20,6 @@ import 'providers/translation_manager_provider.dart';
 import 'providers/mushaf_audio_provider.dart';
 import 'providers/recitation_tracker_provider.dart';
 import 'data/quran_repository.dart';
-import 'screens/hifz_landing_screen.dart';
 import 'screens/welcome_screen.dart';
 import 'data/quran_foundation_repository.dart';
 import 'theme/app_theme.dart';
@@ -47,7 +45,6 @@ Future<void> _initializeAppServices() async {
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
-  FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
   await AppTheme.prewarmFonts();
 
@@ -205,10 +202,10 @@ class HifzApp extends StatelessWidget {
   final QuranFoundationRepository foundationRepository;
 
   const HifzApp({
-    Key? key,
+    super.key,
     required this.repository,
     required this.foundationRepository,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

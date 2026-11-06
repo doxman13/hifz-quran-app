@@ -60,7 +60,6 @@ class ThaiTextProtectionProvider extends ChangeNotifier {
     // as modern Flutter text layout engines wrap Thai text correctly at word boundaries
     // when the locale is set to 'th_TH', whereas inserting \u200B at every consonant/vowel group
     // causes words to break incorrectly in the middle of words.
-    // processedText = _addThaiSyllableBreaks(processedText);
 
     // 3. Restore protected terms back into the text, surrounding them with Zero-Width Spaces (\u200B)
     // to provide clear word boundaries so the layout engine can break lines before/after them
@@ -70,17 +69,6 @@ class ThaiTextProtectionProvider extends ChangeNotifier {
     });
 
     return processedText;
-  }
-
-  static String _addThaiSyllableBreaks(String text) {
-    if (text.isEmpty) return text;
-    // Matches:
-    // 1. A Thai consonant [\u0E01-\u0E2E] followed by zero or more combining characters/vowels/tone marks.
-    // 2. A Thai prepended vowel [\u0E40-\u0E44] followed by a consonant and zero or more combining characters/vowels/tone marks.
-    final regex = RegExp(
-      r'([\u0E01-\u0E2E][\u0E30-\u0E3A\u0E45-\u0E4E]*|[\u0E40-\u0E44][\u0E01-\u0E2E][\u0E30-\u0E3A\u0E45-\u0E4E]*)',
-    );
-    return text.replaceAllMapped(regex, (match) => match.group(1)! + '\u200B');
   }
 
   Future<void> _loadCachedTerms() async {
