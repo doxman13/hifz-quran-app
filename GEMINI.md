@@ -28,7 +28,7 @@
 >      - Master JSONs: `json/*.json`
 >      - Master CSVs: `csv/*.csv`
 > 3. **Commit & Push to `thai-quran-master-data` Origin:**
->    - All regenerated master files MUST be immediately committed and pushed to `https://github.com/doxman13/thai-quran-master-data` on branch `main`.
+>    - All regenerated master files MUST be immediately committed and pushed to `https://github.com/thai-quran/thai-quran-master-data` on branch `main`.
 >    - **NO DATA CHANGE IS CONSIDERED FINISHED OR MERGED UNTIL IT HAS BEEN SUCCESSFULLY COMPILED, VERIFIED, AND PUSHED TO `thai-quran-master-data`.**
 
 ---
